@@ -14,6 +14,9 @@
 
 package com.google.cloud.trace.sdk;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +28,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -67,7 +71,19 @@ public class BatchingTraceWriterTest {
     Mockito.verifyNoMoreInteractions(mockWriter, mockExecutor);
   }
 
+  @Test
+  public void testInitFromProperties() {
+    writer = new BatchingTraceWriter();
+    Properties props = new Properties();
+    props.setProperty(BatchingTraceWriter.class.getName() + ".batchSize", "19");
+    props.setProperty(BatchingTraceWriter.class.getName() + ".traceWriter",
+        LoggingTraceWriter.class.getName());
+    writer.initFromProperties(props);
+    assertEquals(19, writer.getBatchSize());
+    assertTrue(writer.getInnerWriter() instanceof LoggingTraceWriter);
+  }
+
   private TraceSpanData createDummyTraceSpanData() {
     return new TraceSpanData(null, null, null, 0);
-  }  
+  }
 }

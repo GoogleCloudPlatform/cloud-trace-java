@@ -17,8 +17,7 @@ package com.google.cloud.trace.sdk.servlet;
 import com.google.cloud.trace.sdk.LoggingTraceWriter;
 import com.google.cloud.trace.sdk.TraceSpanDataHandle;
 import com.google.cloud.trace.sdk.TraceWriter;
-import com.google.cloud.trace.sdk.TraceWriterFactory;
-import com.google.cloud.trace.sdk.TraceWriterFactoryHelper;
+import com.google.cloud.trace.sdk.TraceWriterHelper;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -70,14 +69,9 @@ public class TraceFilter implements Filter {
       try {
         props.load(getClass().getClassLoader().getResourceAsStream(propertiesFileName));
 
-        String traceWriterFactoryClassName =
-            props.getProperty(getClass().getName() + ".traceWriterFactory");
-        if (traceWriterFactoryClassName != null && traceWriterFactoryClassName.length() > 0) {
-          TraceWriterFactory factory =
-              TraceWriterFactoryHelper.createTraceWriterFactory(traceWriterFactoryClassName);
-          if (factory != null) {
-            writer = factory.createTraceWriter(props);
-          }
+        String traceWriterClassName = props.getProperty(getClass().getName() + ".traceWriter");
+        if (traceWriterClassName != null && !traceWriterClassName.isEmpty()) {
+          writer = TraceWriterHelper.createFromProperties(traceWriterClassName, props);
         }
         projectId = props.getProperty(getClass().getName() + ".projectId");
 

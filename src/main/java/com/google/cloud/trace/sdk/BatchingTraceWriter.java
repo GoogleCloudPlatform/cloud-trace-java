@@ -16,15 +16,20 @@ package com.google.cloud.trace.sdk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Writer implementation that wraps another writer, batches and uses the wrapped
  * writer to write traces when the batch size is met.
  */
-public class BatchingTraceWriter implements TraceWriter {
+public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
+
+  private static final Logger logger = Logger.getLogger(BatchingTraceWriter.class.getName());
 
   public static final int DEFAULT_BATCH_SIZE = 20;
   
@@ -33,9 +38,33 @@ public class BatchingTraceWriter implements TraceWriter {
   private int batchSize = DEFAULT_BATCH_SIZE;
   private ExecutorService executor = Executors.newFixedThreadPool(5);
   
+  public BatchingTraceWriter(){
+  }
+  
   public BatchingTraceWriter(int batchSize, TraceWriter writer) {
     this.batchSize = batchSize;
     this.writer = writer;
+  }
+
+  /**
+   * Initializes the writer from a properties file.
+   */
+  @Override
+  public void initFromProperties(Properties props) {
+    String batchSizeStr = props.getProperty(getClass().getName() + ".batchSize");
+    if (batchSizeStr != null) {
+      try {
+        this.batchSize = Integer.parseInt(batchSizeStr);
+      } catch (NumberFormatException nfe) {
+        logger.log(Level.WARNING,
+            "Found non-numeric batch size in the properties (" + batchSizeStr + ")");
+      }
+    }
+    
+    String innerWriterClassName = props.getProperty(getClass().getName() + ".traceWriter");
+    if (innerWriterClassName != null && !innerWriterClassName.isEmpty()) {
+      this.writer = TraceWriterHelper.createFromProperties(innerWriterClassName, props);
+    }
   }
 
   public void setWriter(TraceWriter writer) {
