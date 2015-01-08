@@ -28,7 +28,7 @@ public class TraceResponseUtils {
   /**
    * Sets the given context into the given servlet response.
    */
-  public static void closeResponseSpanData(TraceSpanData spanData, HttpServletResponse response) {
+  public void closeResponseSpanData(TraceSpanData spanData, HttpServletResponse response) {
     // Set the trace context on the response.
     response.setHeader(TraceHeaders.TRACE_ID_HEADER, spanData.getContext().getTraceId());
     response.setHeader(TraceHeaders.TRACE_SPAN_ID_HEADER, "" + spanData.getContext().getSpanId());

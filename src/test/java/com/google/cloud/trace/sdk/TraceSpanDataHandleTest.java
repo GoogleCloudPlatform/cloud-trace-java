@@ -46,7 +46,8 @@ public class TraceSpanDataHandleTest {
   public void testCreateAndAutoClose() {
     TraceSpanData innerSpanData;
     try (TraceSpanDataHandle handle =
-        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, 0)) {
+        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
+            true)) {
       innerSpanData = handle.getSpanData();
       assertEquals(PROJECT_ID, innerSpanData.getProjectId());
       assertEquals(FakeClock.DEFAULT_MILLIS, innerSpanData.getStartTimeMillis());
@@ -61,7 +62,8 @@ public class TraceSpanDataHandleTest {
   @Test
   public void testCreateChildSpanDataHandle() {
     TraceSpanDataHandle parent =
-        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, 0);
+        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
+            true);
     TraceSpanDataHandle child = parent.createChildSpanDataHandle(CHILD_NAME);
     assertEquals(CHILD_NAME, child.getSpanData().getName());
     assertEquals(TRACE_ID, child.getSpanData().getTraceId());

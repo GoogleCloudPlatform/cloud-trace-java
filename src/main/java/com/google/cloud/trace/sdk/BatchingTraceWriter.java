@@ -63,7 +63,8 @@ public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
     
     String innerWriterClassName = props.getProperty(getClass().getName() + ".traceWriter");
     if (innerWriterClassName != null && !innerWriterClassName.isEmpty()) {
-      this.writer = TraceWriterHelper.createFromProperties(innerWriterClassName, props);
+      this.writer =
+          (TraceWriter) ReflectionUtils.createFromProperties(innerWriterClassName, props);
     }
   }
 

@@ -17,7 +17,7 @@ package com.google.cloud.trace.sdk.servlet;
 import com.google.cloud.trace.sdk.LoggingTraceWriter;
 import com.google.cloud.trace.sdk.TraceSpanDataHandle;
 import com.google.cloud.trace.sdk.TraceWriter;
-import com.google.cloud.trace.sdk.TraceWriterHelper;
+import com.google.cloud.trace.sdk.ReflectionUtils;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletResponse;
 public class TraceFilter implements Filter {
 
   private TraceWriter writer = new LoggingTraceWriter();
+  private TraceRequestUtils requestUtils = new TraceRequestUtils();
+  private TraceResponseUtils responseUtils = new TraceResponseUtils();
   private String projectId;
 
   @Override
@@ -52,9 +54,9 @@ public class TraceFilter implements Filter {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) resp;
     try (TraceSpanDataHandle spanDataHandle =
-        TraceRequestUtils.createRequestSpanData(writer, request, projectId)) {
+        requestUtils.createRequestSpanData(writer, request, projectId)) {
       chain.doFilter(req, resp);
-      TraceResponseUtils.closeResponseSpanData(spanDataHandle.getSpanData(), response);
+      responseUtils.closeResponseSpanData(spanDataHandle.getSpanData(), response);
     }
   }
 
@@ -71,10 +73,11 @@ public class TraceFilter implements Filter {
 
         String traceWriterClassName = props.getProperty(getClass().getName() + ".traceWriter");
         if (traceWriterClassName != null && !traceWriterClassName.isEmpty()) {
-          writer = TraceWriterHelper.createFromProperties(traceWriterClassName, props);
+          writer = (TraceWriter) ReflectionUtils.createFromProperties(traceWriterClassName, props);
         }
         projectId = props.getProperty(getClass().getName() + ".projectId");
 
+        requestUtils.initFromProperties(props);
       } catch (IOException e) {
         throw new ServletException(e);
       }

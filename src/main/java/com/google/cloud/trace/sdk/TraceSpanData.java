@@ -31,7 +31,8 @@ public class TraceSpanData {
   private final long startTimeMillis;
   private long endTimeMillis;
   private Map<String, TraceSpanLabel> labelMap = new HashMap<>();
-
+  private boolean shouldWrite;
+  
   private static final Random random = new Random();
 
   // Package-scoped for testability.
@@ -41,12 +42,13 @@ public class TraceSpanData {
    * Opens up a new trace span in the given project and assigns it a span id.
    */
   public TraceSpanData(String projectId, String traceId, String name,
-      long parentSpanId) {
+      long parentSpanId, boolean shouldWrite) {
     this.context = new TraceContext(traceId, random.nextLong());
     this.projectId = projectId;
     this.name = name;
     this.parentSpanId = parentSpanId;
     this.startTimeMillis = clock.currentTimeMillis();
+    this.shouldWrite = shouldWrite;
   }
 
 
@@ -61,7 +63,8 @@ public class TraceSpanData {
    * Creates a new child span data object with the given name.
    */
   public TraceSpanData createChildSpanData(String name) {
-    return new TraceSpanData(projectId, context.getTraceId(), name, context.getSpanId());
+    return new TraceSpanData(projectId, context.getTraceId(), name, context.getSpanId(),
+        shouldWrite);
   }
 
   @Override
@@ -121,5 +124,13 @@ public class TraceSpanData {
   
   public TraceContext getContext() {
     return context;
+  }
+
+  public boolean getShouldWrite() {
+    return shouldWrite;
+  }
+
+  public void setShouldWrite(boolean shouldWrite) {
+    this.shouldWrite = shouldWrite;
   }
 }

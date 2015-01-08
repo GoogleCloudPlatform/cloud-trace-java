@@ -15,21 +15,19 @@
 package com.google.cloud.trace.sdk;
 
 /**
- * Defines custom HTTP headers for forwarding trace data.
+ * Responsible for the determination of whether tracing is enabled or not
+ * in the current context.
  */
-public interface TraceHeaders {
+public interface TraceEnablingPolicy {
+
   /**
-   * The custom header name for trace id's.
+   * Performs the tracing-enabled calculation for this node.
+   * 
+   * @param alreadyEnabled Tracks whether tracing is already enabled on the context,
+   *    or is unspecified. In general, the implementation should return true
+   *    (thus continuing a trace started upstream) if alreadyEnabled is true, and
+   *    set its own policy if alreadyEnabled is false.
+   * @return Whether or not tracing is enabled going from here downstream.
    */
-  String TRACE_ID_HEADER = "X-Cloud-Trace-Id";
-  
-  /**
-   * The custom header name for trace spans.
-   */
-  String TRACE_SPAN_ID_HEADER = "X-Cloud-Trace-Span-Id";
-  
-  /**
-   * The custom header name for the trace-enabled flag.
-   */
-  String TRACE_ENABLED_HEADER = "X-Cloud-Trace-Enabled";
+  boolean isTracingEnabled(boolean alreadyEnabled);
 }

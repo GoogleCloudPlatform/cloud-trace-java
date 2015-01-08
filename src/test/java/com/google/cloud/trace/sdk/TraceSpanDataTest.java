@@ -32,21 +32,24 @@ public class TraceSpanDataTest {
   @Test
   public void testCreate() {
     TraceSpanData.clock = new FakeClock();
-    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, 0);
+    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
+        true);
     assertEquals(FakeClock.DEFAULT_MILLIS, span.getStartTimeMillis());
     assertEquals(0, span.getParentSpanId());
   }
   
   @Test
   public void testCreateChildSpanData() {
-    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, 0);
+    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
+        true);
     TraceSpanData child = span.createChildSpanData("child");
     assertEquals(child.getParentSpanId(), span.getSpanId());
   }
   
   @Test
   public void testClose() {
-    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, 0);
+    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
+        true);
     span.close();
   }
 }

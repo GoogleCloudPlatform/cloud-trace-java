@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+// http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,21 +15,12 @@
 package com.google.cloud.trace.sdk;
 
 /**
- * Defines custom HTTP headers for forwarding trace data.
+ * Trace enabling policy that is always enabled. Useful for testing.
  */
-public interface TraceHeaders {
-  /**
-   * The custom header name for trace id's.
-   */
-  String TRACE_ID_HEADER = "X-Cloud-Trace-Id";
-  
-  /**
-   * The custom header name for trace spans.
-   */
-  String TRACE_SPAN_ID_HEADER = "X-Cloud-Trace-Span-Id";
-  
-  /**
-   * The custom header name for the trace-enabled flag.
-   */
-  String TRACE_ENABLED_HEADER = "X-Cloud-Trace-Enabled";
+public class AlwaysTraceEnablingPolicy implements TraceEnablingPolicy {
+
+  @Override
+  public boolean isTracingEnabled(boolean alreadyEnabled) {
+    return true;
+  }
 }
