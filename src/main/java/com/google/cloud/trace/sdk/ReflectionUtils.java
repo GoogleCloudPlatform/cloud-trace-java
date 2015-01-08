@@ -26,7 +26,7 @@ public class ReflectionUtils {
   private static final Logger logger = Logger.getLogger(ReflectionUtils.class.getName());
 
   /**
-   * Reflectively instantiates and initializes a TraceWriter using a Properties file.
+   * Reflectively instantiates and initializes a class using a Properties file.
    */
   public static Object createFromProperties(String className, Properties props) {
     Object obj = null;
