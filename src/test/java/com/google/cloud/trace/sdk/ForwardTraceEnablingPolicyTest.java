@@ -14,47 +14,47 @@
 
 package com.google.cloud.trace.sdk;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import com.google.common.util.concurrent.RateLimiter;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Properties;
 
 /**
- * Tests for the {@link RateLimiterTraceEnablingPolicy} class.
+ * Tests for the {@link ForwardTraceEnablingPolicy} class.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class RateLimiterTraceEnablingPolicyTest {
+public class ForwardTraceEnablingPolicyTest {
 
-  private RateLimiterTraceEnablingPolicy policy;
-  @Mock private RateLimiter mockLimiter;
+  private ForwardTraceEnablingPolicy policy;
   
   @Before
   public void setUp() {
-    policy = new RateLimiterTraceEnablingPolicy();
-    policy.setLimiter(mockLimiter);
+    policy = new ForwardTraceEnablingPolicy();
   }
   
   @Test
-  public void testInitFromProperties() {
-    Mockito.when(mockLimiter.tryAcquire()).thenReturn(true);
+  public void testInitFromPropertiesValid() {
     Properties props = new Properties();
-    props.setProperty(RateLimiterTraceEnablingPolicy.class.getName() + ".ratePerSecond", "19");
+    props.setProperty(ForwardTraceEnablingPolicy.class.getName() + ".enablingPolicy",
+        AlwaysTraceEnablingPolicy.class.getName());
     policy.initFromProperties(props);
-    assertEquals(19, policy.getLimiter().getRate(), 0.001);
+    assertTrue(policy.getEnablingPolicy() instanceof AlwaysTraceEnablingPolicy);
   }
   
   @Test
-  public void testIsTracingEnabledByLimiter() {
-    Mockito.when(mockLimiter.tryAcquire()).thenReturn(true);
+  public void testIsTracingEnabledShouldForward() {
+    assertTrue(policy.isTracingEnabled(true));
+  }
+  
+  @Test
+  public void testIsTracingEnabledUsesInnerPolicy() {
+    assertFalse(policy.isTracingEnabled(false));
+    policy.setEnablingPolicy(new AlwaysTraceEnablingPolicy());
     assertTrue(policy.isTracingEnabled(false));
   }
 }

@@ -50,9 +50,6 @@ public class RateLimiterTraceEnablingPolicy implements TraceEnablingPolicy, CanI
   
   @Override
   public boolean isTracingEnabled(boolean alreadyEnabled) {
-    if (alreadyEnabled) {
-      return true;
-    }
     return limiter.tryAcquire();
   }
 

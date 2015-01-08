@@ -15,7 +15,7 @@
 package com.google.cloud.trace.sdk.servlet;
 
 import com.google.cloud.trace.sdk.CanInitFromProperties;
-import com.google.cloud.trace.sdk.RateLimiterTraceEnablingPolicy;
+import com.google.cloud.trace.sdk.NeverTraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceHeaders;
 import com.google.cloud.trace.sdk.TraceIdGenerator;
@@ -54,7 +54,7 @@ public class TraceRequestUtils implements CanInitFromProperties {
    * The trace-enabling policy we use when creating request trace contexts. Package-scoped for
    * testing purposes.
    */
-  TraceEnablingPolicy enablingPolicy = new RateLimiterTraceEnablingPolicy();
+  TraceEnablingPolicy enablingPolicy = new NeverTraceEnablingPolicy();
 
 
   /**

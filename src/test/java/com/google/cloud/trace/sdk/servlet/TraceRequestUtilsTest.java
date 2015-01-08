@@ -63,12 +63,6 @@ public class TraceRequestUtilsTest {
         return NEW_TRACE_ID;
       }
     };
-    utils.enablingPolicy = new TraceEnablingPolicy() {      
-      @Override
-      public boolean isTracingEnabled(boolean alreadyEnabled) {
-        return true;
-      }
-    };
   }
   
   @Test
@@ -80,9 +74,18 @@ public class TraceRequestUtilsTest {
     assertEquals(TRACE_ID, handle.getSpanData().getTraceId());
     assertEquals(SPAN_ID, handle.getSpanData().getParentSpanId());
     assertEquals(URI + "?" + QUERY, handle.getSpanData().getName());
-    assertTrue(handle.getSpanData().getShouldWrite());
+    assertFalse(handle.getSpanData().getShouldWrite());
     Mockito.verify(request).setAttribute(TraceRequestUtils.TRACE_SPAN_DATA_ATTRIBUTE,
         handle);
+  }
+  
+  @Test
+  public void testCreateRequestSpanDataNonDefaultEnabling() {
+    setUpMockRequest(TRACE_ID, SPAN_ID, true);
+    utils.enablingPolicy = new AlwaysTraceEnablingPolicy();
+    TraceSpanDataHandle handle = utils.createRequestSpanData(writer,
+        request, PROJECT_ID);
+    assertTrue(handle.getSpanData().getShouldWrite());
   }
   
   @Test
@@ -93,7 +96,7 @@ public class TraceRequestUtilsTest {
     assertEquals(PROJECT_ID, handle.getSpanData().getProjectId());
     assertEquals(NEW_TRACE_ID, handle.getSpanData().getTraceId());
     assertEquals(0, handle.getSpanData().getParentSpanId());
-    assertTrue(handle.getSpanData().getShouldWrite());
+    assertFalse(handle.getSpanData().getShouldWrite());
     assertEquals(URI + "?" + QUERY, handle.getSpanData().getName());
   }
   

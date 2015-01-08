@@ -14,11 +14,13 @@
 
 package com.google.cloud.trace.sdk;
 
-import java.util.Properties;
-
 /**
- * Implemented by classes that can initialize from standard Java Properties files.
+ * Trace enabling policy that is never enabled.
  */
-public interface CanInitFromProperties {
-  void initFromProperties(Properties props);
+public class NeverTraceEnablingPolicy implements TraceEnablingPolicy {
+
+  @Override
+  public boolean isTracingEnabled(boolean alreadyEnabled) {
+    return false;
+  }
 }

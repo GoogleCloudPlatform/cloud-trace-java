@@ -22,11 +22,9 @@ public interface TraceEnablingPolicy {
 
   /**
    * Performs the tracing-enabled calculation for this node.
-   * 
-   * @param alreadyEnabled Tracks whether tracing is already enabled on the context,
-   *    or is unspecified. In general, the implementation should return true
-   *    (thus continuing a trace started upstream) if alreadyEnabled is true, and
-   *    set its own policy if alreadyEnabled is false.
+   *
+   * @param alreadyEnabled Tracks whether tracing is already enabled on the context, or is
+   *        unspecified.
    * @return Whether or not tracing is enabled going from here downstream.
    */
   boolean isTracingEnabled(boolean alreadyEnabled);

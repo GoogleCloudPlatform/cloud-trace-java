@@ -15,7 +15,7 @@
 package com.google.cloud.trace.sdk;
 
 /**
- * Trace enabling policy that is always enabled. Useful for testing.
+ * Trace enabling policy that is always enabled.
  */
 public class AlwaysTraceEnablingPolicy implements TraceEnablingPolicy {
 
