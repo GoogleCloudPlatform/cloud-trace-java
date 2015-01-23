@@ -14,6 +14,9 @@
 
 package com.google.cloud.trace.sdk;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Helper class that wraps a {@link TraceSpanData} in an {@link AutoCloseable}.
  * Provides a nice programming model for many scenarios where you want to
@@ -22,6 +25,8 @@ package com.google.cloud.trace.sdk;
  *   b) Automatically leverages the provided writer to write out the span data. 
  */
 public class TraceSpanDataHandle implements AutoCloseable {
+
+  private static final Logger logger = Logger.getLogger(TraceSpanDataHandle.class.getName());
 
   private boolean isClosed = false;
   private final TraceWriter writer;
@@ -53,7 +58,11 @@ public class TraceSpanDataHandle implements AutoCloseable {
   public void close() {
     span.close();
     isClosed = true;
-    writer.writeSpan(span);
+    try {
+      writer.writeSpan(span);
+    } catch (TraceWriterException e) {
+      logger.log(Level.SEVERE, "Failed to write trace while shutting down", e);
+    }
   }
   
   @Override

@@ -23,15 +23,15 @@ public interface TraceWriter {
   /**
    * Writes out a single {@link TraceSpanData}.
    */
-  void writeSpan(TraceSpanData span);
+  void writeSpan(TraceSpanData span) throws TraceWriterException;
   
   /**
    * Writes out a batch of {@link TraceSpanData}s.
    */
-  void writeSpans(List<TraceSpanData> spans);
+  void writeSpans(List<TraceSpanData> spans) throws TraceWriterException;
   
   /**
    * Provided as an opportunity for graceful cleanup.
    */
-  void shutdown();
+  void shutdown() throws TraceWriterException;
 }

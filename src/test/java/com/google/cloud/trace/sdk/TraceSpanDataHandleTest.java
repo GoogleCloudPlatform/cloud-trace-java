@@ -43,7 +43,7 @@ public class TraceSpanDataHandleTest {
   }
   
   @Test
-  public void testCreateAndAutoClose() {
+  public void testCreateAndAutoClose() throws TraceWriterException {
     TraceSpanData innerSpanData;
     try (TraceSpanDataHandle handle =
         new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
