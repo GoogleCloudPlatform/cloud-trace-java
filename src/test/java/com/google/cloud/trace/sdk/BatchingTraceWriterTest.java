@@ -48,7 +48,7 @@ public class BatchingTraceWriterTest {
   }
   
   @Test
-  public void testWriteSpan() throws TraceWriterException {
+  public void testWriteSpan() throws CloudTraceException {
     TraceSpanData span1 = createDummyTraceSpanData();
     TraceSpanData span2 = createDummyTraceSpanData();
     List<TraceSpanData> expectedBatch = new ArrayList<>();

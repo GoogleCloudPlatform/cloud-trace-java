@@ -15,7 +15,6 @@
 package com.google.cloud.trace.sdk;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +41,5 @@ public class CloudTraceWriterTest {
     writer.initFromProperties(props);
     assertEquals("19", writer.getProjectId());
     assertEquals("http://localhost:8888/", writer.getApiEndpoint());
-    assertTrue(writer.getCredentialProvider() instanceof NullCredentialProvider);
   }
 }

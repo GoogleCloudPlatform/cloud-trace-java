@@ -18,32 +18,35 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.cloud.trace.sdk.CloudTraceReader;
-import com.google.cloud.trace.sdk.InstalledAppCredentialProvider;
+import com.google.cloud.trace.sdk.ServiceAccountCredentialProvider;
 
 import java.io.File;
 
 /**
- * Reads a trace from the Cloud Trace API.
+ * Reads a trace from the Cloud Trace API using an OAuth2 service account.
  * Command-line arguments:
- *   0: Full path to an Installed Application OAuth2 client secrets file.
- *   1: The Cloud Trace API endpoint.
- *   2. The project ID to read the trace from.
- *   3. The trace ID.
+ *   0: The email address of the service account in the Cloud project.
+ *   1: Full path to a service account P12 key file.
+ *   2: The Cloud Trace API endpoint.
+ *   3. The project ID to read the trace from.
+ *   4. The trace ID.
  */
-public class GetTrace {
+public class GetTraceWithServiceAccount {
 
   public static void main(String[] args) throws Exception {
-    InstalledAppCredentialProvider credentialProvider = new InstalledAppCredentialProvider();
-    credentialProvider.setClientSecretsFile(new File(args[0]));
+    ServiceAccountCredentialProvider credentialProvider = new ServiceAccountCredentialProvider();
+    credentialProvider.setEmailAddress(args[0]);
+    credentialProvider.setP12File(new File(args[1]));
+    System.out.println("Token: " + credentialProvider.getCredential().getAccessToken());
 
     CloudTraceReader reader = new CloudTraceReader();
     NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     HttpRequestFactory requestFactory = httpTransport.createRequestFactory(
         credentialProvider.getCredential());
     reader.setRequestFactory(requestFactory);
-    reader.setApiEndpoint(args[1]);
-    reader.setProjectId(args[2]);
-    String result = reader.readTraceById(args[3]);
+    reader.setApiEndpoint(args[2]);
+    reader.setProjectId(args[3]);
+    String result = reader.readTraceById(args[4]);
     System.out.println(result);
   }
 }

@@ -14,7 +14,6 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
@@ -45,9 +44,9 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   public static List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/trace.append");
 
   /**
-   * Gets the OAuth2 credentials for calling the Cloud Trace API.
+   * Request factory for calling the Cloud Trace API.
    */
-  private CredentialProvider credentialProvider;
+  private HttpRequestFactory requestFactory;
 
   /**
    * The id of the cloud project to write traces to.
@@ -70,14 +69,15 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   public CloudTraceWriter() throws GeneralSecurityException, IOException {
     this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     this.objectMapper = new ObjectMapper();
+    this.requestFactory = this.httpTransport.createRequestFactory();
   }
 
-  public CredentialProvider getCredentialProvider() {
-    return credentialProvider;
+  public HttpRequestFactory getRequestFactory() {
+    return requestFactory;
   }
 
-  public void setCredentialProvider(CredentialProvider credentialProvider) {
-    this.credentialProvider = credentialProvider;
+  public void setRequestFactory(HttpRequestFactory requestFactory) {
+    this.requestFactory = requestFactory;
   }
 
   public String getProjectId() {
@@ -97,25 +97,23 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   }
 
   @Override
-  public void initFromProperties(Properties props) {
+  public void initFromProperties(Properties props) throws CloudTraceException {
     this.projectId = props.getProperty(getClass().getName() + ".projectId");
     this.apiEndpoint = props.getProperty(getClass().getName() + ".apiEndpoint");
     String credentialProviderClassName =
         props.getProperty(getClass().getName() + ".credentialProvider");
     if (credentialProviderClassName != null && !credentialProviderClassName.isEmpty()) {
-      this.credentialProvider = (CredentialProvider) ReflectionUtils.createFromProperties(
+      CredentialProvider credProvider = (CredentialProvider) ReflectionUtils.createFromProperties(
           credentialProviderClassName, props);
+      this.requestFactory = this.httpTransport.createRequestFactory(credProvider.getCredential());
     }
   }
 
   @Override
-  public void writeSpan(TraceSpanData span) throws TraceWriterException {
+  public void writeSpan(TraceSpanData span) throws CloudTraceException {
     checkState();
     GenericUrl url = buildUrl(span);
     try {
-      Credential credential = credentialProvider.authorize();
-      HttpRequestFactory requestFactory = httpTransport.createRequestFactory(credential);
-
       Map<String, String> patchData = new HashMap<>();
       patchData.put("traceId", span.getTraceId());
       patchData.put("projectId", projectId);
@@ -124,15 +122,13 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
       HttpRequest request =
           requestFactory.buildPatchRequest(url, ByteArrayContent.fromString(null, requestBody));
       request.getHeaders().setContentType("application/json");
-      // TODO: Should not be setting this header.
-      request.getHeaders().put("X-GFE-SSL", "yes");
       HttpResponse response = request.execute();
       if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
-        throw new TraceWriterException(
+        throw new CloudTraceException(
             "Failed to write span, status = " + response.getStatusCode());
       }
-    } catch (IOException | GeneralSecurityException e) {
-      throw new TraceWriterException("Exception writing span to API, url=" + url, e);
+    } catch (IOException e) {
+      throw new CloudTraceException("Exception writing span to API, url=" + url, e);
     }
   }
 
@@ -145,7 +141,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   }
 
   @Override
-  public void writeSpans(List<TraceSpanData> spans) throws TraceWriterException {
+  public void writeSpans(List<TraceSpanData> spans) throws CloudTraceException {
     // TODO: Actually roll the batch into a single append call.
     for (TraceSpanData span : spans) {
       writeSpan(span);
@@ -164,9 +160,6 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
     }
     if (apiEndpoint == null || apiEndpoint.isEmpty()) {
       throw new IllegalStateException("API endpoint must be set");
-    }
-    if (credentialProvider == null) {
-      throw new IllegalStateException("Credential provider must be set");
     }
   }
 }

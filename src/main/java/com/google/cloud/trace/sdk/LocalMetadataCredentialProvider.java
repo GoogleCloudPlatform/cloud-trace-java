@@ -14,28 +14,23 @@
 
 package com.google.cloud.trace.sdk;
 
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+
+import java.io.IOException;
+
 /**
- * Custom exception class thrown by {@link TraceWriter} implementations.
+ * Authorizes using the local metadata stored in a GCE instance. This will
+ * fail on anything other than GCE.
  */
-public class TraceWriterException extends Exception {
+public class LocalMetadataCredentialProvider implements CredentialProvider {
 
-  public TraceWriterException() {
-  }
-
-  public TraceWriterException(String message) {
-    super(message);
-  }
-
-  public TraceWriterException(Throwable cause) {
-    super(cause);
-  }
-
-  public TraceWriterException(String message, Throwable cause) {
-    super(message, cause);
-  }
-
-  public TraceWriterException(String message, Throwable cause, boolean enableSuppression,
-      boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
+  @Override
+  public Credential getCredential() throws CloudTraceException {
+    try {
+      return GoogleCredential.getApplicationDefault();
+    } catch (IOException e) {
+      throw new CloudTraceException("Failed to get default GoogleCredential", e);
+    }
   }
 }

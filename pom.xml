@@ -101,6 +101,15 @@
             <argument>project_id</argument>
             <argument>trace_id</argument>
           </arguments>
+
+<!--           <mainClass>com.google.cloud.trace.sdk.examples.GetTraceWithServiceAccount</mainClass> -->
+<!--           <arguments> -->
+<!--             <argument>email_address</argument> -->
+<!--             <argument>/path/to/p12/file</argument> -->
+<!--             <argument>http://path/to/googleapis/endpoint/</argument> -->
+<!--             <argument>project_id</argument> -->
+<!--             <argument>trace_id</argument> -->
+<!--           </arguments> -->
         </configuration>
       </plugin>
     </plugins>

@@ -16,16 +16,13 @@ package com.google.cloud.trace.sdk;
 
 import com.google.api.client.auth.oauth2.Credential;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 /**
  * {@link CredentialProvider} implementation for testing.
  */
 public class NullCredentialProvider implements CredentialProvider {
 
   @Override
-  public Credential authorize() throws IOException, GeneralSecurityException {
+  public Credential getCredential() {
     return null;
   }
 }

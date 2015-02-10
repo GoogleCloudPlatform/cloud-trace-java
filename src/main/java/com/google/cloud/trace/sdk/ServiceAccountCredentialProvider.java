@@ -28,9 +28,7 @@ import java.util.Properties;
 
 /**
  * Authorizes using the Service Account approach. See
- * https://developers.google.com/accounts/docs/OAuth2ServiceAccount
- * TODO: This is not currently working as expected.
- * TODO: Need to add more configuration parameters for dealing with the key.
+ * https://developers.google.com/accounts/docs/OAuth2ServiceAccount.
  */
 public class ServiceAccountCredentialProvider implements CredentialProvider, CanInitFromProperties {
 
@@ -38,19 +36,19 @@ public class ServiceAccountCredentialProvider implements CredentialProvider, Can
    * The email address of the service account.
    */
   private String emailAddress;
-  
+
   /**
    * The private key file for the service account.
    */
   private File p12File;
-  
+
   /**
    * Initializes the service account credentials parameters from a properties file.
    */
   @Override
   public void initFromProperties(Properties props) {
     this.emailAddress = props.getProperty(getClass().getName() + ".emailAddress");
-    
+
     String p12FileName = props.getProperty(getClass().getName() + ".p12FileName");
     if (p12FileName != null) {
       this.p12File = new File(p12FileName);
@@ -74,23 +72,29 @@ public class ServiceAccountCredentialProvider implements CredentialProvider, Can
   }
 
   @Override
-  public Credential authorize() throws IOException, GeneralSecurityException {
+  public Credential getCredential() throws CloudTraceException {
     if (p12File == null) {
       throw new IllegalStateException("P12 file must be set");
     }
     if (emailAddress == null || emailAddress.isEmpty()) {
       throw new IllegalStateException("Email address must be set");
     }
-    
+
     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-    HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    GoogleCredential credential = new GoogleCredential.Builder()
-        .setTransport(httpTransport)
-        .setJsonFactory(jsonFactory)
-        .setServiceAccountId(emailAddress)
-        .setServiceAccountPrivateKeyFromP12File(p12File)
-        .setServiceAccountScopes(CloudTraceWriter.SCOPES)
-        .build();
-    return credential;
+    HttpTransport httpTransport;
+    try {
+      httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+      GoogleCredential credential = new GoogleCredential.Builder()
+          .setTransport(httpTransport)
+          .setJsonFactory(jsonFactory)
+          .setServiceAccountId(emailAddress)
+          .setServiceAccountPrivateKeyFromP12File(p12File)
+          .setServiceAccountScopes(CloudTraceWriter.SCOPES)
+          .build();
+      credential.refreshToken();
+      return credential;
+    } catch (GeneralSecurityException | IOException e) {
+      throw new CloudTraceException("Exception getting oauth2 credential", e);
+    }
   }
 }

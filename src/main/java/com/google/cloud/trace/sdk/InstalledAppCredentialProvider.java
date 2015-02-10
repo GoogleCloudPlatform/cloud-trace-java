@@ -100,16 +100,22 @@ public class InstalledAppCredentialProvider implements CredentialProvider, CanIn
   }
 
   @Override
-  public Credential authorize() throws IOException {
+  public Credential getCredential() throws CloudTraceException {
     if (clientSecretsFile == null) {
       throw new IllegalStateException("Client-secrets file is required");
     }
+    
     JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-    GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(jsonFactory,
-        new FileReader(clientSecretsFile));
-    GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport,
-        jsonFactory, clientSecrets, CloudTraceWriter.SCOPES).setDataStoreFactory(dataStoreFactory)
-        .build();
-    return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+    GoogleClientSecrets clientSecrets;
+    try {
+      clientSecrets = GoogleClientSecrets.load(jsonFactory,
+          new FileReader(clientSecretsFile));
+      GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport,
+          jsonFactory, clientSecrets, CloudTraceWriter.SCOPES).setDataStoreFactory(dataStoreFactory)
+          .build();
+      return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
+    } catch (IOException e) {
+      throw new CloudTraceException("Exception getting oauth2 credential", e);
+    }
   }
 }

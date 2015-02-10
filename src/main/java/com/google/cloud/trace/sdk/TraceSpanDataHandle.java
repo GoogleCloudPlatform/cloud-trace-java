@@ -60,7 +60,7 @@ public class TraceSpanDataHandle implements AutoCloseable {
     isClosed = true;
     try {
       writer.writeSpan(span);
-    } catch (TraceWriterException e) {
+    } catch (CloudTraceException e) {
       logger.log(Level.SEVERE, "Failed to write trace while shutting down", e);
     }
   }

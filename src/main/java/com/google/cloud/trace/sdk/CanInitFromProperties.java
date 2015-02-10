@@ -20,5 +20,5 @@ import java.util.Properties;
  * Implemented by classes that can initialize from standard Java Properties files.
  */
 public interface CanInitFromProperties {
-  void initFromProperties(Properties props);
+  void initFromProperties(Properties props) throws CloudTraceException;
 }

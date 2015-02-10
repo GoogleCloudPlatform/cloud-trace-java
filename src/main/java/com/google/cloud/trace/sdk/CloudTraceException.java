@@ -14,12 +14,28 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.auth.oauth2.Credential;
-
 /**
- * 
- * Supplies OAuth2 {@link Credential}s to call the Cloud Trace API.
+ * Custom exception class thrown by the trace SDK infrastructure.
  */
-public interface CredentialProvider {
-  Credential getCredential() throws CloudTraceException;
+public class CloudTraceException extends Exception {
+
+  public CloudTraceException() {
+  }
+
+  public CloudTraceException(String message) {
+    super(message);
+  }
+
+  public CloudTraceException(Throwable cause) {
+    super(cause);
+  }
+
+  public CloudTraceException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public CloudTraceException(String message, Throwable cause, boolean enableSuppression,
+      boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

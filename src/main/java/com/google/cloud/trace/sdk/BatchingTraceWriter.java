@@ -125,7 +125,7 @@ public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
         public void run() {
           try {
             writer.writeSpans(writeBatch);
-          } catch (TraceWriterException e) {
+          } catch (CloudTraceException e) {
             logger.log(Level.SEVERE, "Exception writing trace batch", e);
           }
         }
@@ -140,7 +140,7 @@ public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
   }
 
   @Override
-  public void shutdown() throws TraceWriterException {
+  public void shutdown() throws CloudTraceException {
     writer.writeSpans(drainBatch());
   }
 }

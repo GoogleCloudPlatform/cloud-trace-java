@@ -14,7 +14,6 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -42,9 +41,9 @@ public class CloudTraceReader {
       Arrays.asList("https://www.googleapis.com/auth/trace.readonly");
 
   /**
-   * Gets the OAuth2 credentials for calling the Cloud Trace API.
+   * Request factory for calling the Cloud Trace API.
    */
-  private CredentialProvider credentialProvider;
+  private HttpRequestFactory requestFactory;
 
   /**
    * The id of the cloud project to write traces to.
@@ -61,14 +60,15 @@ public class CloudTraceReader {
 
   public CloudTraceReader() throws GeneralSecurityException, IOException {
     this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+    this.requestFactory = this.httpTransport.createRequestFactory();
   }
   
-  public CredentialProvider getCredentialProvider() {
-    return credentialProvider;
+  public HttpRequestFactory getRequestFactory() {
+    return requestFactory;
   }
 
-  public void setCredentialProvider(CredentialProvider credentialProvider) {
-    this.credentialProvider = credentialProvider;
+  public void setRequestFactory(HttpRequestFactory requestFactory) {
+    this.requestFactory = requestFactory;
   }
 
   public String getProjectId() {
@@ -87,18 +87,14 @@ public class CloudTraceReader {
     this.apiEndpoint = apiEndpoint;
   }
 
-  public String readTraceById(String traceId) throws TraceWriterException {
+  public String readTraceById(String traceId) throws CloudTraceException {
     checkState();
     GenericUrl url = buildUrl(traceId);      
     try {
-      Credential credential = credentialProvider.authorize();
-      HttpRequestFactory requestFactory = httpTransport.createRequestFactory(credential);
       HttpRequest request = requestFactory.buildGetRequest(url);
-      // TODO: Should not be setting this header.
-      request.getHeaders().put("X-GFE-SSL", "yes");
       HttpResponse response = request.execute();
       if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
-        throw new TraceWriterException("Failed to read span, status = " + response.getStatusCode());
+        throw new CloudTraceException("Failed to read span, status = " + response.getStatusCode());
       }
       BufferedReader reader = new BufferedReader(new InputStreamReader(response.getContent()));
       StringBuilder sb = new StringBuilder();
@@ -108,8 +104,8 @@ public class CloudTraceReader {
         sb.append(line + '\n');
       }
       return sb.toString();
-    } catch (IOException | GeneralSecurityException e) {
-      throw new TraceWriterException("Exception reading span from API, url=" + url, e);
+    } catch (IOException e) {
+      throw new CloudTraceException("Exception reading span from API, url=" + url, e);
     }
   }
 
@@ -130,9 +126,6 @@ public class CloudTraceReader {
     }
     if (apiEndpoint == null || apiEndpoint.isEmpty()) {
       throw new IllegalStateException("API endpoint must be set");
-    }
-    if (credentialProvider == null) {
-      throw new IllegalStateException("Credential provider must be set");
     }
   }
 }
