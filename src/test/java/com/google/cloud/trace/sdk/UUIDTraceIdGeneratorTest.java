@@ -14,17 +14,22 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.auth.oauth2.Credential;
+import static org.junit.Assert.assertTrue;
 
-import java.util.List;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
- * 
- * Supplies OAuth2 {@link Credential}s to call the Cloud Trace API.
+ * Tests for the {@link UUIDTraceIdGenerator} class.
  */
-public interface CredentialProvider {
-  /**
-   * Gets a credential valid for making calls with the given OAuth scopes.
-   */
-  Credential getCredential(List<String> scopes) throws CloudTraceException;
+@RunWith(JUnit4.class)
+public class UUIDTraceIdGeneratorTest {
+  @Test
+  public void testFormat() {
+    String traceId = new UUIDTraceIdGenerator().generate();
+    for (char c : traceId.toCharArray()) {
+      assertTrue(Character.isLetterOrDigit(c));
+    }
+  }
 }

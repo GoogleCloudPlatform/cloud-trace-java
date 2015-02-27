@@ -14,25 +14,21 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpStatusCodes;
-import com.google.api.client.http.HttpTransport;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Reads traces from the public Google Cloud Trace API.
  */
 public class CloudTraceReader {
+
+  private static final Logger logger = Logger.getLogger(CloudTraceReader.class.getName());
 
   /**
    * The scope(s) we need to read traces from the Cloud Trace API.
@@ -43,7 +39,7 @@ public class CloudTraceReader {
   /**
    * Request factory for calling the Cloud Trace API.
    */
-  private HttpRequestFactory requestFactory;
+  private CloudTraceRequestFactory requestFactory;
 
   /**
    * The id of the cloud project to write traces to.
@@ -55,19 +51,15 @@ public class CloudTraceReader {
    */
   private String apiEndpoint = "https://www.googleapis.com/";
   
-  /** Instance of the HTTP transport. */
-  private HttpTransport httpTransport;
-
-  public CloudTraceReader() throws GeneralSecurityException, IOException {
-    this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-    this.requestFactory = this.httpTransport.createRequestFactory();
+  public CloudTraceReader() {
+    this.requestFactory = new CloudTraceRequestFactory();
   }
   
-  public HttpRequestFactory getRequestFactory() {
+  public CloudTraceRequestFactory getRequestFactory() {
     return requestFactory;
   }
 
-  public void setRequestFactory(HttpRequestFactory requestFactory) {
+  public void setRequestFactory(CloudTraceRequestFactory requestFactory) {
     this.requestFactory = requestFactory;
   }
 
@@ -87,23 +79,18 @@ public class CloudTraceReader {
     this.apiEndpoint = apiEndpoint;
   }
 
+  // TODO: Convert this to produce an instance of Trace from the v1 model.
   public String readTraceById(String traceId) throws CloudTraceException {
     checkState();
-    GenericUrl url = buildUrl(traceId);      
+    GenericUrl url = buildUrl(traceId);
+    logger.log(Level.INFO, "Reading trace from " + url);
     try {
-      HttpRequest request = requestFactory.buildGetRequest(url);
-      HttpResponse response = request.execute();
+      CloudTraceRequest request = requestFactory.buildGetRequest(url);
+      CloudTraceResponse response = requestFactory.execute(request);
       if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
         throw new CloudTraceException("Failed to read span, status = " + response.getStatusCode());
       }
-      BufferedReader reader = new BufferedReader(new InputStreamReader(response.getContent()));
-      StringBuilder sb = new StringBuilder();
-      String line = null;
-      while ((line = reader.readLine()) != null)
-      {
-        sb.append(line + '\n');
-      }
-      return sb.toString();
+      return response.getContentAsString();
     } catch (IOException e) {
       throw new CloudTraceException("Exception reading span from API, url=" + url, e);
     }

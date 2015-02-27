@@ -26,6 +26,7 @@ import com.google.cloud.trace.sdk.TraceWriter;
 import com.google.cloud.trace.sdk.ReflectionUtils;
 import com.google.cloud.trace.sdk.UUIDTraceIdGenerator;
 
+import java.math.BigInteger;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -85,17 +86,17 @@ public class TraceRequestUtils implements CanInitFromProperties {
   /**
    * Looks for a parent span id already existing on the request headers.
    */
-  private long getParentSpanId(HttpServletRequest request) {
+  private BigInteger getParentSpanId(HttpServletRequest request) {
     String parentSpanId = request.getHeader(TraceHeaders.TRACE_SPAN_ID_HEADER);
     if (parentSpanId != null) {
       try {
-        return Long.parseLong(parentSpanId);
+        return new BigInteger(parentSpanId);
       } catch (NumberFormatException nfe) {
         logger.log(Level.WARNING,
             "Found non-numeric span id in the headers (" + parentSpanId + ")");
       }
     }
-    return 0;
+    return BigInteger.ZERO;
   }
 
   /**

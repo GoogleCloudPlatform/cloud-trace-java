@@ -31,6 +31,11 @@ public interface TraceWriter {
   void writeSpans(List<TraceSpanData> spans) throws CloudTraceException;
   
   /**
+   * Writes out a batch of {@link TraceSpanData}s.
+   */
+  void writeSpans(TraceSpanData... spans) throws CloudTraceException;
+  
+  /**
    * Provided as an opportunity for graceful cleanup.
    */
   void shutdown() throws CloudTraceException;

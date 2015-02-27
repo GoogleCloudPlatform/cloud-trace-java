@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -100,7 +101,7 @@ public class InstalledAppCredentialProvider implements CredentialProvider, CanIn
   }
 
   @Override
-  public Credential getCredential() throws CloudTraceException {
+  public Credential getCredential(List<String> scopes) throws CloudTraceException {
     if (clientSecretsFile == null) {
       throw new IllegalStateException("Client-secrets file is required");
     }
@@ -111,7 +112,7 @@ public class InstalledAppCredentialProvider implements CredentialProvider, CanIn
       clientSecrets = GoogleClientSecrets.load(jsonFactory,
           new FileReader(clientSecretsFile));
       GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(httpTransport,
-          jsonFactory, clientSecrets, CloudTraceWriter.SCOPES).setDataStoreFactory(dataStoreFactory)
+          jsonFactory, clientSecrets, scopes).setDataStoreFactory(dataStoreFactory)
           .build();
       return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
     } catch (IOException e) {

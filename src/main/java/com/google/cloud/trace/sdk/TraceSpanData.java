@@ -14,9 +14,9 @@
 
 package com.google.cloud.trace.sdk;
 
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Tracks the key information about a trace span, including timings and
@@ -26,14 +26,14 @@ public class TraceSpanData {
 
   private final TraceContext context;
   private final String projectId;
-  private final long parentSpanId;
+  private final BigInteger parentSpanId;
   private String name;
   private final long startTimeMillis;
   private long endTimeMillis;
   private Map<String, TraceSpanLabel> labelMap = new HashMap<>();
   private boolean shouldWrite;
   
-  private static final Random random = new Random();
+  private static final SpanIdGenerator spanIdGenerator = new SpanIdGenerator();
 
   // Package-scoped for testability.
   static Clock clock = new SystemClock();
@@ -42,15 +42,14 @@ public class TraceSpanData {
    * Opens up a new trace span in the given project and assigns it a span id.
    */
   public TraceSpanData(String projectId, String traceId, String name,
-      long parentSpanId, boolean shouldWrite) {
-    this.context = new TraceContext(traceId, random.nextLong());
+      BigInteger parentSpanId, boolean shouldWrite) {
+    this.context = new TraceContext(traceId, spanIdGenerator.generate());
     this.projectId = projectId;
     this.name = name;
     this.parentSpanId = parentSpanId;
     this.startTimeMillis = clock.currentTimeMillis();
     this.shouldWrite = shouldWrite;
   }
-
 
   /**
    * Ends the trace span by capturing an end time.
@@ -102,11 +101,11 @@ public class TraceSpanData {
     return projectId;
   }
 
-  public long getParentSpanId() {
+  public BigInteger getParentSpanId() {
     return parentSpanId;
   }
 
-  public long getSpanId() {
+  public BigInteger getSpanId() {
     return context.getSpanId();
   }
 

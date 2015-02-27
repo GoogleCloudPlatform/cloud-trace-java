@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-// http://www.apache.org/licenses/LICENSE-2.0
+//     http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,17 +14,17 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.auth.oauth2.Credential;
-
-import java.util.List;
+import java.math.BigInteger;
+import java.util.Random;
 
 /**
- * 
- * Supplies OAuth2 {@link Credential}s to call the Cloud Trace API.
+ * Generates span id's in the format expected by the Cloud Trace API.
  */
-public interface CredentialProvider {
-  /**
-   * Gets a credential valid for making calls with the given OAuth scopes.
-   */
-  Credential getCredential(List<String> scopes) throws CloudTraceException;
+public class SpanIdGenerator {
+  private static final Random random = new Random();
+
+  public BigInteger generate() {
+    // Cloud Trace uses 64-bit span ids.
+    return new BigInteger(64, random);
+  }
 }

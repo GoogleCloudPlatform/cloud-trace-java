@@ -18,6 +18,7 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Authorizes using the local metadata stored in a GCE instance. This will
@@ -26,7 +27,7 @@ import java.io.IOException;
 public class LocalMetadataCredentialProvider implements CredentialProvider {
 
   @Override
-  public Credential getCredential() throws CloudTraceException {
+  public Credential getCredential(List<String> scopes) throws CloudTraceException {
     try {
       return GoogleCredential.getApplicationDefault();
     } catch (IOException e) {

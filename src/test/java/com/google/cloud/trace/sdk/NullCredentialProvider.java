@@ -16,13 +16,15 @@ package com.google.cloud.trace.sdk;
 
 import com.google.api.client.auth.oauth2.Credential;
 
+import java.util.List;
+
 /**
  * {@link CredentialProvider} implementation for testing.
  */
 public class NullCredentialProvider implements CredentialProvider {
 
   @Override
-  public Credential getCredential() {
+  public Credential getCredential(List<String> scopes) {
     return null;
   }
 }

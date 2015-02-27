@@ -33,6 +33,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.math.BigInteger;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class TraceRequestUtilsTest {
   private static final String PROJECT_ID = "project id";
   private static final String TRACE_ID = "trace id";
   private static final String NEW_TRACE_ID = "new trace id";
-  private static final long SPAN_ID = 5;
+  private static final BigInteger SPAN_ID = BigInteger.valueOf(5);
   private static final String URI = "myuri";
   private static final String QUERY = "a=5";
   
@@ -95,7 +96,7 @@ public class TraceRequestUtilsTest {
         request, PROJECT_ID);
     assertEquals(PROJECT_ID, handle.getSpanData().getProjectId());
     assertEquals(NEW_TRACE_ID, handle.getSpanData().getTraceId());
-    assertEquals(0, handle.getSpanData().getParentSpanId());
+    assertEquals(BigInteger.ZERO, handle.getSpanData().getParentSpanId());
     assertFalse(handle.getSpanData().getShouldWrite());
     assertEquals(URI + "?" + QUERY, handle.getSpanData().getName());
   }
@@ -123,7 +124,7 @@ public class TraceRequestUtilsTest {
     assertTrue(utils.enablingPolicy instanceof AlwaysTraceEnablingPolicy);
   }
   
-  private void setUpMockRequest(String traceId, Long spanId, boolean enabled) {
+  private void setUpMockRequest(String traceId, BigInteger spanId, boolean enabled) {
     Mockito.when(request.getRequestURI()).thenReturn(URI);
     Mockito.when(request.getQueryString()).thenReturn(QUERY);
     if (traceId != null) {

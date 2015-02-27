@@ -14,6 +14,7 @@
 
 package com.google.cloud.trace.sdk;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,6 +38,11 @@ public class LoggingTraceWriter implements TraceWriter {
     for (TraceSpanData span : spans) {
       writeSpan(span);
     }
+  }
+
+  @Override
+  public void writeSpans(TraceSpanData... spans) throws CloudTraceException {
+    writeSpans(Arrays.asList(spans));
   }
 
   @Override

@@ -23,6 +23,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.math.BigInteger;
+
 /**
  * Tests for the {@link TraceSpanDataHandle} class.
  */
@@ -46,7 +48,7 @@ public class TraceSpanDataHandleTest {
   public void testCreateAndAutoClose() throws CloudTraceException {
     TraceSpanData innerSpanData;
     try (TraceSpanDataHandle handle =
-        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
+        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
             true)) {
       innerSpanData = handle.getSpanData();
       assertEquals(PROJECT_ID, innerSpanData.getProjectId());
@@ -62,7 +64,7 @@ public class TraceSpanDataHandleTest {
   @Test
   public void testCreateChildSpanDataHandle() {
     TraceSpanDataHandle parent =
-        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, 0,
+        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
             true);
     TraceSpanDataHandle child = parent.createChildSpanDataHandle(CHILD_NAME);
     assertEquals(CHILD_NAME, child.getSpanData().getName());

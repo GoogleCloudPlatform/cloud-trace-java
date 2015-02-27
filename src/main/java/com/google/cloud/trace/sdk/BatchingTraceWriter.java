@@ -15,6 +15,7 @@
 package com.google.cloud.trace.sdk;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -110,6 +111,12 @@ public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
   @Override
   public void writeSpans(List<TraceSpanData> spans) {
     batch.addAll(spans);
+    checkWriteBatch();
+  }
+
+  @Override
+  public void writeSpans(TraceSpanData... spans) throws CloudTraceException {
+    batch.addAll(Arrays.asList(spans));
     checkWriteBatch();
   }
 

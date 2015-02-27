@@ -14,18 +14,20 @@
 
 package com.google.cloud.trace.sdk;
 
+import java.math.BigInteger;
+
 /**
  * Identifies the trace and span. Potentially forwarded over the wire for use
  * in propagation to child spans.
  */
 public class TraceContext {
   private final String traceId;
-  private final long spanId;
+  private final BigInteger spanId;
   
   /**
    * Creates a new trace context with the given identifiers.
    */
-  public TraceContext(String traceId, long spanId) {
+  public TraceContext(String traceId, BigInteger spanId) {
     this.traceId = traceId;
     this.spanId = spanId;
   }
@@ -34,7 +36,7 @@ public class TraceContext {
     return traceId;
   }
 
-  public long getSpanId() {
+  public BigInteger getSpanId() {
     return spanId;
   }
 }

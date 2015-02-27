@@ -24,6 +24,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -72,7 +73,7 @@ public class ServiceAccountCredentialProvider implements CredentialProvider, Can
   }
 
   @Override
-  public Credential getCredential() throws CloudTraceException {
+  public Credential getCredential(List<String> scopes) throws CloudTraceException {
     if (p12File == null) {
       throw new IllegalStateException("P12 file must be set");
     }
@@ -89,7 +90,7 @@ public class ServiceAccountCredentialProvider implements CredentialProvider, Can
           .setJsonFactory(jsonFactory)
           .setServiceAccountId(emailAddress)
           .setServiceAccountPrivateKeyFromP12File(p12File)
-          .setServiceAccountScopes(CloudTraceWriter.SCOPES)
+          .setServiceAccountScopes(scopes)
           .build();
       credential.refreshToken();
       return credential;

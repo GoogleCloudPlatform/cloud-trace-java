@@ -14,29 +14,32 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.http.ByteArrayContent;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpStatusCodes;
-import com.google.api.client.http.HttpTransport;
+import com.google.cloud.trace.api.v1.model.Trace;
+import com.google.cloud.trace.api.v1.model.TraceSpan;
+import com.google.common.collect.ImmutableList;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * Writes traces to the public Google Cloud Trace API.
  */
 public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
+
+  private static final Logger logger = Logger.getLogger(CloudTraceWriter.class.getName());
 
   /**
    * The scope(s) we need to write traces to the Cloud Trace API.
@@ -46,7 +49,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   /**
    * Request factory for calling the Cloud Trace API.
    */
-  private HttpRequestFactory requestFactory;
+  private CloudTraceRequestFactory requestFactory;
 
   /**
    * The id of the cloud project to write traces to.
@@ -58,25 +61,21 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
    */
   private String apiEndpoint = "https://www.googleapis.com/";
 
-  /** Instance of the HTTP transport. */
-  private HttpTransport httpTransport;
-
   /**
    * JSON mapper for forming API requests.
    */
   private ObjectMapper objectMapper;
 
-  public CloudTraceWriter() throws GeneralSecurityException, IOException {
-    this.httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+  public CloudTraceWriter() {
     this.objectMapper = new ObjectMapper();
-    this.requestFactory = this.httpTransport.createRequestFactory();
+    this.requestFactory = new CloudTraceRequestFactory();
   }
 
-  public HttpRequestFactory getRequestFactory() {
+  public CloudTraceRequestFactory getRequestFactory() {
     return requestFactory;
   }
 
-  public void setRequestFactory(HttpRequestFactory requestFactory) {
+  public void setRequestFactory(CloudTraceRequestFactory requestFactory) {
     this.requestFactory = requestFactory;
   }
 
@@ -100,32 +99,56 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   public void initFromProperties(Properties props) throws CloudTraceException {
     this.projectId = props.getProperty(getClass().getName() + ".projectId");
     this.apiEndpoint = props.getProperty(getClass().getName() + ".apiEndpoint");
-    String credentialProviderClassName =
-        props.getProperty(getClass().getName() + ".credentialProvider");
-    if (credentialProviderClassName != null && !credentialProviderClassName.isEmpty()) {
-      CredentialProvider credProvider = (CredentialProvider) ReflectionUtils.createFromProperties(
-          credentialProviderClassName, props);
-      this.requestFactory = this.httpTransport.createRequestFactory(credProvider.getCredential());
-    }
+    requestFactory.initFromProperties(props);
   }
 
   @Override
   public void writeSpan(TraceSpanData span) throws CloudTraceException {
     checkState();
-    GenericUrl url = buildUrl(span);
-    try {
-      Map<String, String> patchData = new HashMap<>();
-      patchData.put("traceId", span.getTraceId());
-      patchData.put("projectId", projectId);
-      String requestBody = objectMapper.writeValueAsString(patchData);
+    Trace trace = convertTraceSpanDataToTrace(span);
+    writeTrace(trace);
+  }
 
-      HttpRequest request =
-          requestFactory.buildPatchRequest(url, ByteArrayContent.fromString(null, requestBody));
-      request.getHeaders().setContentType("application/json");
-      HttpResponse response = request.execute();
+  @Override
+  public void writeSpans(List<TraceSpanData> spans) throws CloudTraceException {
+    // Aggregate all the spans by trace. It's more efficient to call the API this way.
+    Map<String, Trace> traces = new HashMap<>();
+    for (TraceSpanData spanData : spans) {
+      TraceSpan span = convertTraceSpanDataToSpan(spanData);
+      if (!traces.containsKey(spanData.getTraceId())) {
+        Trace trace = convertTraceSpanDataToTrace(spanData);
+        traces.put(spanData.getTraceId(), trace);
+        trace.setSpan(new ArrayList<TraceSpan>());
+      }
+      traces.get(spanData.getTraceId()).getSpan().add(span);
+    }
+    
+    for (Trace trace : traces.values()) {
+      writeTrace(trace);
+    }
+  }
+
+  @Override
+  public void writeSpans(TraceSpanData... spans) throws CloudTraceException {
+    writeSpans(Arrays.asList(spans));
+  }
+
+  @Override
+  public void shutdown() {}
+
+  /**
+   * Writes the trace JSON to the Cloud Trace API.
+   */
+  private void writeTrace(Trace trace) throws CloudTraceException {
+    GenericUrl url = buildUrl(trace);
+    try {
+      String requestBody = objectMapper.writeValueAsString(trace);
+      logger.info("Writing trace: " + requestBody);
+      CloudTraceRequest request = requestFactory.buildPatchRequest(url, requestBody);
+      request.setContentType("application/json");
+      CloudTraceResponse response = requestFactory.execute(request);
       if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
-        throw new CloudTraceException(
-            "Failed to write span, status = " + response.getStatusCode());
+        throw new CloudTraceException("Failed to write span, status = " + response.getStatusCode());
       }
     } catch (IOException e) {
       throw new CloudTraceException("Exception writing span to API, url=" + url, e);
@@ -133,23 +156,46 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   }
 
   /**
+   * Helper method that converts from the SDK span data model to the API trace model.
+   */
+  private Trace convertTraceSpanDataToTrace(TraceSpanData spanData) {
+    Trace trace = new Trace();
+    trace.setProjectId(spanData.getProjectId());
+    trace.setTraceId(spanData.getTraceId());
+    
+    TraceSpan span = convertTraceSpanDataToSpan(spanData);
+    trace.setSpan(ImmutableList.<TraceSpan>of(span));
+    return trace;
+  }
+
+  /**
+   * Helper method that pulls SDK span data into an API span.
+   */
+  private TraceSpan convertTraceSpanDataToSpan(TraceSpanData spanData) {
+    TraceSpan span = new TraceSpan();
+    span.setName(spanData.getName());
+    span.setParentSpanId(spanData.getParentSpanId());
+    span.setSpanId(spanData.getSpanId());
+    span.setStartTime(ISODateTimeFormat.dateTime().withZoneUTC().print(
+        new DateTime(spanData.getStartTimeMillis())));
+    span.setEndTime(ISODateTimeFormat.dateTime().withZoneUTC().print(
+        new DateTime(spanData.getEndTimeMillis())));
+    
+    Map<String, String> labels = new HashMap<>();
+    for (Map.Entry<String, TraceSpanLabel> labelVal : spanData.getLabelMap().entrySet()) {
+      labels.put(labelVal.getKey(), labelVal.getValue().getValue());
+    }
+    span.setLabels(labels);
+    return span;
+  }
+
+  /**
    * Creates the URL to use to patch the trace with the given span.
    */
-  private GenericUrl buildUrl(TraceSpanData span) {
-    String url = apiEndpoint + "v1/projects/" + projectId + "/traces/" + span.getTraceId();
+  private GenericUrl buildUrl(Trace trace) {
+    String url = apiEndpoint + "v1/projects/" + projectId + "/traces/" + trace.getTraceId();
     return new GenericUrl(url);
   }
-
-  @Override
-  public void writeSpans(List<TraceSpanData> spans) throws CloudTraceException {
-    // TODO: Actually roll the batch into a single append call.
-    for (TraceSpanData span : spans) {
-      writeSpan(span);
-    }
-  }
-
-  @Override
-  public void shutdown() {}
 
   /**
    * Validates the state before attempting to write a trace to the API.

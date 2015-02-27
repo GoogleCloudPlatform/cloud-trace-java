@@ -14,17 +14,27 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.auth.oauth2.Credential;
-
-import java.util.List;
+import com.google.api.client.http.HttpRequest;
 
 /**
- * 
- * Supplies OAuth2 {@link Credential}s to call the Cloud Trace API.
+ * Wrapper class for http requests to the Cloud Trace API.
  */
-public interface CredentialProvider {
+public class CloudTraceRequest {
+
+  private HttpRequest httpRequest;
+
+  public CloudTraceRequest(HttpRequest request) {
+    this.httpRequest = request;
+  }
+
   /**
-   * Gets a credential valid for making calls with the given OAuth scopes.
+   * Exposes the underlying http request instance.
    */
-  Credential getCredential(List<String> scopes) throws CloudTraceException;
+  public HttpRequest getHttpRequest() {
+    return httpRequest;
+  }
+
+  public void setContentType(String contentType) {
+    httpRequest.getHeaders().setContentType(contentType);
+  }
 }

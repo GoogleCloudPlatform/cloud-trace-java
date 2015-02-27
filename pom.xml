@@ -47,6 +47,11 @@
       <version>${project.oauth.version}</version>
     </dependency>
     <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>2.7</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.11</version>
@@ -102,14 +107,24 @@
             <argument>trace_id</argument>
           </arguments>
 
-<!--           <mainClass>com.google.cloud.trace.sdk.examples.GetTraceWithServiceAccount</mainClass> -->
+          <mainClass>com.google.cloud.trace.sdk.examples.GetTraceWithServiceAccount</mainClass>
+          <arguments>
+            <argument>service_account_email</argument>
+            <argument>/path/to/p12/file</argument>
+            <argument>http://path/to/googleapis/endpoint/</argument>
+            <argument>project_id</argument>
+            <argument>trace_id</argument>
+          </arguments>
+
+<!--           <mainClass>com.google.cloud.trace.sdk.examples.AppendTraceWithServiceAccount</mainClass> -->
 <!--           <arguments> -->
-<!--             <argument>email_address</argument> -->
+<!--             <argument>service_account_email</argument> -->
 <!--             <argument>/path/to/p12/file</argument> -->
 <!--             <argument>http://path/to/googleapis/endpoint/</argument> -->
 <!--             <argument>project_id</argument> -->
-<!--             <argument>trace_id</argument> -->
 <!--           </arguments> -->
+
+
         </configuration>
       </plugin>
     </plugins>

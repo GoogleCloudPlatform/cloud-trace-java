@@ -14,6 +14,7 @@
 
 package com.google.cloud.trace.sdk;
 
+import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +34,7 @@ public class TraceSpanDataHandle implements AutoCloseable {
   private final TraceSpanData span;
 
   public TraceSpanDataHandle(TraceWriter writer, String projectId, String traceId, String name,
-      long parentSpanId, boolean shouldWrite) {
+      BigInteger parentSpanId, boolean shouldWrite) {
     this.writer = writer;
     this.span = new TraceSpanData(projectId, traceId, name, parentSpanId, shouldWrite);
   }

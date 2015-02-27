@@ -18,6 +18,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.cloud.trace.sdk.CloudTraceReader;
+import com.google.cloud.trace.sdk.CloudTraceRequestFactory;
 import com.google.cloud.trace.sdk.InstalledAppCredentialProvider;
 
 import java.io.File;
@@ -37,10 +38,11 @@ public class GetTrace {
     credentialProvider.setClientSecretsFile(new File(args[0]));
 
     CloudTraceReader reader = new CloudTraceReader();
+    // NetHttpTransport doesn't support HTTP PATCH, but for a GET it's good enough.
     NetHttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     HttpRequestFactory requestFactory = httpTransport.createRequestFactory(
-        credentialProvider.getCredential());
-    reader.setRequestFactory(requestFactory);
+        credentialProvider.getCredential(CloudTraceReader.SCOPES));
+    reader.setRequestFactory(new CloudTraceRequestFactory(httpTransport, requestFactory));
     reader.setApiEndpoint(args[1]);
     reader.setProjectId(args[2]);
     String result = reader.readTraceById(args[3]);
