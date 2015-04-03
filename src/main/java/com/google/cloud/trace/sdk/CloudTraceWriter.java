@@ -18,6 +18,7 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpStatusCodes;
 import com.google.cloud.trace.api.v1.model.Trace;
 import com.google.cloud.trace.api.v1.model.TraceSpan;
+import com.google.cloud.trace.api.v1.model.Traces;
 import com.google.common.collect.ImmutableList;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -25,7 +26,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -106,7 +106,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   public void writeSpan(TraceSpanData span) throws CloudTraceException {
     checkState();
     Trace trace = convertTraceSpanDataToTrace(span);
-    writeTrace(trace);
+    writeTraces(new Traces().setTraces(ImmutableList.of(trace)));
   }
 
   @Override
@@ -118,14 +118,12 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
       if (!traces.containsKey(spanData.getTraceId())) {
         Trace trace = convertTraceSpanDataToTrace(spanData);
         traces.put(spanData.getTraceId(), trace);
-        trace.setSpan(new ArrayList<TraceSpan>());
+        trace.setSpans(new ArrayList<TraceSpan>());
       }
-      traces.get(spanData.getTraceId()).getSpan().add(span);
+      traces.get(spanData.getTraceId()).getSpans().add(span);
     }
     
-    for (Trace trace : traces.values()) {
-      writeTrace(trace);
-    }
+    writeTraces(new Traces().setTraces(new ArrayList<Trace>(traces.values())));
   }
 
   @Override
@@ -137,12 +135,12 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   public void shutdown() {}
 
   /**
-   * Writes the trace JSON to the Cloud Trace API.
+   * Writes the trace list JSON to the Cloud Trace API.
    */
-  private void writeTrace(Trace trace) throws CloudTraceException {
-    GenericUrl url = buildUrl(trace);
+  private void writeTraces(Traces traces) throws CloudTraceException {
+    GenericUrl url = buildUrl();
     try {
-      String requestBody = objectMapper.writeValueAsString(trace);
+      String requestBody = objectMapper.writeValueAsString(traces);
       logger.info("Writing trace: " + requestBody);
       CloudTraceRequest request = requestFactory.buildPatchRequest(url, requestBody);
       request.setContentType("application/json");
@@ -164,7 +162,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
     trace.setTraceId(spanData.getTraceId());
     
     TraceSpan span = convertTraceSpanDataToSpan(spanData);
-    trace.setSpan(ImmutableList.<TraceSpan>of(span));
+    trace.setSpans(ImmutableList.<TraceSpan>of(span));
     return trace;
   }
 
@@ -192,8 +190,8 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   /**
    * Creates the URL to use to patch the trace with the given span.
    */
-  private GenericUrl buildUrl(Trace trace) {
-    String url = apiEndpoint + "v1/projects/" + projectId + "/traces/" + trace.getTraceId();
+  private GenericUrl buildUrl() {
+    String url = apiEndpoint + "v1/projects/" + projectId + "/traces/";
     return new GenericUrl(url);
   }
 

@@ -29,6 +29,4 @@ public interface HttpServletSpanLabels {
    */
   public static final String HTTP_METHOD_LABEL_KEY =
       "trace.cloud.google.com/http/method";
-  
-
 }

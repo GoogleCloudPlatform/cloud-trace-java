@@ -82,35 +82,31 @@ public class CloudTraceWriterTest {
 
     writer.writeSpans(span1, span2, span3);
     
-    assertEquals(2, urlCapture.getAllValues().size());
-    
-    // Don't care about the order of calls to the API.
-    int firstIdx, secondIdx;
-    if (urlCapture.getAllValues().get(0).toString().endsWith(TRACEID_1)) {
-      firstIdx = 0;
-      secondIdx = 1;
+    GenericUrl patchUrl = urlCapture.getValue();
+    String patchBody = bodyCapture.getValue();
+    assertEquals("http://localhost/v1/projects/19/traces/", patchUrl.toString());
+
+    JsonNode traces = objectMapper.readValue(patchBody, JsonNode.class);
+    JsonNode trace = null;
+    JsonNode trace2 = null;
+    JsonNode tmpTrace = traces.get("traces").get(0);
+    if (tmpTrace.get("traceId").getTextValue().equals(TRACEID_1)) {
+      trace = tmpTrace;
+      trace2 = traces.get("traces").get(1);
     } else {
-      firstIdx = 1;
-      secondIdx = 0;
+      trace = traces.get("traces").get(1);
+      trace2 = tmpTrace;
     }
     
-    GenericUrl firstUrl = urlCapture.getAllValues().get(firstIdx);
-    String firstBody = bodyCapture.getAllValues().get(firstIdx);
-    assertEquals("http://localhost/v1/projects/19/traces/20", firstUrl.toString());
-    JsonNode trace = objectMapper.readValue(firstBody, JsonNode.class);
     assertEquals(PROJECT_ID, trace.get("projectId").getTextValue());
     assertEquals(TRACEID_1, trace.get("traceId").getTextValue());
-    assertEquals(2, trace.get("span").size());
-    assertEquals("span1", trace.get("span").get(0).get("name").getTextValue());
-    assertEquals("span2", trace.get("span").get(1).get("name").getTextValue());
+    assertEquals(2, trace.get("spans").size());
+    assertEquals("span1", trace.get("spans").get(0).get("name").getTextValue());
+    assertEquals("span2", trace.get("spans").get(1).get("name").getTextValue());
     
-    GenericUrl secondUrl = urlCapture.getAllValues().get(secondIdx);
-    String secondBody = bodyCapture.getAllValues().get(secondIdx);
-    assertEquals("http://localhost/v1/projects/19/traces/21", secondUrl.toString());
-    JsonNode trace2 = objectMapper.readValue(secondBody, JsonNode.class);
     assertEquals(PROJECT_ID, trace2.get("projectId").getTextValue());
     assertEquals(TRACEID_2, trace2.get("traceId").getTextValue());
-    assertEquals(1,trace2.get("span").size());
-    assertEquals("span3", trace2.get("span").get(0).get("name").getTextValue());
+    assertEquals(1,trace2.get("spans").size());
+    assertEquals("span3", trace2.get("spans").get(0).get("name").getTextValue());
   }
 }

@@ -36,7 +36,7 @@ public final class Trace extends com.google.api.client.json.GenericJson {
    * The value may be {@code null}.
    */
   @com.google.api.client.util.Key
-  private java.util.List<TraceSpan> span;
+  private java.util.List<TraceSpan> spans;
 
   /**
    * The value may be {@code null}.
@@ -62,15 +62,15 @@ public final class Trace extends com.google.api.client.json.GenericJson {
   /**
    * @return value or {@code null} for none
    */
-  public java.util.List<TraceSpan> getSpan() {
-    return span;
+  public java.util.List<TraceSpan> getSpans() {
+    return spans;
   }
 
   /**
-   * @param span span or {@code null} for none
+   * @param spans spans or {@code null} for none
    */
-  public Trace setSpan(java.util.List<TraceSpan> span) {
-    this.span = span;
+  public Trace setSpans(java.util.List<TraceSpan> spans) {
+    this.spans = spans;
     return this;
   }
 
