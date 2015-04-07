@@ -25,7 +25,6 @@ import java.util.Map;
 public class TraceSpanData {
 
   private final TraceContext context;
-  private final String projectId;
   private final BigInteger parentSpanId;
   private String name;
   private final long startTimeMillis;
@@ -41,10 +40,10 @@ public class TraceSpanData {
   /**
    * Opens up a new trace span in the given project and assigns it a span id.
    */
-  public TraceSpanData(String projectId, String traceId, String name,
+  public TraceSpanData(String traceId, String name,
       BigInteger parentSpanId, boolean shouldWrite) {
     this.context = new TraceContext(traceId, spanIdGenerator.generate());
-    this.projectId = projectId;
+    ThreadTraceContext.push(this.context);
     this.name = name;
     this.parentSpanId = parentSpanId;
     this.startTimeMillis = clock.currentTimeMillis();
@@ -55,14 +54,18 @@ public class TraceSpanData {
    * Ends the trace span by capturing an end time.
    */
   public void close() {
-    this.endTimeMillis = clock.currentTimeMillis();
+    if (this.endTimeMillis == 0) {
+      // Not closed yet.
+      ThreadTraceContext.pop();
+      this.endTimeMillis = clock.currentTimeMillis();      
+    }
   }
 
   /**
    * Creates a new child span data object with the given name.
    */
   public TraceSpanData createChildSpanData(String name) {
-    return new TraceSpanData(projectId, context.getTraceId(), name, context.getSpanId(),
+    return new TraceSpanData(context.getTraceId(), name, context.getSpanId(),
         shouldWrite);
   }
 
@@ -73,7 +76,7 @@ public class TraceSpanData {
       labelStr.append(labelEntry.getValue());
       labelStr.append('|');
     }
-    return projectId + '|' + context.getTraceId() + '|' + name + '|' + parentSpanId + '|'
+    return context.getTraceId() + '|' + name + '|' + parentSpanId + '|'
         + context.getSpanId() + '|' + startTimeMillis + '|' + endTimeMillis + '|' + labelStr;
   }
 
@@ -95,10 +98,6 @@ public class TraceSpanData {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public String getProjectId() {
-    return projectId;
   }
 
   public BigInteger getParentSpanId() {

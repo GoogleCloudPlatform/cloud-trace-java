@@ -34,7 +34,6 @@ public class TraceSpanDataHandleTest {
   private static final String CHILD_NAME = "childName";
   private static final String TRACE_NAME = "name";
   private static final String TRACE_ID = "traceId";
-  private static final String PROJECT_ID = "projectId";
 
   @Mock private TraceWriter writer;
   private FakeClock fakeClock = new FakeClock();
@@ -48,10 +47,9 @@ public class TraceSpanDataHandleTest {
   public void testCreateAndAutoClose() throws CloudTraceException {
     TraceSpanData innerSpanData;
     try (TraceSpanDataHandle handle =
-        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+        new TraceSpanDataHandle(writer, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
             true)) {
       innerSpanData = handle.getSpanData();
-      assertEquals(PROJECT_ID, innerSpanData.getProjectId());
       assertEquals(FakeClock.DEFAULT_MILLIS, innerSpanData.getStartTimeMillis());
       assertEquals(0, innerSpanData.getEndTimeMillis());
       assertEquals(TRACE_NAME, innerSpanData.getName());
@@ -64,12 +62,11 @@ public class TraceSpanDataHandleTest {
   @Test
   public void testCreateChildSpanDataHandle() {
     TraceSpanDataHandle parent =
-        new TraceSpanDataHandle(writer, PROJECT_ID, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+        new TraceSpanDataHandle(writer, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
             true);
     TraceSpanDataHandle child = parent.createChildSpanDataHandle(CHILD_NAME);
     assertEquals(CHILD_NAME, child.getSpanData().getName());
     assertEquals(TRACE_ID, child.getSpanData().getTraceId());
-    assertEquals(PROJECT_ID, child.getSpanData().getProjectId());
     assertEquals(parent.getSpanData().getSpanId(), child.getSpanData().getParentSpanId());
     parent.close();
   }

@@ -33,10 +33,10 @@ public class TraceSpanDataHandle implements AutoCloseable {
   private final TraceWriter writer;
   private final TraceSpanData span;
 
-  public TraceSpanDataHandle(TraceWriter writer, String projectId, String traceId, String name,
+  public TraceSpanDataHandle(TraceWriter writer, String traceId, String name,
       BigInteger parentSpanId, boolean shouldWrite) {
     this.writer = writer;
-    this.span = new TraceSpanData(projectId, traceId, name, parentSpanId, shouldWrite);
+    this.span = new TraceSpanData(traceId, name, parentSpanId, shouldWrite);
   }
 
   /**
@@ -47,7 +47,7 @@ public class TraceSpanDataHandle implements AutoCloseable {
     if (isClosed) {
       throw new IllegalStateException("TraceSpanData is already closed");
     }
-    return new TraceSpanDataHandle(writer, span.getProjectId(), span.getTraceId(), name,
+    return new TraceSpanDataHandle(writer, span.getTraceId(), name,
         span.getSpanId(), span.getShouldWrite());
   }
 

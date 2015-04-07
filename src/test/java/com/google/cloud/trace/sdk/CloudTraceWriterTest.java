@@ -41,9 +41,8 @@ public class CloudTraceWriterTest {
   private static final String TRACEID_1 = "20";
   private static final String TRACEID_2 = "21";
 
-  @Mock private CloudTraceRequestFactory mockRequestFactory;
+  @Mock private HttpTransportCloudTraceRequestFactory mockRequestFactory;
   @Mock private CloudTraceResponse mock200Response;
-  @Mock private CloudTraceRequest mockRequest;
 
   private CloudTraceWriter writer;
   private ObjectMapper objectMapper = new ObjectMapper();
@@ -70,15 +69,14 @@ public class CloudTraceWriterTest {
 
   @Test
   public void testWriteSpansAggregation() throws Exception {
-    TraceSpanData span1 = new TraceSpanData(PROJECT_ID, TRACEID_1, "span1", BigInteger.ZERO, true);
-    TraceSpanData span2 = new TraceSpanData(PROJECT_ID, TRACEID_1, "span2", BigInteger.ZERO, true);
-    TraceSpanData span3 = new TraceSpanData(PROJECT_ID, TRACEID_2, "span3", BigInteger.ZERO, true);
+    TraceSpanData span1 = new TraceSpanData(TRACEID_1, "span1", BigInteger.ZERO, true);
+    TraceSpanData span2 = new TraceSpanData(TRACEID_1, "span2", BigInteger.ZERO, true);
+    TraceSpanData span3 = new TraceSpanData(TRACEID_2, "span3", BigInteger.ZERO, true);
 
     ArgumentCaptor<GenericUrl> urlCapture = ArgumentCaptor.forClass(GenericUrl.class);
     ArgumentCaptor<String> bodyCapture = ArgumentCaptor.forClass(String.class);
-    when(mockRequestFactory.buildPatchRequest(urlCapture.capture(), bodyCapture.capture()))
-        .thenReturn(mockRequest);
-    when(mockRequestFactory.execute(mockRequest)).thenReturn(mock200Response);
+    when(mockRequestFactory.executePatch(urlCapture.capture(), bodyCapture.capture()))
+        .thenReturn(mock200Response);
 
     writer.writeSpans(span1, span2, span3);
     

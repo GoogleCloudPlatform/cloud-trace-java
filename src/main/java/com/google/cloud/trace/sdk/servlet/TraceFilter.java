@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Servlet filter that instantiates a {@link TraceWriter} and installs a {@link TraceSpanDataHandle}
- * in the request context.
+ * in the request context and a corresponding ThreadLocal.
  */
 public class TraceFilter implements Filter {
 
@@ -55,8 +55,11 @@ public class TraceFilter implements Filter {
     HttpServletResponse response = (HttpServletResponse) resp;
     try (TraceSpanDataHandle spanDataHandle =
         requestUtils.createRequestSpanData(writer, request, projectId)) {
-      chain.doFilter(req, resp);
-      responseUtils.closeResponseSpanData(spanDataHandle.getSpanData(), response);
+      try {
+        chain.doFilter(req, resp);        
+      } catch (Exception e) {
+        responseUtils.closeResponseSpanData(spanDataHandle.getSpanData(), response);
+      }
     }
   }
 

@@ -29,17 +29,17 @@ import java.util.Properties;
 @RunWith(JUnit4.class)
 public class CloudTraceRequestFactoryTest {
 
-  private CloudTraceRequestFactory factory;
+  private HttpTransportCloudTraceRequestFactory factory;
   
   @Before
   public void setUp() {
-    factory = new CloudTraceRequestFactory();
+    factory = new HttpTransportCloudTraceRequestFactory();
   }
   
   @Test
   public void testInitFromProperties() throws Exception {
     Properties props = new Properties();
-    props.setProperty(CloudTraceRequestFactory.class.getName() + ".credentialProvider",
+    props.setProperty(HttpTransportCloudTraceRequestFactory.class.getName() + ".credentialProvider",
         NullCredentialProvider.class.getName());
     factory.initFromProperties(props);
     assertNotNull(factory.getRequestFactory());

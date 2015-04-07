@@ -17,7 +17,7 @@ package com.google.cloud.trace.sdk.examples;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.cloud.trace.sdk.CloudTraceRequestFactory;
+import com.google.cloud.trace.sdk.HttpTransportCloudTraceRequestFactory;
 import com.google.cloud.trace.sdk.CloudTraceWriter;
 import com.google.cloud.trace.sdk.ServiceAccountCredentialProvider;
 import com.google.cloud.trace.sdk.TraceSpanData;
@@ -46,7 +46,7 @@ public class AppendTraceWithServiceAccount {
     HttpTransport httpTransport = new ApacheHttpTransport();
     HttpRequestFactory requestFactory = httpTransport.createRequestFactory(
         credentialProvider.getCredential(CloudTraceWriter.SCOPES));
-    writer.setRequestFactory(new CloudTraceRequestFactory(httpTransport, requestFactory));
+    writer.setRequestFactory(new HttpTransportCloudTraceRequestFactory(httpTransport, requestFactory));
     writer.setApiEndpoint(args[2]);
     writer.setProjectId(args[3]);
     
@@ -72,6 +72,6 @@ public class AppendTraceWithServiceAccount {
 
   private static TraceSpanData createRandomParentSpan(String projectId) {
     String traceId = new UUIDTraceIdGenerator().generate();
-    return new TraceSpanData(projectId, traceId, "/PARENT", BigInteger.ZERO, true);
+    return new TraceSpanData(traceId, "/PARENT", BigInteger.ZERO, true);
   }
 }

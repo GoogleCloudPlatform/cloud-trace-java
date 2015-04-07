@@ -36,6 +36,7 @@ public class LoggingTraceWriter implements TraceWriter {
   @Override
   public void writeSpans(List<TraceSpanData> spans) {
     for (TraceSpanData span : spans) {
+      span.close();
       writeSpan(span);
     }
   }

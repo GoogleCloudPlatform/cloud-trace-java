@@ -71,7 +71,6 @@ public class TraceRequestUtilsTest {
     setUpMockRequest(TRACE_ID, SPAN_ID, true);
     TraceSpanDataHandle handle = utils.createRequestSpanData(writer,
         request, PROJECT_ID);
-    assertEquals(PROJECT_ID, handle.getSpanData().getProjectId());
     assertEquals(TRACE_ID, handle.getSpanData().getTraceId());
     assertEquals(SPAN_ID, handle.getSpanData().getParentSpanId());
     assertEquals(URI + "?" + QUERY, handle.getSpanData().getName());
@@ -94,7 +93,6 @@ public class TraceRequestUtilsTest {
     setUpMockRequest(null, null, false);
     TraceSpanDataHandle handle = utils.createRequestSpanData(writer,
         request, PROJECT_ID);
-    assertEquals(PROJECT_ID, handle.getSpanData().getProjectId());
     assertEquals(NEW_TRACE_ID, handle.getSpanData().getTraceId());
     assertEquals(BigInteger.ZERO, handle.getSpanData().getParentSpanId());
     assertFalse(handle.getSpanData().getShouldWrite());

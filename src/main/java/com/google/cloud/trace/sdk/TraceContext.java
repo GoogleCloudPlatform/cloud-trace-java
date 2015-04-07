@@ -39,4 +39,42 @@ public class TraceContext {
   public BigInteger getSpanId() {
     return spanId;
   }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((spanId == null) ? 0 : spanId.hashCode());
+    result = prime * result + ((traceId == null) ? 0 : traceId.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    TraceContext other = (TraceContext) obj;
+    if (spanId == null) {
+      if (other.spanId != null) {
+        return false;
+      }
+    } else if (!spanId.equals(other.spanId)) {
+      return false;
+    }
+    if (traceId == null) {
+      if (other.traceId != null) {
+        return false;
+      }
+    } else if (!traceId.equals(other.traceId)) {
+      return false;
+    }
+    return true;
+  }
 }

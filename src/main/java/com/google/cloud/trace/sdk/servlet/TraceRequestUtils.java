@@ -123,7 +123,6 @@ public class TraceRequestUtils implements CanInitFromProperties {
   public TraceSpanDataHandle createRequestSpanData(TraceWriter writer, HttpServletRequest request,
       String projectId) {
     TraceSpanDataHandle spanDataHandle = new TraceSpanDataHandle(writer,
-        projectId,
         getTraceId(request),
         getFullURL(request),
         getParentSpanId(request),

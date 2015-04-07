@@ -14,35 +14,24 @@
 
 package com.google.cloud.trace.sdk;
 
-import com.google.api.client.http.HttpResponse;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 /**
  * Wrapper class for http responses from the Cloud Trace API.
  */
 public class CloudTraceResponse {
 
-  private HttpResponse response;
-
-  public CloudTraceResponse(HttpResponse response) {
-    this.response = response;
+  private final String content;
+  private final int statusCode;
+  
+  public CloudTraceResponse(String content, int statusCode) {
+    this.content = content;
+    this.statusCode = statusCode;
   }
 
   public int getStatusCode() {
-    return this.response.getStatusCode();
+    return statusCode;
   }
 
-  public String getContentAsString() throws IOException {
-    BufferedReader reader = new BufferedReader(new InputStreamReader(response.getContent()));
-    StringBuilder sb = new StringBuilder();
-    String line = null;
-    while ((line = reader.readLine()) != null)
-    {
-      sb.append(line + '\n');
-    }
-    return sb.toString();
+  public String getContent() {
+    return content;
   }
 }

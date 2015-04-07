@@ -15,7 +15,9 @@
 package com.google.cloud.trace.sdk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -28,30 +30,41 @@ import java.math.BigInteger;
 @RunWith(JUnit4.class)
 public class TraceSpanDataTest {
   private static final String TRACE_NAME = "name";
-  private static final String PROJECT_ID = "project id";
   private static final String TRACE_ID = "trace id";
 
+  @Before
+  public void setUp() {
+    ThreadTraceContext.clear();
+  }
+  
   @Test
   public void testCreate() {
     TraceSpanData.clock = new FakeClock();
-    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+    TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
         true);
     assertEquals(FakeClock.DEFAULT_MILLIS, span.getStartTimeMillis());
     assertEquals(BigInteger.ZERO, span.getParentSpanId());
+    assertEquals(span.getContext(), ThreadTraceContext.peek());
   }
   
   @Test
   public void testCreateChildSpanData() {
-    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+    TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
         true);
     TraceSpanData child = span.createChildSpanData("child");
     assertEquals(child.getParentSpanId(), span.getSpanId());
+    assertEquals(child.getContext(), ThreadTraceContext.peek());
+    child.close();
+    assertEquals(span.getContext(), ThreadTraceContext.peek());
+    span.close();
+    assertTrue(ThreadTraceContext.isEmpty());
   }
   
   @Test
   public void testClose() {
-    TraceSpanData span = new TraceSpanData(PROJECT_ID, TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+    TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
         true);
     span.close();
+    assertTrue(ThreadTraceContext.isEmpty());
   }
 }

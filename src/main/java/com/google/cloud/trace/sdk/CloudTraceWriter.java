@@ -59,7 +59,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   /**
    * The endpoint of the Google API service to call.
    */
-  private String apiEndpoint = "https://www.googleapis.com/";
+  private String apiEndpoint = "https://cloudtrace.googleapis.com/";
 
   /**
    * JSON mapper for forming API requests.
@@ -68,7 +68,6 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
 
   public CloudTraceWriter() {
     this.objectMapper = new ObjectMapper();
-    this.requestFactory = new CloudTraceRequestFactory();
   }
 
   public CloudTraceRequestFactory getRequestFactory() {
@@ -98,13 +97,24 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   @Override
   public void initFromProperties(Properties props) throws CloudTraceException {
     this.projectId = props.getProperty(getClass().getName() + ".projectId");
-    this.apiEndpoint = props.getProperty(getClass().getName() + ".apiEndpoint");
+    String apiEndpointProp = props.getProperty(getClass().getName() + ".apiEndpoint");
+    if (apiEndpointProp != null && !apiEndpointProp.isEmpty()) {
+      this.apiEndpoint = apiEndpointProp;
+    }
+    String requestFactoryClassName = props.getProperty(getClass().getName() + ".requestFactory");
+    if (requestFactoryClassName != null && !requestFactoryClassName.isEmpty()) {
+      this.requestFactory = (CloudTraceRequestFactory) ReflectionUtils.createFromProperties(
+          requestFactoryClassName, props);
+    } else {
+      this.requestFactory = new HttpTransportCloudTraceRequestFactory();      
+    }
     requestFactory.initFromProperties(props);
   }
 
   @Override
   public void writeSpan(TraceSpanData span) throws CloudTraceException {
     checkState();
+    span.close();
     Trace trace = convertTraceSpanDataToTrace(span);
     writeTraces(new Traces().setTraces(ImmutableList.of(trace)));
   }
@@ -114,6 +124,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
     // Aggregate all the spans by trace. It's more efficient to call the API this way.
     Map<String, Trace> traces = new HashMap<>();
     for (TraceSpanData spanData : spans) {
+      spanData.close();
       TraceSpan span = convertTraceSpanDataToSpan(spanData);
       if (!traces.containsKey(spanData.getTraceId())) {
         Trace trace = convertTraceSpanDataToTrace(spanData);
@@ -142,9 +153,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
     try {
       String requestBody = objectMapper.writeValueAsString(traces);
       logger.info("Writing trace: " + requestBody);
-      CloudTraceRequest request = requestFactory.buildPatchRequest(url, requestBody);
-      request.setContentType("application/json");
-      CloudTraceResponse response = requestFactory.execute(request);
+      CloudTraceResponse response = requestFactory.executePatch(url, requestBody);
       if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
         throw new CloudTraceException("Failed to write span, status = " + response.getStatusCode());
       }
@@ -158,7 +167,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
    */
   private Trace convertTraceSpanDataToTrace(TraceSpanData spanData) {
     Trace trace = new Trace();
-    trace.setProjectId(spanData.getProjectId());
+    trace.setProjectId(projectId);
     trace.setTraceId(spanData.getTraceId());
     
     TraceSpan span = convertTraceSpanDataToSpan(spanData);

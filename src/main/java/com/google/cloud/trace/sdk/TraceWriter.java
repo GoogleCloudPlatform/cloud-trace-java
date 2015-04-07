@@ -21,17 +21,20 @@ import java.util.List;
  */
 public interface TraceWriter {
   /**
-   * Writes out a single {@link TraceSpanData}.
+   * Writes out a single {@link TraceSpanData}. Should close it if it isn't
+   * already closed.
    */
   void writeSpan(TraceSpanData span) throws CloudTraceException;
   
   /**
-   * Writes out a batch of {@link TraceSpanData}s.
+   * Writes out a batch of {@link TraceSpanData}s. Should close them if they
+   * aren't already.
    */
   void writeSpans(List<TraceSpanData> spans) throws CloudTraceException;
   
   /**
-   * Writes out a batch of {@link TraceSpanData}s.
+   * Writes out a batch of {@link TraceSpanData}s. Should close them if they
+   * aren't already.
    */
   void writeSpans(TraceSpanData... spans) throws CloudTraceException;
   

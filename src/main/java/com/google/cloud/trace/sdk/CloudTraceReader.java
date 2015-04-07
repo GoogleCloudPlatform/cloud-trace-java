@@ -17,7 +17,6 @@ package com.google.cloud.trace.sdk;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpStatusCodes;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,10 +48,10 @@ public class CloudTraceReader {
   /**
    * The endpoint of the Google API service to call.
    */
-  private String apiEndpoint = "https://www.googleapis.com/";
+  private String apiEndpoint = "https://cloudtrace.googleapis.com/";
   
   public CloudTraceReader() {
-    this.requestFactory = new CloudTraceRequestFactory();
+    this.requestFactory = new HttpTransportCloudTraceRequestFactory();
   }
   
   public CloudTraceRequestFactory getRequestFactory() {
@@ -84,16 +83,11 @@ public class CloudTraceReader {
     checkState();
     GenericUrl url = buildUrl(traceId);
     logger.log(Level.INFO, "Reading trace from " + url);
-    try {
-      CloudTraceRequest request = requestFactory.buildGetRequest(url);
-      CloudTraceResponse response = requestFactory.execute(request);
-      if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
-        throw new CloudTraceException("Failed to read span, status = " + response.getStatusCode());
-      }
-      return response.getContentAsString();
-    } catch (IOException e) {
-      throw new CloudTraceException("Exception reading span from API, url=" + url, e);
+    CloudTraceResponse response = requestFactory.executeGet(url);
+    if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
+      throw new CloudTraceException("Failed to read span, status = " + response.getStatusCode());
     }
+    return response.getContent();
   }
 
   /**
