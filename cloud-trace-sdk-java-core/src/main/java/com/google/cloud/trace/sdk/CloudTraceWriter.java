@@ -114,7 +114,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   @Override
   public void writeSpan(TraceSpanData span) throws CloudTraceException {
     checkState();
-    span.close();
+    span.end();
     Trace trace = convertTraceSpanDataToTrace(span);
     writeTraces(new Traces().setTraces(ImmutableList.of(trace)));
   }
@@ -124,7 +124,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
     // Aggregate all the spans by trace. It's more efficient to call the API this way.
     Map<String, Trace> traces = new HashMap<>();
     for (TraceSpanData spanData : spans) {
-      spanData.close();
+      spanData.end();
       TraceSpan span = convertTraceSpanDataToSpan(spanData);
       if (!traces.containsKey(spanData.getTraceId())) {
         Trace trace = convertTraceSpanDataToTrace(spanData);

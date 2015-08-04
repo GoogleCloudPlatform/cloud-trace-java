@@ -27,10 +27,15 @@ public class TraceSpanData {
   private final TraceContext context;
   private final BigInteger parentSpanId;
   private String name;
-  private final long startTimeMillis;
+  private long startTimeMillis;
   private long endTimeMillis;
   private Map<String, TraceSpanLabel> labelMap = new HashMap<>();
   private boolean shouldWrite;
+  
+  /**
+   * Installed listener for start and end events.
+   */
+  private static TraceSpanDataListener listener;
   
   private static final SpanIdGenerator spanIdGenerator = new SpanIdGenerator();
 
@@ -43,21 +48,41 @@ public class TraceSpanData {
   public TraceSpanData(String traceId, String name,
       BigInteger parentSpanId, boolean shouldWrite) {
     this.context = new TraceContext(traceId, spanIdGenerator.generate());
-    ThreadTraceContext.push(this.context);
     this.name = name;
     this.parentSpanId = parentSpanId;
-    this.startTimeMillis = clock.currentTimeMillis();
     this.shouldWrite = shouldWrite;
   }
 
   /**
+   * Starts the trace span by filling in the start time.
+   */
+  public void start() {
+    this.startTimeMillis = clock.currentTimeMillis();
+    if (listener != null) {
+      listener.onStart(this);
+    }
+  }
+  
+  /**
    * Ends the trace span by capturing an end time.
    */
-  public void close() {
+  public void end() {
+    verifyStarted();
     if (this.endTimeMillis == 0) {
       // Not closed yet.
-      ThreadTraceContext.pop();
-      this.endTimeMillis = clock.currentTimeMillis();      
+      this.endTimeMillis = clock.currentTimeMillis();
+      if (listener != null) {
+        listener.onEnd(this);
+      }
+    }
+  }
+
+  /**
+   * Helper method that ensures the span data has been started.
+   */
+  private void verifyStarted() {
+    if (startTimeMillis <= 0) {
+      throw new IllegalStateException("Trace span not yet started");
     }
   }
 
@@ -65,6 +90,7 @@ public class TraceSpanData {
    * Creates a new child span data object with the given name.
    */
   public TraceSpanData createChildSpanData(String name) {
+    verifyStarted();
     return new TraceSpanData(context.getTraceId(), name, context.getSpanId(),
         shouldWrite);
   }
@@ -135,5 +161,9 @@ public class TraceSpanData {
 
   public void setShouldWrite(boolean shouldWrite) {
     this.shouldWrite = shouldWrite;
+  }
+
+  public static void setListener(TraceSpanDataListener newListener) {
+    listener = newListener;
   }
 }

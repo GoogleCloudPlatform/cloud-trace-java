@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * Helper class that wraps a {@link TraceSpanData} in an {@link AutoCloseable}.
  * Provides a nice programming model for many scenarios where you want to
  * manually trace one or more operations, as it:
- *   a) Automatically fills in the end time on the span.
+ *   a) Automatically starts and ends the span.
  *   b) Automatically leverages the provided writer to write out the span data. 
  */
 public class TraceSpanDataHandle implements AutoCloseable {
@@ -37,6 +37,7 @@ public class TraceSpanDataHandle implements AutoCloseable {
       BigInteger parentSpanId, boolean shouldWrite) {
     this.writer = writer;
     this.span = new TraceSpanData(traceId, name, parentSpanId, shouldWrite);
+    this.span.start();
   }
 
   /**
@@ -57,7 +58,7 @@ public class TraceSpanDataHandle implements AutoCloseable {
 
   @Override
   public void close() {
-    span.close();
+    span.end();
     isClosed = true;
     try {
       writer.writeSpan(span);

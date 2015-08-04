@@ -98,7 +98,7 @@ public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
    */
   @Override
   public void writeSpan(TraceSpanData span) {
-    span.close();
+    span.end();
     batch.add(span);
     checkWriteBatch();
   }
@@ -112,7 +112,7 @@ public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
   @Override
   public void writeSpans(List<TraceSpanData> spans) {
     for (TraceSpanData span : spans) {
-      span.close();
+      span.end();
     }
     batch.addAll(spans);
     checkWriteBatch();
@@ -121,7 +121,7 @@ public class BatchingTraceWriter implements TraceWriter, CanInitFromProperties {
   @Override
   public void writeSpans(TraceSpanData... spans) throws CloudTraceException {
     for (TraceSpanData span : spans) {
-      span.close();
+      span.end();
     }
     batch.addAll(Arrays.asList(spans));
     checkWriteBatch();

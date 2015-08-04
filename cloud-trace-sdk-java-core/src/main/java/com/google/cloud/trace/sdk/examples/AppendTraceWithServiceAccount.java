@@ -59,12 +59,12 @@ public class AppendTraceWithServiceAccount {
     TraceSpanData childSpan2 = parentSpan.createChildSpanData("/CHILD2");
     Thread.sleep(2000);
 
-    childSpan2.close();
+    childSpan2.end();
     Thread.sleep(2000);
 
-    childSpan1.close();
+    childSpan1.end();
     Thread.sleep(2000);
-    parentSpan.close();
+    parentSpan.end();
     
     System.out.println("Writing trace span with trace id " + parentSpan.getTraceId());
     writer.writeSpans(parentSpan, childSpan1, childSpan2);

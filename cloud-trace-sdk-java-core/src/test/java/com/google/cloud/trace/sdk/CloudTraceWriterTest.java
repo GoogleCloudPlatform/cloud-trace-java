@@ -72,7 +72,10 @@ public class CloudTraceWriterTest {
     TraceSpanData span1 = new TraceSpanData(TRACEID_1, "span1", BigInteger.ZERO, true);
     TraceSpanData span2 = new TraceSpanData(TRACEID_1, "span2", BigInteger.ZERO, true);
     TraceSpanData span3 = new TraceSpanData(TRACEID_2, "span3", BigInteger.ZERO, true);
-
+    span1.start();
+    span2.start();
+    span3.start();
+    
     ArgumentCaptor<GenericUrl> urlCapture = ArgumentCaptor.forClass(GenericUrl.class);
     ArgumentCaptor<String> bodyCapture = ArgumentCaptor.forClass(String.class);
     when(mockRequestFactory.executePatch(urlCapture.capture(), bodyCapture.capture()))

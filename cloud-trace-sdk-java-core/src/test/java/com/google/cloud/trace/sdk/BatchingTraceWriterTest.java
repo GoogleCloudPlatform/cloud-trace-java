@@ -85,6 +85,8 @@ public class BatchingTraceWriterTest {
   }
 
   private TraceSpanData createDummyTraceSpanData() {
-    return new TraceSpanData(null, null, BigInteger.ZERO, true);
+    TraceSpanData spanData = new TraceSpanData(null, null, BigInteger.ZERO, true);
+    spanData.start();
+    return spanData;
   }
 }

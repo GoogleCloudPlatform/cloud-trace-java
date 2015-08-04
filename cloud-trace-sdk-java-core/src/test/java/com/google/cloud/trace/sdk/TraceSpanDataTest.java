@@ -16,8 +16,8 @@ package com.google.cloud.trace.sdk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -32,19 +32,12 @@ public class TraceSpanDataTest {
   private static final String TRACE_NAME = "name";
   private static final String TRACE_ID = "trace id";
 
-  @Before
-  public void setUp() {
-    ThreadTraceContext.clear();
-  }
-  
   @Test
   public void testCreate() {
-    TraceSpanData.clock = new FakeClock();
     TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
         true);
-    assertEquals(FakeClock.DEFAULT_MILLIS, span.getStartTimeMillis());
+    assertEquals(0, span.getStartTimeMillis());
     assertEquals(BigInteger.ZERO, span.getParentSpanId());
-    assertEquals(span.getContext(), ThreadTraceContext.peek());
   }
   
   @Test
@@ -60,20 +53,52 @@ public class TraceSpanDataTest {
   public void testCreateChildSpanData() {
     TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
         true);
+    span.start();
     TraceSpanData child = span.createChildSpanData("child");
+    child.start();
     assertEquals(child.getParentSpanId(), span.getSpanId());
-    assertEquals(child.getContext(), ThreadTraceContext.peek());
-    child.close();
-    assertEquals(span.getContext(), ThreadTraceContext.peek());
-    span.close();
-    assertTrue(ThreadTraceContext.isEmpty());
+    child.end();
+    span.end();
   }
   
   @Test
-  public void testClose() {
+  public void testCreateChildSpanDataNotYetStarted() {
     TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
         true);
-    span.close();
-    assertTrue(ThreadTraceContext.isEmpty());
+    try {
+      span.createChildSpanData("child");
+    } catch (IllegalStateException ise) {
+      return;
+    }
+    fail("Didn't catch expected exception");
+  }
+  
+  @Test
+  public void testStart() {
+    TraceSpanData.clock = new FakeClock();
+    TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+        true);
+    span.start();
+    assertEquals(FakeClock.DEFAULT_MILLIS, span.getStartTimeMillis());
+  }
+  
+  @Test
+  public void testEnd() {
+    TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+        true);
+    span.start();
+    span.end();
+  }
+  
+  @Test
+  public void testEndBeforeStart() {
+    TraceSpanData span = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
+        true);
+    try {
+      span.end();
+    } catch (IllegalStateException ise) {
+      return;
+    }
+    fail("Didn't catch expected exception");
   }
 }
