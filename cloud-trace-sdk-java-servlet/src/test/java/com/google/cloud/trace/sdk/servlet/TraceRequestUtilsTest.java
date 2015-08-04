@@ -22,7 +22,7 @@ import com.google.cloud.trace.sdk.AlwaysTraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceHeaders;
 import com.google.cloud.trace.sdk.TraceIdGenerator;
-import com.google.cloud.trace.sdk.TraceSpanDataHandle;
+import com.google.cloud.trace.sdk.TraceSpanData;
 import com.google.cloud.trace.sdk.TraceWriter;
 import com.google.cloud.trace.sdk.servlet.TraceRequestUtils;
 
@@ -68,31 +68,31 @@ public class TraceRequestUtilsTest {
   @Test
   public void testCreateRequestSpanDataExistingTrace() {
     setUpMockRequest(TRACE_ID, SPAN_ID, true);
-    TraceSpanDataHandle handle = utils.createRequestSpanData(writer, request);
-    assertEquals(TRACE_ID, handle.getSpanData().getTraceId());
-    assertEquals(SPAN_ID, handle.getSpanData().getParentSpanId());
-    assertEquals(URI + "?" + QUERY, handle.getSpanData().getName());
-    assertFalse(handle.getSpanData().getShouldWrite());
+    TraceSpanData spanData = utils.createRequestSpanData(request);
+    assertEquals(TRACE_ID, spanData.getContext().getTraceId());
+    assertEquals(SPAN_ID, spanData.getParentSpanId());
+    assertEquals(URI + "?" + QUERY, spanData.getName());
+    assertFalse(spanData.getContext().getShouldWrite());
     Mockito.verify(request).setAttribute(TraceRequestUtils.TRACE_SPAN_DATA_ATTRIBUTE,
-        handle);
+        spanData);
   }
   
   @Test
   public void testCreateRequestSpanDataNonDefaultEnabling() {
     setUpMockRequest(TRACE_ID, SPAN_ID, true);
     utils.enablingPolicy = new AlwaysTraceEnablingPolicy();
-    TraceSpanDataHandle handle = utils.createRequestSpanData(writer, request);
-    assertTrue(handle.getSpanData().getShouldWrite());
+    TraceSpanData spanData = utils.createRequestSpanData(request);
+    assertTrue(spanData.getContext().getShouldWrite());
   }
   
   @Test
   public void testCreateRequestSpanDataNewTrace() {
     setUpMockRequest(null, null, false);
-    TraceSpanDataHandle handle = utils.createRequestSpanData(writer, request);
-    assertEquals(NEW_TRACE_ID, handle.getSpanData().getTraceId());
-    assertEquals(BigInteger.ZERO, handle.getSpanData().getParentSpanId());
-    assertFalse(handle.getSpanData().getShouldWrite());
-    assertEquals(URI + "?" + QUERY, handle.getSpanData().getName());
+    TraceSpanData spanData = utils.createRequestSpanData(request);
+    assertEquals(NEW_TRACE_ID, spanData.getContext().getTraceId());
+    assertEquals(BigInteger.ZERO, spanData.getParentSpanId());
+    assertFalse(spanData.getContext().getShouldWrite());
+    assertEquals(URI + "?" + QUERY, spanData.getName());
   }
   
   @Test
@@ -104,8 +104,8 @@ public class TraceRequestUtilsTest {
         return false;
       }
     };
-    TraceSpanDataHandle handle = utils.createRequestSpanData(writer, request);
-    assertFalse(handle.getSpanData().getShouldWrite());
+    TraceSpanData spanData = utils.createRequestSpanData(request);
+    assertFalse(spanData.getContext().getShouldWrite());
   }
   
   @Test

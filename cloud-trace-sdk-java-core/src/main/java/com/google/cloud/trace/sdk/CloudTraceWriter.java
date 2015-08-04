@@ -126,12 +126,12 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
     for (TraceSpanData spanData : spans) {
       spanData.end();
       TraceSpan span = convertTraceSpanDataToSpan(spanData);
-      if (!traces.containsKey(spanData.getTraceId())) {
+      if (!traces.containsKey(spanData.getContext().getTraceId())) {
         Trace trace = convertTraceSpanDataToTrace(spanData);
-        traces.put(spanData.getTraceId(), trace);
+        traces.put(spanData.getContext().getTraceId(), trace);
         trace.setSpans(new ArrayList<TraceSpan>());
       }
-      traces.get(spanData.getTraceId()).getSpans().add(span);
+      traces.get(spanData.getContext().getTraceId()).getSpans().add(span);
     }
     
     writeTraces(new Traces().setTraces(new ArrayList<Trace>(traces.values())));
@@ -168,7 +168,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   private Trace convertTraceSpanDataToTrace(TraceSpanData spanData) {
     Trace trace = new Trace();
     trace.setProjectId(projectId);
-    trace.setTraceId(spanData.getTraceId());
+    trace.setTraceId(spanData.getContext().getTraceId());
     
     TraceSpan span = convertTraceSpanDataToSpan(spanData);
     trace.setSpans(ImmutableList.<TraceSpan>of(span));
@@ -182,7 +182,7 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
     TraceSpan span = new TraceSpan();
     span.setName(spanData.getName());
     span.setParentSpanId(spanData.getParentSpanId());
-    span.setSpanId(spanData.getSpanId());
+    span.setSpanId(spanData.getContext().getSpanId());
     span.setStartTime(ISODateTimeFormat.dateTime().withZoneUTC().print(
         new DateTime(spanData.getStartTimeMillis())));
     span.setEndTime(ISODateTimeFormat.dateTime().withZoneUTC().print(

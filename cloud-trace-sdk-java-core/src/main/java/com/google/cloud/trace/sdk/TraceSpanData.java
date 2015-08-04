@@ -30,27 +30,24 @@ public class TraceSpanData {
   private long startTimeMillis;
   private long endTimeMillis;
   private Map<String, TraceSpanLabel> labelMap = new HashMap<>();
-  private boolean shouldWrite;
   
   /**
    * Installed listener for start and end events.
    */
   private static TraceSpanDataListener listener;
   
-  private static final SpanIdGenerator spanIdGenerator = new SpanIdGenerator();
-
+  private transient DefaultTraceContextManager contextManager = new DefaultTraceContextManager();
+  
   // Package-scoped for testability.
   static Clock clock = new SystemClock();
   
   /**
    * Opens up a new trace span in the given project and assigns it a span id.
    */
-  public TraceSpanData(String traceId, String name,
-      BigInteger parentSpanId, boolean shouldWrite) {
-    this.context = new TraceContext(traceId, spanIdGenerator.generate());
+  public TraceSpanData(String traceId, String name, BigInteger parentSpanId, boolean shouldWrite) {
+    this.context = contextManager.createTraceContext(traceId, shouldWrite);
     this.name = name;
     this.parentSpanId = parentSpanId;
-    this.shouldWrite = shouldWrite;
   }
 
   /**
@@ -92,7 +89,7 @@ public class TraceSpanData {
   public TraceSpanData createChildSpanData(String name) {
     verifyStarted();
     return new TraceSpanData(context.getTraceId(), name, context.getSpanId(),
-        shouldWrite);
+        context.getShouldWrite());
   }
 
   @Override
@@ -115,10 +112,6 @@ public class TraceSpanData {
     labelMap.put(label.getKey(), label);
   }
 
-  public String getTraceId() {
-    return context.getTraceId();
-  }
-
   public void setEndTimeMillis(long endTimeMillis) {
     this.endTimeMillis = endTimeMillis;
   }
@@ -135,10 +128,6 @@ public class TraceSpanData {
     return parentSpanId;
   }
 
-  public BigInteger getSpanId() {
-    return context.getSpanId();
-  }
-
   public long getStartTimeMillis() {
     return startTimeMillis;
   }
@@ -153,14 +142,6 @@ public class TraceSpanData {
   
   public TraceContext getContext() {
     return context;
-  }
-
-  public boolean getShouldWrite() {
-    return shouldWrite;
-  }
-
-  public void setShouldWrite(boolean shouldWrite) {
-    this.shouldWrite = shouldWrite;
   }
 
   public static void setListener(TraceSpanDataListener newListener) {

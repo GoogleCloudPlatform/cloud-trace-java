@@ -14,9 +14,11 @@
 
 package com.google.cloud.trace.sdk.servlet;
 
+import com.google.cloud.trace.sdk.CloudTraceException;
 import com.google.cloud.trace.sdk.TraceHeaders;
 import com.google.cloud.trace.sdk.TraceSpanData;
 import com.google.cloud.trace.sdk.TraceSpanLabel;
+import com.google.cloud.trace.sdk.TraceWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,19 +26,21 @@ import javax.servlet.http.HttpServletResponse;
  * Utilities for working with {@link TraceSpanData}s in the context of servlet responses.
  */
 public class TraceResponseUtils {
-
   /**
    * Sets the given context into the given servlet response.
+   * @throws CloudTraceException
    */
-  public void closeResponseSpanData(TraceSpanData spanData, HttpServletResponse response) {
+  public void closeResponseSpanData(TraceSpanData spanData, TraceWriter writer,
+      HttpServletResponse response) throws CloudTraceException {
     // Set the trace context on the response.
     response.setHeader(TraceHeaders.TRACE_ID_HEADER, spanData.getContext().getTraceId());
     response.setHeader(TraceHeaders.TRACE_SPAN_ID_HEADER, "" + spanData.getContext().getSpanId());
 
     // Fill in a standard label on the span.
-    TraceSpanLabel httpResponseLabel =
-        new TraceSpanLabel(HttpServletSpanLabels.HTTP_RESPONSE_CODE_LABEL_KEY,
-            "" + response.getStatus());
+    TraceSpanLabel httpResponseLabel = new TraceSpanLabel(
+        HttpServletSpanLabels.HTTP_RESPONSE_CODE_LABEL_KEY, "" + response.getStatus());
     spanData.addLabel(httpResponseLabel);
+    spanData.end();
+    writer.writeSpan(spanData);
   }
 }

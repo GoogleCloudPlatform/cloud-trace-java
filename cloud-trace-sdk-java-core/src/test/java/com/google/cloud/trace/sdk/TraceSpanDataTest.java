@@ -56,7 +56,7 @@ public class TraceSpanDataTest {
     span.start();
     TraceSpanData child = span.createChildSpanData("child");
     child.start();
-    assertEquals(child.getParentSpanId(), span.getSpanId());
+    assertEquals(child.getParentSpanId(), span.getContext().getSpanId());
     child.end();
     span.end();
   }

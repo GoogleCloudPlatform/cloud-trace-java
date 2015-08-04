@@ -17,19 +17,21 @@ package com.google.cloud.trace.sdk;
 import java.math.BigInteger;
 
 /**
- * Identifies the trace and span. Potentially forwarded over the wire for use
- * in propagation to child spans.
+ * Identifies the trace and span and whether it is currently slated to be written out.
+ * Potentially forwarded over the wire for use in propagation to child spans.
  */
 public class TraceContext {
   private final String traceId;
   private final BigInteger spanId;
-  
+  private boolean shouldWrite;
+
   /**
    * Creates a new trace context with the given identifiers.
    */
-  public TraceContext(String traceId, BigInteger spanId) {
+  public TraceContext(String traceId, BigInteger spanId, boolean shouldWrite) {
     this.traceId = traceId;
     this.spanId = spanId;
+    this.shouldWrite = shouldWrite;
   }
 
   public String getTraceId() {
@@ -39,11 +41,20 @@ public class TraceContext {
   public BigInteger getSpanId() {
     return spanId;
   }
-  
+
+  public boolean getShouldWrite() {
+    return shouldWrite;
+  }
+
+  public void setShouldWrite(boolean shouldWrite) {
+    this.shouldWrite = shouldWrite;
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
+    result = prime * result + (shouldWrite ? 1231 : 1237);
     result = prime * result + ((spanId == null) ? 0 : spanId.hashCode());
     result = prime * result + ((traceId == null) ? 0 : traceId.hashCode());
     return result;
@@ -51,30 +62,25 @@ public class TraceContext {
 
   @Override
   public boolean equals(Object obj) {
-    if (this == obj) {
+    if (this == obj)
       return true;
-    }
-    if (obj == null) {
+    if (obj == null)
       return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (getClass() != obj.getClass())
       return false;
-    }
     TraceContext other = (TraceContext) obj;
+    if (shouldWrite != other.shouldWrite)
+      return false;
     if (spanId == null) {
-      if (other.spanId != null) {
+      if (other.spanId != null)
         return false;
-      }
-    } else if (!spanId.equals(other.spanId)) {
+    } else if (!spanId.equals(other.spanId))
       return false;
-    }
     if (traceId == null) {
-      if (other.traceId != null) {
+      if (other.traceId != null)
         return false;
-      }
-    } else if (!traceId.equals(other.traceId)) {
+    } else if (!traceId.equals(other.traceId))
       return false;
-    }
     return true;
   }
 }

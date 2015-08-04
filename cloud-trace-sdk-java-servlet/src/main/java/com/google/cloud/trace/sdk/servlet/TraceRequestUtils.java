@@ -20,9 +20,7 @@ import com.google.cloud.trace.sdk.TraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceHeaders;
 import com.google.cloud.trace.sdk.TraceIdGenerator;
 import com.google.cloud.trace.sdk.TraceSpanData;
-import com.google.cloud.trace.sdk.TraceSpanDataHandle;
 import com.google.cloud.trace.sdk.TraceSpanLabel;
-import com.google.cloud.trace.sdk.TraceWriter;
 import com.google.cloud.trace.sdk.ReflectionUtils;
 import com.google.cloud.trace.sdk.UUIDTraceIdGenerator;
 
@@ -116,32 +114,32 @@ public class TraceRequestUtils implements CanInitFromProperties {
   }
 
   /**
-   * Creates a new {@link TraceSpanDataHandle}. If a trace and span are already on the servlet
+   * Creates a new {@link TraceSpanData}. If a trace and span are already on the servlet
    * request, it parents the new {@link TraceSpanData} appropriately and assigns it to the given
    * trace. If not, it creates things from scratch.
    */
-  public TraceSpanDataHandle createRequestSpanData(TraceWriter writer,
-      HttpServletRequest request) {
-    TraceSpanDataHandle spanDataHandle = new TraceSpanDataHandle(writer,
+  public TraceSpanData createRequestSpanData(HttpServletRequest request) {
+    TraceSpanData spanData = new TraceSpanData(
         getTraceId(request),
         getFullURL(request),
         getParentSpanId(request),
         enablingPolicy.isTracingEnabled(getTraceEnabledHeader(request)));
-    request.setAttribute(TRACE_SPAN_DATA_ATTRIBUTE, spanDataHandle);
+    request.setAttribute(TRACE_SPAN_DATA_ATTRIBUTE, spanData);
 
     // Let's add a standard label.
     TraceSpanLabel httpMethodLabel =
         new TraceSpanLabel(HttpServletSpanLabels.HTTP_METHOD_LABEL_KEY, request.getMethod());
-    spanDataHandle.getSpanData().addLabel(httpMethodLabel);
-
-    return spanDataHandle;
+    spanData.addLabel(httpMethodLabel);
+    spanData.start();
+    
+    return spanData;
   }
 
   /**
-   * Gets the trace span data handle off the given servlet request.
+   * Gets the trace span data off the given servlet request.
    */
-  public TraceSpanDataHandle getRequestSpanDataHandle(HttpServletRequest req) {
-    return (TraceSpanDataHandle) req.getAttribute(TRACE_SPAN_DATA_ATTRIBUTE);
+  public TraceSpanData getRequestSpanDataHandle(HttpServletRequest req) {
+    return (TraceSpanData) req.getAttribute(TRACE_SPAN_DATA_ATTRIBUTE);
   }
 
   /**

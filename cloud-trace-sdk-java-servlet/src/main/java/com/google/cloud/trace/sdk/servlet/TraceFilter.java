@@ -14,10 +14,11 @@
 
 package com.google.cloud.trace.sdk.servlet;
 
+import com.google.cloud.trace.sdk.CloudTraceException;
 import com.google.cloud.trace.sdk.LoggingTraceWriter;
-import com.google.cloud.trace.sdk.TraceSpanDataHandle;
 import com.google.cloud.trace.sdk.TraceWriter;
 import com.google.cloud.trace.sdk.ReflectionUtils;
+import com.google.cloud.trace.sdk.TraceSpanData;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -32,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet filter that instantiates a {@link TraceWriter} and installs a {@link TraceSpanDataHandle}
+ * Servlet filter that instantiates a {@link TraceWriter} and installs a {@link TraceSpanData}
  * in the request context and a corresponding ThreadLocal.
  */
 public class TraceFilter implements Filter {
@@ -45,19 +46,21 @@ public class TraceFilter implements Filter {
   public void destroy() {}
 
   /**
-   * Filter method to install a new {@link TraceSpanDataHandle} as a request attribute.
+   * Filter method to install a new {@link TraceSpanData} as a request attribute.
    */
   @Override
   public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
       throws IOException, ServletException {
     HttpServletRequest request = (HttpServletRequest) req;
     HttpServletResponse response = (HttpServletResponse) resp;
-    try (TraceSpanDataHandle spanDataHandle =
-        requestUtils.createRequestSpanData(writer, request)) {
+    TraceSpanData spanData = requestUtils.createRequestSpanData(request);
+    try {
+      chain.doFilter(req, resp);        
+    } finally {
       try {
-        chain.doFilter(req, resp);        
-      } catch (Exception e) {
-        responseUtils.closeResponseSpanData(spanDataHandle.getSpanData(), response);
+        responseUtils.closeResponseSpanData(spanData, writer, response);
+      } catch (CloudTraceException e) {
+        throw new ServletException(e);
       }
     }
   }
