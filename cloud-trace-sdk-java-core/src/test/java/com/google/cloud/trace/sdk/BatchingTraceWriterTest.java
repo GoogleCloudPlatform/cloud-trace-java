@@ -26,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -85,7 +84,8 @@ public class BatchingTraceWriterTest {
   }
 
   private TraceSpanData createDummyTraceSpanData() {
-    TraceSpanData spanData = new TraceSpanData(null, null, BigInteger.ZERO, true);
+    TraceSpanDataBuilder builder = new DefaultTraceSpanDataBuilder(null, null);
+    TraceSpanData spanData = new TraceSpanData(builder);
     spanData.start();
     return spanData;
   }

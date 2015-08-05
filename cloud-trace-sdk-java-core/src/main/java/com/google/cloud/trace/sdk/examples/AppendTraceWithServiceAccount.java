@@ -19,8 +19,12 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.cloud.trace.sdk.HttpTransportCloudTraceRequestFactory;
 import com.google.cloud.trace.sdk.CloudTraceWriter;
+import com.google.cloud.trace.sdk.DefaultTraceSpanDataBuilder;
 import com.google.cloud.trace.sdk.ServiceAccountCredentialProvider;
+import com.google.cloud.trace.sdk.SpanIdGenerator;
+import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceSpanData;
+import com.google.cloud.trace.sdk.TraceSpanDataBuilder;
 import com.google.cloud.trace.sdk.UUIDTraceIdGenerator;
 
 import java.io.File;
@@ -50,13 +54,14 @@ public class AppendTraceWithServiceAccount {
     writer.setApiEndpoint(args[2]);
     writer.setProjectId(args[3]);
     
-    TraceSpanData parentSpan = createRandomParentSpan();
+    TraceSpanDataBuilder spanDataBuilder = new DefaultTraceSpanDataBuilder("/PARENT");
+    TraceSpanData parentSpan = new TraceSpanData(spanDataBuilder);
     Thread.sleep(1000);
     
-    TraceSpanData childSpan1 = parentSpan.createChildSpanData("/CHILD1");
+    TraceSpanData childSpan1 = new TraceSpanData(spanDataBuilder.createChild("/CHILD1"));
     Thread.sleep(2000);
 
-    TraceSpanData childSpan2 = parentSpan.createChildSpanData("/CHILD2");
+    TraceSpanData childSpan2 = new TraceSpanData(spanDataBuilder.createChild("/CHILD2"));
     Thread.sleep(2000);
 
     childSpan2.end();
@@ -68,10 +73,5 @@ public class AppendTraceWithServiceAccount {
     
     System.out.println("Writing trace span with trace id " + parentSpan.getContext().getTraceId());
     writer.writeSpans(parentSpan, childSpan1, childSpan2);
-  }
-
-  private static TraceSpanData createRandomParentSpan() {
-    String traceId = new UUIDTraceIdGenerator().generate();
-    return new TraceSpanData(traceId, "/PARENT", BigInteger.ZERO, true);
   }
 }

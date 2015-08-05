@@ -19,10 +19,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.math.BigInteger;
 
 /**
  * Tests for the {@link ThreadTraceContextTraceSpanDataListener} class.
@@ -31,6 +30,8 @@ public class ThreadTraceContextTraceSpanDataListenerTest {
 
   private static final String TRACE_NAME = "name";
   private static final String TRACE_ID = "trace id";
+
+  private TraceSpanDataBuilder builder, builder2;
 
   @BeforeClass
   public static void setUpClass() {
@@ -41,18 +42,22 @@ public class ThreadTraceContextTraceSpanDataListenerTest {
   public static void tearDownClass() {
     TraceSpanData.setListener(null);
   }
-  
+    
+  @Before
+  public void setUp() {
+    builder = new DefaultTraceSpanDataBuilder(TRACE_ID, TRACE_NAME);
+    builder2 = new DefaultTraceSpanDataBuilder(TRACE_ID + "2", TRACE_NAME + "2");
+  }
+
   @Test
   public void testSpanLifecycle() {
     assertTrue(ThreadTraceContext.isEmpty());
-    TraceSpanData span1 = new TraceSpanData(TRACE_ID, TRACE_NAME, BigInteger.ZERO,
-        true);
+    TraceSpanData span1 = new TraceSpanData(builder);
     span1.start();
     assertFalse(ThreadTraceContext.isEmpty());
     assertEquals(span1.getContext(), ThreadTraceContext.peek());
     
-    TraceSpanData span2 = new TraceSpanData(TRACE_ID + "2", TRACE_NAME + "2", BigInteger.ZERO,
-        true);
+    TraceSpanData span2 = new TraceSpanData(builder2);
     span2.start();
     assertEquals(span2.getContext(), ThreadTraceContext.peek());
     

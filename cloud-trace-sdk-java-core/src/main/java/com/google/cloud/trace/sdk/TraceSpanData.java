@@ -35,19 +35,20 @@ public class TraceSpanData {
    * Installed listener for start and end events.
    */
   private static TraceSpanDataListener listener;
-  
-  private transient DefaultTraceContextManager contextManager = new DefaultTraceContextManager();
-  
+    
   // Package-scoped for testability.
   static Clock clock = new SystemClock();
   
   /**
    * Opens up a new trace span in the given project and assigns it a span id.
    */
-  public TraceSpanData(String traceId, String name, BigInteger parentSpanId, boolean shouldWrite) {
-    this.context = contextManager.createTraceContext(traceId, shouldWrite);
-    this.name = name;
-    this.parentSpanId = parentSpanId;
+  public TraceSpanData(TraceSpanDataBuilder builder) {
+    this.context = builder.getTraceContext();
+    this.name = builder.getName();
+    this.parentSpanId = builder.getParentSpanId();
+    if (builder.getLabelMap() != null) {
+      this.labelMap.putAll(builder.getLabelMap());
+    }
   }
 
   /**
@@ -61,7 +62,9 @@ public class TraceSpanData {
   }
   
   /**
-   * Ends the trace span by capturing an end time.
+   * Ends the trace span by capturing an end time. It is safe to call this method
+   * multiple times; however, note that any associated event handler will fire
+   * only once.
    */
   public void end() {
     verifyStarted();
@@ -81,15 +84,6 @@ public class TraceSpanData {
     if (startTimeMillis <= 0) {
       throw new IllegalStateException("Trace span not yet started");
     }
-  }
-
-  /**
-   * Creates a new child span data object with the given name.
-   */
-  public TraceSpanData createChildSpanData(String name) {
-    verifyStarted();
-    return new TraceSpanData(context.getTraceId(), name, context.getSpanId(),
-        context.getShouldWrite());
   }
 
   @Override

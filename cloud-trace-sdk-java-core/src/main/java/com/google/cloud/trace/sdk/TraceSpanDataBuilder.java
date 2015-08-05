@@ -1,4 +1,4 @@
-// Copyright 2014 Google Inc. All rights reserved.
+// Copyright 2015 Google Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,26 @@
 
 package com.google.cloud.trace.sdk;
 
+import java.math.BigInteger;
+import java.util.Map;
+
 /**
- * Defines custom HTTP headers for forwarding trace data.
- * TODO: The header format is in the process of changing...
+ * Exposes the data necessary to create fully-fleshed-out {@link TraceSpanData}s.
  */
-public interface TraceHeaders {
-  /**
-   * The custom header name for trace id's.
-   */
-  String TRACE_ID_HEADER = "X-Cloud-Trace-Id";
+public interface TraceSpanDataBuilder {
+  TraceContext getTraceContext();
+
+  String getName();
+
+  BigInteger getParentSpanId();
+
+  Map<String, TraceSpanLabel> getLabelMap();
   
   /**
-   * The custom header name for trace spans.
+   * Creates a new builder whose resulting trace span(s) will be children
+   * of the span(s) built by this one.
+   * @param childSpanName The name of the child span.
+   * @return the new builder.
    */
-  String TRACE_SPAN_ID_HEADER = "X-Cloud-Trace-Span-Id";
-  
-  /**
-   * The custom header name for the trace-enabled flag.
-   */
-  String TRACE_ENABLED_HEADER = "X-Cloud-Trace-Enabled";
+  TraceSpanDataBuilder createChild(String childSpanName);
 }

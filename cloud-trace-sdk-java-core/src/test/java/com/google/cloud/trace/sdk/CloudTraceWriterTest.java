@@ -28,7 +28,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.math.BigInteger;
 import java.util.Properties;
 
 /**
@@ -69,9 +68,9 @@ public class CloudTraceWriterTest {
 
   @Test
   public void testWriteSpansAggregation() throws Exception {
-    TraceSpanData span1 = new TraceSpanData(TRACEID_1, "span1", BigInteger.ZERO, true);
-    TraceSpanData span2 = new TraceSpanData(TRACEID_1, "span2", BigInteger.ZERO, true);
-    TraceSpanData span3 = new TraceSpanData(TRACEID_2, "span3", BigInteger.ZERO, true);
+    TraceSpanData span1 = new TraceSpanData(new DefaultTraceSpanDataBuilder(TRACEID_1, "span1"));
+    TraceSpanData span2 = new TraceSpanData(new DefaultTraceSpanDataBuilder(TRACEID_1, "span2"));
+    TraceSpanData span3 = new TraceSpanData(new DefaultTraceSpanDataBuilder(TRACEID_2, "span3"));
     span1.start();
     span2.start();
     span3.start();

@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.cloud.trace.sdk.AbstractTraceSpanDataBuilder;
 import com.google.cloud.trace.sdk.AlwaysTraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceHeaders;
@@ -57,7 +58,7 @@ public class TraceRequestUtilsTest {
   @Before
   public void setUp() {
     utils = new TraceRequestUtils();
-    utils.traceIdGenerator = new TraceIdGenerator() {
+    AbstractTraceSpanDataBuilder.traceIdGenerator = new TraceIdGenerator() {
       @Override
       public String generate() {
         return NEW_TRACE_ID;
