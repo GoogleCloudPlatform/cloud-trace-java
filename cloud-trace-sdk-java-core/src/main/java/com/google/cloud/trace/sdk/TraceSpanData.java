@@ -93,8 +93,8 @@ public class TraceSpanData {
       labelStr.append(labelEntry.getValue());
       labelStr.append('|');
     }
-    return context.getTraceId() + '|' + name + '|' + parentSpanId + '|'
-        + context.getSpanId() + '|' + startTimeMillis + '|' + endTimeMillis + '|' + labelStr;
+    return context.toString() + '|' + name + '|' + parentSpanId + '|'
+        + startTimeMillis + '|' + endTimeMillis + '|' + labelStr;
   }
 
   public void addLabel(TraceSpanLabel label) {

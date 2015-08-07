@@ -23,6 +23,9 @@ import java.util.logging.Logger;
  * Writer implementation that writes trace information to a standard log file.
  * Writes at the INFO level. The logger can be configured using standard Java
  * logging approaches.
+ * This class does not deal with the shouldWrite flag on trace context -- the idea
+ * is that a logs processor will come along and aggregate spans by trace id, then
+ * decide whether or not to push them to the cloud trace API.
  */
 public class LoggingTraceWriter implements TraceWriter {
 

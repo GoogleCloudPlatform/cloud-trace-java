@@ -19,7 +19,9 @@ import com.google.api.client.http.HttpStatusCodes;
 import com.google.cloud.trace.api.v1.model.Trace;
 import com.google.cloud.trace.api.v1.model.TraceSpan;
 import com.google.cloud.trace.api.v1.model.Traces;
+import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.DateTime;
@@ -29,13 +31,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
  * Writes traces to the public Google Cloud Trace API.
+ * Aggregates trace spans by trace id. If any span on the trace has shouldWrite == true,
+ * then the trace will be pushed to the API server. Otherwise, it will be dropped at
+ * this point.
  */
 public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
 
@@ -115,6 +122,9 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   public void writeSpan(TraceSpanData span) throws CloudTraceException {
     checkState();
     span.end();
+    if (!span.getContext().getShouldWrite()) {
+      return;
+    }
     Trace trace = convertTraceSpanDataToTrace(span);
     writeTraces(new Traces().setTraces(ImmutableList.of(trace)));
   }
@@ -123,9 +133,17 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
   public void writeSpans(List<TraceSpanData> spans) throws CloudTraceException {
     // Aggregate all the spans by trace. It's more efficient to call the API this way.
     Map<String, Trace> traces = new HashMap<>();
+    
+    // Keep track of traces we really want to write out.
+    Set<String> shouldWriteTraces = new HashSet<>();
+    
     for (TraceSpanData spanData : spans) {
       spanData.end();
       TraceSpan span = convertTraceSpanDataToSpan(spanData);
+      if (spanData.getContext().getShouldWrite()) {
+        shouldWriteTraces.add(spanData.getContext().getTraceId());
+      }
+      
       if (!traces.containsKey(spanData.getContext().getTraceId())) {
         Trace trace = convertTraceSpanDataToTrace(spanData);
         traces.put(spanData.getContext().getTraceId(), trace);
@@ -134,7 +152,13 @@ public class CloudTraceWriter implements TraceWriter, CanInitFromProperties {
       traces.get(spanData.getContext().getTraceId()).getSpans().add(span);
     }
     
-    writeTraces(new Traces().setTraces(new ArrayList<Trace>(traces.values())));
+    // Only write out the ones where at least one trace span said to write.
+    traces = Maps.filterKeys(traces, Predicates.in(shouldWriteTraces));
+    
+    // Write to the API.
+    if (!traces.isEmpty()) {
+      writeTraces(new Traces().setTraces(new ArrayList<Trace>(traces.values())));
+    }
   }
 
   @Override

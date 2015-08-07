@@ -23,6 +23,11 @@ import java.math.BigInteger;
 public class TraceContext {
   private final String traceId;
   private final BigInteger spanId;
+  
+  /**
+   * Whether or not the trace/span should be written out. Individual trace writers
+   * and header-forwarding implementations may choose to respect this, or not.
+   */
   private boolean shouldWrite;
 
   /**
@@ -82,5 +87,10 @@ public class TraceContext {
     } else if (!traceId.equals(other.traceId))
       return false;
     return true;
+  }
+  
+  @Override
+  public String toString() {
+    return traceId + '|' + spanId + '|' + shouldWrite;
   }
 }
