@@ -84,6 +84,20 @@ public class RequestTraceSpanDataBuilderTest {
     assertEquals(URI + "?" + QUERY, builder.getName());
   }
 
+  @Test
+  public void testCustomNamingStrategy() {
+    setUpMockRequest(null, null, false);
+    RequestTraceSpanDataBuilder builder =
+        new RequestTraceSpanDataBuilder(request, new ForwardTraceEnablingPolicy(),
+            new RequestTraceSpanNamingStrategy() {
+              @Override
+              public String getName(HttpServletRequest request) {
+                return "ZZZ" + request.getRequestURI();
+              }
+            });
+    assertEquals("ZZZ" + URI, builder.getName());    
+  }
+  
   private void setUpMockRequest(String traceId, BigInteger spanId, boolean enabled) {
     Mockito.when(request.getRequestURI()).thenReturn(URI);
     Mockito.when(request.getQueryString()).thenReturn(QUERY);

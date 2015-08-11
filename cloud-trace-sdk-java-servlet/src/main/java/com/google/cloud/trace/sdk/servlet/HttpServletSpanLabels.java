@@ -29,4 +29,16 @@ public interface HttpServletSpanLabels {
    */
   public static final String HTTP_METHOD_LABEL_KEY =
       "trace.cloud.google.com/http/method";
+
+  /**
+   * Label key for the full url.
+   */
+  public static final String HTTP_URL_LABEL_KEY =
+      "trace.cloud.google.com/http/url";
+
+  /**
+   * Label key for the host name.
+   */
+  public static final String HTTP_HOST_LABEL_KEY =
+      "trace.cloud.google.com/http/host";
 }
