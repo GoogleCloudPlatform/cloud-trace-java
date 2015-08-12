@@ -41,7 +41,8 @@ public class DefaultTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
    * TODO: Better integrate this with trace-enabling. Currently they will always write.
    */
   public DefaultTraceSpanDataBuilder(String traceId, String spanName) {
-    this(new TraceContext(traceId, spanIdGenerator.generate(), true), spanName, BigInteger.ZERO);
+    this(new TraceContext(traceId, spanIdGenerator.generate(), TraceContext.TRACE_ENABLED),
+        spanName, BigInteger.ZERO);
   }
 
   /**

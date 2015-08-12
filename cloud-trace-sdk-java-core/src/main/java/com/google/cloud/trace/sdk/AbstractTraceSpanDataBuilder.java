@@ -33,7 +33,7 @@ public abstract class AbstractTraceSpanDataBuilder implements TraceSpanDataBuild
   public TraceSpanDataBuilder createChild(String childSpanName) {
     TraceContext parentContext = getTraceContext();
     TraceContext childContext = new TraceContext(
-        parentContext.getTraceId(), spanIdGenerator.generate(), parentContext.getShouldWrite());
+        parentContext.getTraceId(), spanIdGenerator.generate(), parentContext.getOptions());
     // TODO: Make the type of the child span builder definable by the subclass.
     return new DefaultTraceSpanDataBuilder(childContext, childSpanName, parentContext.getSpanId());
   }

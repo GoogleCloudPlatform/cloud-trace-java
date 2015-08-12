@@ -66,7 +66,7 @@ public class DefaultTraceSpanDataBuilderTest {
 
   @Test
   public void testHasExistingContextCtor() {
-    TraceContext context = new TraceContext("zzz", OTHER_SPAN_ID, true);
+    TraceContext context = new TraceContext("zzz", OTHER_SPAN_ID, TraceContext.TRACE_ENABLED);
     DefaultTraceSpanDataBuilder builder =
         new DefaultTraceSpanDataBuilder(context, SPAN_NAME, PARENT_SPAN_ID);
     assertEquals(SPAN_NAME, builder.getName());

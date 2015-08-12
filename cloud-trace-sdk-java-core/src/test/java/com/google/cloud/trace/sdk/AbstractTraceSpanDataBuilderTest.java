@@ -38,7 +38,7 @@ public class AbstractTraceSpanDataBuilderTest {
    builder = new AbstractTraceSpanDataBuilder() {
     @Override
     public TraceContext getTraceContext() {
-      return new TraceContext(TRACE_ID, PARENT_SPAN_ID, true);
+      return new TraceContext(TRACE_ID, PARENT_SPAN_ID, TraceContext.TRACE_ENABLED);
     }
 
     @Override

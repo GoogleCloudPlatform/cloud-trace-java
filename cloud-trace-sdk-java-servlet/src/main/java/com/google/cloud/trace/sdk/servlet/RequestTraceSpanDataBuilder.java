@@ -56,8 +56,9 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
 
   @Override
   public TraceContext getTraceContext() {
+    boolean enabled = enablingPolicy.isTracingEnabled(getTraceEnabledHeader());
     return new TraceContext(getTraceId(), new SpanIdGenerator().generate(),
-        enablingPolicy.isTracingEnabled(getTraceEnabledHeader()));
+        enabled ? TraceContext.TRACE_ENABLED : 0);
   }
 
   @Override
