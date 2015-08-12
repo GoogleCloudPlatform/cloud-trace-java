@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
  * in the request context and a corresponding ThreadLocal.
  */
 public class TraceFilter implements Filter {
-
   private TraceWriter writer = new LoggingTraceWriter();
   private TraceRequestUtils requestUtils = new TraceRequestUtils();
   private TraceResponseUtils responseUtils = new TraceResponseUtils();
@@ -55,7 +54,7 @@ public class TraceFilter implements Filter {
     HttpServletResponse response = (HttpServletResponse) resp;
     TraceSpanData spanData = requestUtils.createRequestSpanData(request);
     try {
-      chain.doFilter(req, resp);        
+      chain.doFilter(req, resp);
     } finally {
       try {
         responseUtils.closeResponseSpanData(spanData, writer, response);

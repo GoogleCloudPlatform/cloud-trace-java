@@ -20,7 +20,6 @@ import com.google.cloud.trace.sdk.ReflectionUtils;
 import com.google.cloud.trace.sdk.TraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceSpanData;
 import com.google.cloud.trace.sdk.TraceSpanDataBuilder;
-import com.google.cloud.trace.sdk.TraceSpanLabel;
 
 import java.util.Properties;
 
@@ -42,6 +41,8 @@ public class TraceRequestUtils implements CanInitFromProperties {
    */
   TraceEnablingPolicy enablingPolicy = new NeverTraceEnablingPolicy();
 
+  private RequestTraceSpanNamingStrategy spanNamingStrategy =
+      new URIWithQueryRequestTraceSpanNamingStrategy();
 
   /**
    * Initializes/reinitializes based on values in the given properties file.
@@ -53,6 +54,12 @@ public class TraceRequestUtils implements CanInitFromProperties {
       enablingPolicy = (TraceEnablingPolicy) ReflectionUtils.createFromProperties(
           enablingPolicyClassName, props);
     }
+    
+    String namingStrategyClassName = props.getProperty(getClass().getName() + ".spanNamingStrategy");
+    if (namingStrategyClassName != null && !namingStrategyClassName.isEmpty()) {
+      spanNamingStrategy = (RequestTraceSpanNamingStrategy) ReflectionUtils.createFromProperties(
+          namingStrategyClassName, props);
+    }
   }
 
   /**
@@ -61,14 +68,10 @@ public class TraceRequestUtils implements CanInitFromProperties {
    * trace. If not, it creates things from scratch.
    */
   public TraceSpanData createRequestSpanData(HttpServletRequest request) {
-    TraceSpanDataBuilder spanDataBuilder = new RequestTraceSpanDataBuilder(request, enablingPolicy);
+    TraceSpanDataBuilder spanDataBuilder = new RequestTraceSpanDataBuilder(request, enablingPolicy,
+        spanNamingStrategy);
     TraceSpanData spanData = new TraceSpanData(spanDataBuilder);
     request.setAttribute(TRACE_SPAN_DATA_ATTRIBUTE, spanData);
-
-    // Let's add a standard label.
-    TraceSpanLabel httpMethodLabel =
-        new TraceSpanLabel(HttpServletSpanLabels.HTTP_METHOD_LABEL_KEY, request.getMethod());
-    spanData.addLabel(httpMethodLabel);
     spanData.start();
 
     return spanData;
