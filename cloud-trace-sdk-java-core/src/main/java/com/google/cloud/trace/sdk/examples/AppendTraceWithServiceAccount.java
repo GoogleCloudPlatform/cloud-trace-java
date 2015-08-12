@@ -17,18 +17,14 @@ package com.google.cloud.trace.sdk.examples;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.cloud.trace.sdk.HttpTransportCloudTraceRequestFactory;
 import com.google.cloud.trace.sdk.CloudTraceWriter;
 import com.google.cloud.trace.sdk.DefaultTraceSpanDataBuilder;
+import com.google.cloud.trace.sdk.HttpTransportCloudTraceRequestFactory;
 import com.google.cloud.trace.sdk.ServiceAccountCredentialProvider;
-import com.google.cloud.trace.sdk.SpanIdGenerator;
-import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceSpanData;
 import com.google.cloud.trace.sdk.TraceSpanDataBuilder;
-import com.google.cloud.trace.sdk.UUIDTraceIdGenerator;
 
 import java.io.File;
-import java.math.BigInteger;
 
 /**
  * Writes a trace to the Cloud Trace API using an OAuth2 service account.

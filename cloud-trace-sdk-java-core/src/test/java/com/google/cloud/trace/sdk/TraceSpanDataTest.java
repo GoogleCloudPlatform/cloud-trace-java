@@ -15,6 +15,7 @@
 package com.google.cloud.trace.sdk;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -101,5 +102,14 @@ public class TraceSpanDataTest {
       return;
     }
     fail("Didn't catch expected exception");
+  }
+  
+  @Test
+  public void testIsEnded() {
+    TraceSpanData span = new TraceSpanData(builder);
+    assertFalse(span.isEnded());
+    span.start();
+    span.end();
+    assertTrue(span.isEnded());
   }
 }
