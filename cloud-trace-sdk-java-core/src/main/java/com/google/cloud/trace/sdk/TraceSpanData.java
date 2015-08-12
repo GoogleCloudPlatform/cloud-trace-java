@@ -68,7 +68,7 @@ public class TraceSpanData {
    */
   public void end() {
     verifyStarted();
-    if (this.endTimeMillis == 0) {
+    if (!isEnded()) {
       // Not closed yet.
       this.endTimeMillis = clock.currentTimeMillis();
       if (listener != null) {
@@ -130,6 +130,14 @@ public class TraceSpanData {
     return endTimeMillis;
   }
 
+  /**
+   * Helper method that says whether or not the span has been closed (had the
+   * end time filled in) yet.
+   */
+  public boolean isEnded() {
+    return endTimeMillis > 0;
+  }
+  
   public Map<String, TraceSpanLabel> getLabelMap() {
     return labelMap;
   }
