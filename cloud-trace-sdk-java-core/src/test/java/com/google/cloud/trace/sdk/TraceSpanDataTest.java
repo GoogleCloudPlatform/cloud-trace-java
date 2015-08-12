@@ -112,4 +112,12 @@ public class TraceSpanDataTest {
     span.end();
     assertTrue(span.isEnded());
   }
+  
+  @Test
+  public void testIsStarted() {
+    TraceSpanData span = new TraceSpanData(builder);
+    assertFalse(span.isStarted());
+    span.start();
+    assertTrue(span.isStarted());
+  }
 }

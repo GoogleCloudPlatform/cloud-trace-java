@@ -52,12 +52,15 @@ public class AppendTraceWithServiceAccount {
     
     TraceSpanDataBuilder spanDataBuilder = new DefaultTraceSpanDataBuilder("/PARENT");
     TraceSpanData parentSpan = new TraceSpanData(spanDataBuilder);
+    parentSpan.start();
     Thread.sleep(1000);
     
     TraceSpanData childSpan1 = new TraceSpanData(spanDataBuilder.createChild("/CHILD1"));
+    childSpan1.start();
     Thread.sleep(2000);
 
     TraceSpanData childSpan2 = new TraceSpanData(spanDataBuilder.createChild("/CHILD2"));
+    childSpan2.start();
     Thread.sleep(2000);
 
     childSpan2.end();

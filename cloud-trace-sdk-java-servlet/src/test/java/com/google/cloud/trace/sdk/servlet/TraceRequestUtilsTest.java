@@ -49,6 +49,7 @@ public class TraceRequestUtilsTest {
   private static final String NEW_TRACE_ID = "new trace id";
   private static final BigInteger SPAN_ID = BigInteger.valueOf(5);
   private static final String URI = "myuri";
+  private static final String URL = "http://myuri";
   private static final String QUERY = "a=5";
   
   @Mock private HttpServletRequest request;
@@ -120,6 +121,7 @@ public class TraceRequestUtilsTest {
   
   private void setUpMockRequest(String traceId, BigInteger spanId, boolean enabled) {
     Mockito.when(request.getRequestURI()).thenReturn(URI);
+    Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer(URL));
     Mockito.when(request.getQueryString()).thenReturn(QUERY);
     if (traceId != null) {
       Mockito.when(request.getHeader(TraceHeaders.TRACE_ID_HEADER)).thenReturn(traceId);

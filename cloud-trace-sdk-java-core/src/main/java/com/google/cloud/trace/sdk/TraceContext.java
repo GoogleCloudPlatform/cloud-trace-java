@@ -21,22 +21,25 @@ import java.math.BigInteger;
  * Potentially forwarded over the wire for use in propagation to child spans.
  */
 public class TraceContext {
+  public static final long TRACE_ENABLED = 1;
+
   private final String traceId;
   private final BigInteger spanId;
-  
-  /**
-   * Whether or not the trace/span should be written out. Individual trace writers
-   * and header-forwarding implementations may choose to respect this, or not.
-   */
-  private boolean shouldWrite;
 
   /**
-   * Creates a new trace context with the given identifiers.
+   * The trace span options, which is a bitmasked long representing the state
+   * of various tracing features (such as whether or not incoming/outgoing traces
+   * are enabled).
    */
-  public TraceContext(String traceId, BigInteger spanId, boolean shouldWrite) {
+  private long options;
+
+  /**
+   * Creates a new trace context with the given identifiers and options.
+   */
+  public TraceContext(String traceId, BigInteger spanId, long options) {
     this.traceId = traceId;
     this.spanId = spanId;
-    this.shouldWrite = shouldWrite;
+    this.options = options;
   }
 
   public String getTraceId() {
@@ -48,18 +51,35 @@ public class TraceContext {
   }
 
   public boolean getShouldWrite() {
-    return shouldWrite;
+    return (options & TRACE_ENABLED) == TRACE_ENABLED;
   }
 
   public void setShouldWrite(boolean shouldWrite) {
-    this.shouldWrite = shouldWrite;
+    if (shouldWrite) {
+      this.options |= TRACE_ENABLED;
+    } else {
+      this.options &= ~TRACE_ENABLED;
+    }
+  }
+
+  public long getOptions() {
+    return options;
+  }
+
+  public void setOptions(long options) {
+    this.options = options;
+  }
+
+  @Override
+  public String toString() {
+    return traceId + '|' + spanId + '|' + options;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + (shouldWrite ? 1231 : 1237);
+    result = prime * result + (int) (options ^ (options >>> 32));
     result = prime * result + ((spanId == null) ? 0 : spanId.hashCode());
     result = prime * result + ((traceId == null) ? 0 : traceId.hashCode());
     return result;
@@ -74,7 +94,7 @@ public class TraceContext {
     if (getClass() != obj.getClass())
       return false;
     TraceContext other = (TraceContext) obj;
-    if (shouldWrite != other.shouldWrite)
+    if (options != other.options)
       return false;
     if (spanId == null) {
       if (other.spanId != null)
@@ -87,10 +107,5 @@ public class TraceContext {
     } else if (!traceId.equals(other.traceId))
       return false;
     return true;
-  }
-  
-  @Override
-  public String toString() {
-    return traceId + '|' + spanId + '|' + shouldWrite;
   }
 }

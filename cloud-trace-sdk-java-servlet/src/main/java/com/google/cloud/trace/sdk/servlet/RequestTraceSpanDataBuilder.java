@@ -20,8 +20,11 @@ import com.google.cloud.trace.sdk.SpanIdGenerator;
 import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceHeaders;
+import com.google.cloud.trace.sdk.TraceSpanLabel;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,19 +34,34 @@ import javax.servlet.http.HttpServletRequest;
  * Builds trace span data based on an http servlet request.
  */
 public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
-
-  private static final Logger logger = Logger.getLogger(RequestTraceSpanDataBuilder.class.getName());
+  private static final Logger logger =
+      Logger.getLogger(RequestTraceSpanDataBuilder.class.getName());
 
   private final HttpServletRequest request;
   private final TraceEnablingPolicy enablingPolicy;
+  private final RequestTraceSpanNamingStrategy spanNamingStrategy;
 
   /**
    * Creates a trace span data builder for the given servlet request with the
-   * given enabling policy.
+   * given enabling policy and given span naming strategy.
    */
-  public RequestTraceSpanDataBuilder(HttpServletRequest request, TraceEnablingPolicy enablingPolicy) {
+  public RequestTraceSpanDataBuilder(HttpServletRequest request, TraceEnablingPolicy enablingPolicy,
+      RequestTraceSpanNamingStrategy spanNamingStrategy) {
+    if (spanNamingStrategy == null) {
+      throw new IllegalArgumentException("Span naming strategy must be provided");
+    }
     this.request = request;
     this.enablingPolicy = enablingPolicy;
+    this.spanNamingStrategy = spanNamingStrategy;
+  }
+
+  /**
+   * Creates a trace span data builder for the given servlet request with the
+   * given enabling policy and default span naming strategy.
+   */
+  public RequestTraceSpanDataBuilder(
+      HttpServletRequest request, TraceEnablingPolicy enablingPolicy) {
+    this(request, enablingPolicy, new URIWithQueryRequestTraceSpanNamingStrategy());
   }
 
   /**
@@ -56,15 +74,14 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
 
   @Override
   public TraceContext getTraceContext() {
+    boolean enabled = enablingPolicy.isTracingEnabled(getTraceEnabledHeader());
     return new TraceContext(getTraceId(), new SpanIdGenerator().generate(),
-        enablingPolicy.isTracingEnabled(getTraceEnabledHeader()));
+        enabled ? TraceContext.TRACE_ENABLED : 0);
   }
 
   @Override
   public String getName() {
-    // TODO: The name should have some configurability since we can't assume
-    // the semantics of the application's URL schemes.
-    return getFullURL();
+    return spanNamingStrategy.getName(request);
   }
 
   @Override
@@ -79,6 +96,26 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
       }
     }
     return BigInteger.ZERO;
+  }
+
+  @Override
+  public Map<String, TraceSpanLabel> getLabelMap() {
+    Map<String, TraceSpanLabel> labelMap = new HashMap<>();
+
+    // Start filling in standard labels.
+    TraceSpanLabel httpMethodLabel =
+        new TraceSpanLabel(HttpServletSpanLabels.HTTP_METHOD_LABEL_KEY, request.getMethod());
+    labelMap.put(httpMethodLabel.getKey(), httpMethodLabel);
+
+    TraceSpanLabel httpUrlLabel = new TraceSpanLabel(
+        HttpServletSpanLabels.HTTP_URL_LABEL_KEY, getFullUrl());
+    labelMap.put(httpUrlLabel.getKey(), httpUrlLabel);
+
+    TraceSpanLabel httpHostLabel =
+        new TraceSpanLabel(HttpServletSpanLabels.HTTP_HOST_LABEL_KEY, request.getServerName());
+    labelMap.put(httpHostLabel.getKey(), httpHostLabel);
+
+    return labelMap;
   }
 
   /**
@@ -110,20 +147,14 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
     return false;
   }
   
-
-  /**
-   * Helper method to get the servlet request URL in the format we use for trace id's started by
-   * requests.
-   */
-  private String getFullURL() {
-    String requestURL = request.getRequestURI();
+  private String getFullUrl() {
+    StringBuffer requestURI = request.getRequestURL();
     String queryString = request.getQueryString();
 
     if (queryString == null) {
-      return requestURL.toString();
+      return requestURI.toString();
     } else {
-      return requestURL + '?' + queryString;
+      return requestURI.append('?').append(queryString).toString();
     }
   }
 }
-

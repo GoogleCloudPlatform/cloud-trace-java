@@ -55,6 +55,7 @@ public class TraceSpanData {
    * Starts the trace span by filling in the start time.
    */
   public void start() {
+    assert !isEnded();
     this.startTimeMillis = clock.currentTimeMillis();
     if (listener != null) {
       listener.onStart(this);
@@ -67,22 +68,16 @@ public class TraceSpanData {
    * only once.
    */
   public void end() {
-    verifyStarted();
+    if (!isStarted()) {
+      throw new IllegalStateException("Trace span not yet started");
+    }
+
     if (!isEnded()) {
       // Not closed yet.
       this.endTimeMillis = clock.currentTimeMillis();
       if (listener != null) {
         listener.onEnd(this);
       }
-    }
-  }
-
-  /**
-   * Helper method that ensures the span data has been started.
-   */
-  private void verifyStarted() {
-    if (startTimeMillis <= 0) {
-      throw new IllegalStateException("Trace span not yet started");
     }
   }
 
@@ -136,6 +131,14 @@ public class TraceSpanData {
    */
   public boolean isEnded() {
     return endTimeMillis > 0;
+  }
+  
+  /**
+   * Helper method that says whether or not the span has been opened (had the
+   * start time filled in) yet.
+   */
+  public boolean isStarted() {
+    return startTimeMillis > 0;
   }
   
   public Map<String, TraceSpanLabel> getLabelMap() {
