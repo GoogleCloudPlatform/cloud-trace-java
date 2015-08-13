@@ -20,8 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.trace.sdk.AbstractTraceSpanDataBuilder;
 import com.google.cloud.trace.sdk.AlwaysTraceEnablingPolicy;
+import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceEnablingPolicy;
-import com.google.cloud.trace.sdk.TraceHeaders;
 import com.google.cloud.trace.sdk.TraceIdGenerator;
 import com.google.cloud.trace.sdk.TraceSpanData;
 import com.google.cloud.trace.sdk.TraceWriter;
@@ -123,14 +123,11 @@ public class TraceRequestUtilsTest {
     Mockito.when(request.getRequestURI()).thenReturn(URI);
     Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer(URL));
     Mockito.when(request.getQueryString()).thenReturn(QUERY);
+    TraceContext incomingContext = new TraceContext(traceId, spanId, enabled ? 1 : 0);
     if (traceId != null) {
-      Mockito.when(request.getHeader(TraceHeaders.TRACE_ID_HEADER)).thenReturn(traceId);
+      Mockito.when(request.getHeader(TraceContext.TRACE_HEADER)).thenReturn(incomingContext.toTraceHeader());
+    } else {
+      Mockito.when(request.getHeader(TraceContext.TRACE_HEADER)).thenReturn(null);
     }
-    if (spanId != null) {
-      Mockito.when(request.getHeader(TraceHeaders.TRACE_SPAN_ID_HEADER)).thenReturn(
-          spanId.toString());
-    }
-    Mockito.when(request.getHeader(TraceHeaders.TRACE_ENABLED_HEADER)).thenReturn(
-        Boolean.toString(enabled));
   }
 }

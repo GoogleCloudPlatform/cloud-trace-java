@@ -15,7 +15,7 @@
 package com.google.cloud.trace.sdk.servlet;
 
 import com.google.cloud.trace.sdk.CloudTraceException;
-import com.google.cloud.trace.sdk.TraceHeaders;
+import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceSpanData;
 import com.google.cloud.trace.sdk.TraceSpanLabel;
 import com.google.cloud.trace.sdk.TraceWriter;
@@ -33,8 +33,7 @@ public class TraceResponseUtils {
   public void closeResponseSpanData(TraceSpanData spanData, TraceWriter writer,
       HttpServletResponse response) throws CloudTraceException {
     // Set the trace context on the response.
-    response.setHeader(TraceHeaders.TRACE_ID_HEADER, spanData.getContext().getTraceId());
-    response.setHeader(TraceHeaders.TRACE_SPAN_ID_HEADER, "" + spanData.getContext().getSpanId());
+    response.setHeader(TraceContext.TRACE_HEADER, spanData.getContext().toTraceHeader());
 
     // Fill in a standard label on the span.
     TraceSpanLabel httpResponseLabel = new TraceSpanLabel(

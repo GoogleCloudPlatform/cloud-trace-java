@@ -19,14 +19,11 @@ import com.google.cloud.trace.sdk.AlwaysTraceEnablingPolicy;
 import com.google.cloud.trace.sdk.SpanIdGenerator;
 import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceEnablingPolicy;
-import com.google.cloud.trace.sdk.TraceHeaders;
 import com.google.cloud.trace.sdk.TraceSpanLabel;
 
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,13 +31,11 @@ import javax.servlet.http.HttpServletRequest;
  * Builds trace span data based on an http servlet request.
  */
 public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
-  private static final Logger logger =
-      Logger.getLogger(RequestTraceSpanDataBuilder.class.getName());
-
   private final HttpServletRequest request;
   private final TraceEnablingPolicy enablingPolicy;
   private final RequestTraceSpanNamingStrategy spanNamingStrategy;
-
+  private final TraceContext incomingContext;
+  
   /**
    * Creates a trace span data builder for the given servlet request with the
    * given enabling policy and given span naming strategy.
@@ -53,6 +48,13 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
     this.request = request;
     this.enablingPolicy = enablingPolicy;
     this.spanNamingStrategy = spanNamingStrategy;
+    
+    String traceHeaderValue = request.getHeader(TraceContext.TRACE_HEADER);
+    if (traceHeaderValue != null) {
+      this.incomingContext = TraceContext.fromTraceHeader(traceHeaderValue);
+    } else {
+      this.incomingContext = null;
+    }
   }
 
   /**
@@ -86,14 +88,8 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
 
   @Override
   public BigInteger getParentSpanId() {
-    String parentSpanId = request.getHeader(TraceHeaders.TRACE_SPAN_ID_HEADER);
-    if (parentSpanId != null) {
-      try {
-        return new BigInteger(parentSpanId);
-      } catch (NumberFormatException nfe) {
-        logger.log(
-            Level.WARNING, "Found non-numeric span id in the headers (" + parentSpanId + ")");
-      }
+    if (incomingContext != null && incomingContext.getSpanId() != null) {
+      return incomingContext.getSpanId();
     }
     return BigInteger.ZERO;
   }
@@ -123,26 +119,19 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
    * anything.
    */
   private String getTraceId() {
-    String traceId = request.getHeader(TraceHeaders.TRACE_ID_HEADER);
-    if (traceId == null) {
-      // Let's create one.
-      traceId = traceIdGenerator.generate();
+    if (incomingContext != null && incomingContext.getTraceId() != null) {
+      return incomingContext.getTraceId();
     }
-    return traceId;
+    // Else et's create one.
+    return traceIdGenerator.generate();
   }
 
   /**
    * Looks for the enabled flag value on the request headers.
    */
   private boolean getTraceEnabledHeader() {
-    String enabledHeader = request.getHeader(TraceHeaders.TRACE_ENABLED_HEADER);
-    if (enabledHeader != null) {
-      try {
-        return Boolean.parseBoolean(enabledHeader);
-      } catch (NumberFormatException nfe) {
-        logger.log(
-            Level.WARNING, "Found non-boolean enabled flag in the headers (" + enabledHeader + ")");
-      }
+    if (incomingContext != null) {
+      return incomingContext.getShouldWrite();
     }
     return false;
   }
