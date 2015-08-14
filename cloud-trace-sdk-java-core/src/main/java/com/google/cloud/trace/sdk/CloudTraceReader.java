@@ -16,7 +16,11 @@ package com.google.cloud.trace.sdk;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpStatusCodes;
+import com.google.cloud.trace.api.v1.model.Trace;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,8 +54,14 @@ public class CloudTraceReader {
    */
   private String apiEndpoint = "https://cloudtrace.googleapis.com/";
   
+  /**
+   * JSON mapper for unwrapping API responses.
+   */
+  private ObjectMapper objectMapper;
+
   public CloudTraceReader() {
     this.requestFactory = new HttpTransportCloudTraceRequestFactory();
+    this.objectMapper = new ObjectMapper();
   }
   
   public CloudTraceRequestFactory getRequestFactory() {
@@ -78,8 +88,7 @@ public class CloudTraceReader {
     this.apiEndpoint = apiEndpoint;
   }
 
-  // TODO: Convert this to produce an instance of Trace from the v1 model.
-  public String readTraceById(String traceId) throws CloudTraceException {
+  public Trace readTraceById(String traceId) throws CloudTraceException {
     checkState();
     GenericUrl url = buildUrl(traceId);
     logger.log(Level.INFO, "Reading trace from " + url);
@@ -87,7 +96,12 @@ public class CloudTraceReader {
     if (response.getStatusCode() != HttpStatusCodes.STATUS_CODE_OK) {
       throw new CloudTraceException("Failed to read span, status = " + response.getStatusCode());
     }
-    return response.getContent();
+    String result = response.getContent();
+    try {
+      return objectMapper.readValue(result, Trace.class);
+    } catch (IOException e) {
+      throw new CloudTraceException("Failed to parse JSON response", e);
+    }
   }
 
   /**

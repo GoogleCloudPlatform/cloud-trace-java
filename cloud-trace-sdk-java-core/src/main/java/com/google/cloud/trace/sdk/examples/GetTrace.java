@@ -17,6 +17,7 @@ package com.google.cloud.trace.sdk.examples;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.cloud.trace.api.v1.model.Trace;
 import com.google.cloud.trace.sdk.CloudTraceReader;
 import com.google.cloud.trace.sdk.HttpTransportCloudTraceRequestFactory;
 import com.google.cloud.trace.sdk.InstalledAppCredentialProvider;
@@ -45,7 +46,7 @@ public class GetTrace {
     reader.setRequestFactory(new HttpTransportCloudTraceRequestFactory(httpTransport, requestFactory));
     reader.setApiEndpoint(args[1]);
     reader.setProjectId(args[2]);
-    String result = reader.readTraceById(args[3]);
+    Trace result = reader.readTraceById(args[3]);
     System.out.println(result);
   }
 }
