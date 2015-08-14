@@ -36,12 +36,29 @@ public class DefaultTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
   }
 
   /**
+   * Creates a new default trace span data builder that builds a child span for a given parent span
+   * on the given trace with the given trace options and name.
+   */
+  public DefaultTraceSpanDataBuilder(String traceId, BigInteger parentSpanId, long traceOptions,
+      String spanName) {
+    this(new TraceContext(traceId, spanIdGenerator.generate(), traceOptions),
+        spanName, parentSpanId);
+  }
+
+  /**
+   * Creates a new default trace span data builder for root spans on a new trace with the given
+   * trace options.
+   */
+  public DefaultTraceSpanDataBuilder(long traceOptions, String spanName) {
+    this(traceIdGenerator.generate(), BigInteger.ZERO, traceOptions, spanName);
+  }
+
+  /**
    * Creates a new default trace span data builder that builds a root span on the given trace
    * with the given name.
    */
   public DefaultTraceSpanDataBuilder(String traceId, String spanName) {
-    this(new TraceContext(traceId, spanIdGenerator.generate(), TraceContext.TRACE_ENABLED),
-        spanName, BigInteger.ZERO);
+    this(traceId, BigInteger.ZERO, TraceContext.TRACE_ENABLED, spanName);
   }
 
   /**

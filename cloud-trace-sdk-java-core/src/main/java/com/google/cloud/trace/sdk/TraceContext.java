@@ -28,6 +28,7 @@ public class TraceContext {
    */
   public static final String TRACE_HEADER = "X-Cloud-Trace-Context";
 
+  public static final long TRACE_DISABLED = 0;
   public static final long TRACE_ENABLED = 1;
 
   private final String traceId;

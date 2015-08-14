@@ -38,8 +38,9 @@ public class TraceContextTest {
     assertFalse(context.getShouldWrite());
     assertEquals(0, context.getOptions());
 
-    context = new TraceContext("1", BigInteger.valueOf(2), 0);
+    context = new TraceContext("1", BigInteger.valueOf(2), TraceContext.TRACE_DISABLED);
     assertFalse(context.getShouldWrite());
+    assertEquals(TraceContext.TRACE_DISABLED, context.getOptions());
   }
   
   @Test
