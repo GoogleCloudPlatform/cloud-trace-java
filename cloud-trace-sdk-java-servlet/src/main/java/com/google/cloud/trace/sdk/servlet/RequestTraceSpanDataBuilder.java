@@ -35,7 +35,7 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
   private final TraceEnablingPolicy enablingPolicy;
   private final RequestTraceSpanNamingStrategy spanNamingStrategy;
   private final TraceContext incomingContext;
-  
+
   /**
    * Creates a trace span data builder for the given servlet request with the
    * given enabling policy and given span naming strategy.
@@ -48,7 +48,7 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
     this.request = request;
     this.enablingPolicy = enablingPolicy;
     this.spanNamingStrategy = spanNamingStrategy;
-    
+
     String traceHeaderValue = request.getHeader(TraceContext.TRACE_HEADER);
     if (traceHeaderValue != null) {
       this.incomingContext = TraceContext.fromTraceHeader(traceHeaderValue);
@@ -77,8 +77,8 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
   @Override
   public TraceContext getTraceContext() {
     boolean enabled = enablingPolicy.isTracingEnabled(getTraceEnabledHeader());
-    return new TraceContext(getTraceId(), new SpanIdGenerator().generate(),
-        enabled ? TraceContext.TRACE_ENABLED : 0);
+    return new TraceContext(
+        getTraceId(), new SpanIdGenerator().generate(), enabled ? TraceContext.TRACE_ENABLED : 0);
   }
 
   @Override
@@ -103,8 +103,8 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
         new TraceSpanLabel(HttpServletSpanLabels.HTTP_METHOD_LABEL_KEY, request.getMethod());
     labelMap.put(httpMethodLabel.getKey(), httpMethodLabel);
 
-    TraceSpanLabel httpUrlLabel = new TraceSpanLabel(
-        HttpServletSpanLabels.HTTP_URL_LABEL_KEY, getFullUrl());
+    TraceSpanLabel httpUrlLabel =
+        new TraceSpanLabel(HttpServletSpanLabels.HTTP_URL_LABEL_KEY, getFullUrl());
     labelMap.put(httpUrlLabel.getKey(), httpUrlLabel);
 
     TraceSpanLabel httpHostLabel =
@@ -135,7 +135,7 @@ public class RequestTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
     }
     return false;
   }
-  
+
   private String getFullUrl() {
     StringBuffer requestURI = request.getRequestURL();
     String queryString = request.getQueryString();

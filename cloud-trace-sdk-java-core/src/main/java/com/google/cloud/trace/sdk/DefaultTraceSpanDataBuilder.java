@@ -38,7 +38,6 @@ public class DefaultTraceSpanDataBuilder extends AbstractTraceSpanDataBuilder {
   /**
    * Creates a new default trace span data builder that builds a root span on the given trace
    * with the given name.
-   * TODO: Better integrate this with trace-enabling. Currently they will always write.
    */
   public DefaultTraceSpanDataBuilder(String traceId, String spanName) {
     this(new TraceContext(traceId, spanIdGenerator.generate(), TraceContext.TRACE_ENABLED),

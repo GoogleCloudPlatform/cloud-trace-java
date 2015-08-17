@@ -14,6 +14,7 @@
 
 package com.google.cloud.trace.sdk;
 
+import java.math.BigInteger;
 import java.util.Map;
 
 /**
@@ -28,13 +29,24 @@ public abstract class AbstractTraceSpanDataBuilder implements TraceSpanDataBuild
   public Map<String, TraceSpanLabel> getLabelMap() {
     return null;
   }
-  
+
   @Override
   public TraceSpanDataBuilder createChild(String childSpanName) {
     TraceContext parentContext = getTraceContext();
     TraceContext childContext = new TraceContext(
         parentContext.getTraceId(), spanIdGenerator.generate(), parentContext.getOptions());
-    // TODO: Make the type of the child span builder definable by the subclass.
-    return new DefaultTraceSpanDataBuilder(childContext, childSpanName, parentContext.getSpanId());
+    return createChildSpanDataBuilder(childContext, childSpanName, parentContext.getSpanId());
+  }
+
+  /**
+   * Creates a new {@link TraceSpanDataBuilder} for a child span of this one.
+   * Defaults to an instance of {@link DefaultTraceSpanDataBuilder}.
+   * Override to customize. One example where this is useful is where the initial
+   * span is from a servlet request -- child spans almost certainly would take
+   * some other form.
+   */
+  protected TraceSpanDataBuilder createChildSpanDataBuilder(
+      TraceContext childContext, String childSpanName, BigInteger parentSpanID) {
+    return new DefaultTraceSpanDataBuilder(childContext, childSpanName, parentSpanID);
   }
 }

@@ -19,7 +19,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.cloud.trace.sdk.AbstractTraceSpanDataBuilder;
+import com.google.cloud.trace.sdk.AlwaysTraceEnablingPolicy;
 import com.google.cloud.trace.sdk.ForwardTraceEnablingPolicy;
+import com.google.cloud.trace.sdk.NeverTraceEnablingPolicy;
 import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceIdGenerator;
 import com.google.cloud.trace.sdk.TraceWriter;
@@ -96,6 +98,22 @@ public class RequestTraceSpanDataBuilderTest {
               }
             });
     assertEquals("ZZZ" + URI, builder.getName());    
+  }
+  
+  @Test
+  public void testCreateChildSpanNotEnabled() {
+    setUpMockRequest(TRACE_ID, SPAN_ID, true);
+    RequestTraceSpanDataBuilder builder =
+        new RequestTraceSpanDataBuilder(request, new NeverTraceEnablingPolicy());
+    assertFalse(builder.createChild("CHILD").getTraceContext().getShouldWrite());
+  }
+  
+  @Test
+  public void testCreateChildSpanEnabled() {
+    setUpMockRequest(TRACE_ID, SPAN_ID, true);
+    RequestTraceSpanDataBuilder builder =
+        new RequestTraceSpanDataBuilder(request, new AlwaysTraceEnablingPolicy());
+    assertTrue(builder.createChild("CHILD").getTraceContext().getShouldWrite());
   }
   
   private void setUpMockRequest(String traceId, BigInteger spanId, boolean enabled) {
