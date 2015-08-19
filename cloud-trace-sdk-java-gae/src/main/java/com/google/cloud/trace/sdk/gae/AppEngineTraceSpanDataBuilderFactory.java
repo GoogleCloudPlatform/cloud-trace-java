@@ -25,7 +25,7 @@ public class AppEngineTraceSpanDataBuilderFactory {
   public static TraceSpanDataBuilder getBuilder(String spanName) {
     TraceContext parent = AppEngineCurrentTraceContext.getInstance().get();
     if (parent == null) {
-      return new DefaultTraceSpanDataBuilder(TraceContext.TRACE_DISABLED, spanName);
+      return new DefaultTraceSpanDataBuilder(TraceContext.TRACE_OPTIONS_NONE, spanName);
     } else {
       return new DefaultTraceSpanDataBuilder(
           parent.getTraceId(), parent.getSpanId(), parent.getOptions(), spanName);

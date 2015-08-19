@@ -80,20 +80,20 @@ public class DefaultTraceSpanDataBuilderTest {
   @Test
   public void testExplicitOptioinsCtor() {
     DefaultTraceSpanDataBuilder builder =
-        new DefaultTraceSpanDataBuilder(TraceContext.TRACE_DISABLED, SPAN_NAME);
+        new DefaultTraceSpanDataBuilder(TraceContext.TRACE_OPTIONS_NONE, SPAN_NAME);
     assertEquals(SPAN_NAME, builder.getName());
     assertEquals(EVERY_TRACE_ID, builder.getTraceContext().getTraceId());
     assertEquals(EVERY_SPAN_ID, builder.getTraceContext().getSpanId());
-    assertEquals(TraceContext.TRACE_DISABLED, builder.getTraceContext().getOptions());
+    assertEquals(TraceContext.TRACE_OPTIONS_NONE, builder.getTraceContext().getOptions());
   }
 
   @Test
   public void testExplicitOptioinsExistingTraceCtor() {
     DefaultTraceSpanDataBuilder builder = new DefaultTraceSpanDataBuilder(
-        "zzz", OTHER_SPAN_ID, TraceContext.TRACE_DISABLED, SPAN_NAME);
+        "zzz", OTHER_SPAN_ID, TraceContext.TRACE_OPTIONS_NONE, SPAN_NAME);
     assertEquals(SPAN_NAME, builder.getName());
     assertEquals("zzz", builder.getTraceContext().getTraceId());
     assertEquals(EVERY_SPAN_ID, builder.getTraceContext().getSpanId());
-    assertEquals(TraceContext.TRACE_DISABLED, builder.getTraceContext().getOptions());
+    assertEquals(TraceContext.TRACE_OPTIONS_NONE, builder.getTraceContext().getOptions());
   }
 }

@@ -21,7 +21,7 @@ import com.google.cloud.trace.sdk.TraceContext;
 import org.junit.Test;
 
 import java.math.BigInteger;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Tests for the {@link ContextTransformer} class.
@@ -34,14 +34,14 @@ public class ContextTransformerTest {
   public void testTraceContextToCloudTraceContext() {
     TraceContext input = new TraceContext(TRACE_ID, SPAN_ID, TraceContext.TRACE_ENABLED);
     CloudTraceContext output = ContextTransformer.transform(input);
-    assertArrayEquals(TRACE_ID.getBytes(Charset.forName("UTF-8")), output.getTraceId());
+    assertArrayEquals(TRACE_ID.getBytes(StandardCharsets.UTF_8), output.getTraceId());
     assertEquals(SPAN_ID.longValue(), output.getSpanId());
     assertEquals(TraceContext.TRACE_ENABLED, output.getTraceMask());
   }
 
   @Test
   public void testCloudTraceContextToTraceContext() {
-    CloudTraceContext input = new CloudTraceContext(TRACE_ID.getBytes(Charset.forName("UTF-8")),
+    CloudTraceContext input = new CloudTraceContext(TRACE_ID.getBytes(StandardCharsets.UTF_8),
         SPAN_ID.longValue(), TraceContext.TRACE_ENABLED);
     TraceContext output = ContextTransformer.transform(input);
     assertEquals(TRACE_ID, output.getTraceId());

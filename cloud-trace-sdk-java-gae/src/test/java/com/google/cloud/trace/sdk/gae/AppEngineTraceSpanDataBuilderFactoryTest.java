@@ -70,6 +70,7 @@ public class AppEngineTraceSpanDataBuilderFactoryTest {
     assertEquals(SPAN_ID, builder.getParentSpanId());
     assertEquals(TRACE_ID, builder.getTraceContext().getTraceId());
     assertEquals(EVERY_SPAN_ID, builder.getTraceContext().getSpanId());
+    assertEquals(TraceContext.TRACE_ENABLED, builder.getTraceContext().getOptions());
     assertEquals(SPAN_NAME, builder.getName());
   }
 
@@ -87,6 +88,7 @@ public class AppEngineTraceSpanDataBuilderFactoryTest {
     assertEquals(BigInteger.ZERO, builder.getParentSpanId());
     assertEquals(EVERY_TRACE_ID, builder.getTraceContext().getTraceId());
     assertEquals(EVERY_SPAN_ID, builder.getTraceContext().getSpanId());
+    assertEquals(TraceContext.TRACE_OPTIONS_NONE, builder.getTraceContext().getOptions());
     assertEquals(SPAN_NAME, builder.getName());
   }
 }

@@ -17,7 +17,7 @@ package com.google.cloud.trace.sdk.gae;
 import com.google.cloud.trace.sdk.TraceContext;
 
 import java.math.BigInteger;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Transforms between two forms of trace context:
@@ -26,12 +26,12 @@ import java.nio.charset.Charset;
  */
 public final class ContextTransformer {
   public static CloudTraceContext transform(TraceContext context) {
-    return new CloudTraceContext(context.getTraceId().getBytes(Charset.forName("UTF-8")),
+    return new CloudTraceContext(context.getTraceId().getBytes(StandardCharsets.UTF_8),
         context.getSpanId().longValue(), context.getOptions());
   }
 
   public static TraceContext transform(CloudTraceContext context) {
-    return new TraceContext(new String(context.getTraceId(), Charset.forName("UTF-8")),
+    return new TraceContext(new String(context.getTraceId(), StandardCharsets.UTF_8),
         BigInteger.valueOf(context.getSpanId()), context.getTraceMask());
   }
 }
