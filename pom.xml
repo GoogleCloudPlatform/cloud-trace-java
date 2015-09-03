@@ -13,6 +13,7 @@
     <module>cloud-trace-sdk-java-core</module>
     <module>cloud-trace-sdk-java-servlet</module>
     <module>cloud-trace-sdk-java-gae</module>
+    <module>cloud-trace-sdk-java-samples/gae/hello-trace</module>
   </modules>
 
   <build>

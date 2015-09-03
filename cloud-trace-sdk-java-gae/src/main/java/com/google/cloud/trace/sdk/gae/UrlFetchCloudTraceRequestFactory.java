@@ -18,20 +18,19 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.GenericUrl;
+import com.google.appengine.api.appidentity.AppIdentityService;
+import com.google.appengine.api.appidentity.AppIdentityServiceFactory;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-import com.google.cloud.trace.sdk.CanInitFromProperties;
 import com.google.cloud.trace.sdk.CloudTraceException;
 import com.google.cloud.trace.sdk.CloudTraceReader;
 import com.google.cloud.trace.sdk.CloudTraceRequestFactory;
 import com.google.cloud.trace.sdk.CloudTraceResponse;
 import com.google.cloud.trace.sdk.CloudTraceWriter;
-import com.google.cloud.trace.sdk.CredentialProvider;
 
 /**
  * Implementation of {@link CloudTraceRequestFactory} that understands App Engine. Unfortunately, we
@@ -42,41 +41,20 @@ public class UrlFetchCloudTraceRequestFactory implements CloudTraceRequestFactor
 
   private static final Logger logger = Logger.getLogger(UrlFetchCloudTraceRequestFactory.class.getName());
 
-  /**
-   * Reflectively instantiates and initializes a class using a Properties file.
-   */
-  private static Object createFromProperties(String className, Properties props) {
-    Object obj = null;
-    try {
-      obj = Class.forName(className).newInstance();
-      if (obj != null && obj instanceof CanInitFromProperties) {
-        ((CanInitFromProperties) obj).initFromProperties(props);
-      }
-    } catch (InstantiationException | IllegalAccessException | ClassNotFoundException
-        | CloudTraceException e) {
-    }
-    return obj;
-  }
-
-  private CredentialProvider credentialProvider;
-
   @Override
   public void initFromProperties(Properties props) throws CloudTraceException {
-    String credentialProviderClassName =
-        props.getProperty(getClass().getName() + ".credentialProvider");
-    if (credentialProviderClassName != null && !credentialProviderClassName.isEmpty()) {
-      this.credentialProvider =
-          (CredentialProvider) createFromProperties(credentialProviderClassName, props);
-    }
   }
 
   @Override
   public CloudTraceResponse executeGet(GenericUrl url) throws CloudTraceException {
-    Credential credential = credentialProvider.getCredential(CloudTraceReader.SCOPES);
+    // TODO(liqian): Don't refresh the token until it expires.
+    AppIdentityService appIdentity = AppIdentityServiceFactory.getAppIdentityService();
+    AppIdentityService.GetAccessTokenResult accessToken =
+        appIdentity.getAccessToken(CloudTraceReader.SCOPES);
     String urlStr = url.toURL().toString();
     logger.info("Getting trace from: " + urlStr);
     HTTPRequest request = new HTTPRequest(url.toURL());
-    request.addHeader(new HTTPHeader("Authorization", "Bearer " + credential.getAccessToken()));
+    request.addHeader(new HTTPHeader("Authorization", "Bearer " + accessToken.getAccessToken()));
     try {
       HTTPResponse response = URLFetchServiceFactory.getURLFetchService().fetch(request);
       String content = "";
@@ -92,12 +70,14 @@ public class UrlFetchCloudTraceRequestFactory implements CloudTraceRequestFactor
   @Override
   public CloudTraceResponse executePatch(GenericUrl url, String requestBody)
       throws CloudTraceException {
-    Credential credential = credentialProvider.getCredential(CloudTraceWriter.SCOPES);
+    AppIdentityService appIdentity = AppIdentityServiceFactory.getAppIdentityService();
+    AppIdentityService.GetAccessTokenResult accessToken =
+        appIdentity.getAccessToken(CloudTraceWriter.SCOPES);
     String urlStr = url.toURL().toString();
     logger.info("Writing trace to: " + urlStr);
     HTTPRequest request = new HTTPRequest(url.toURL(), HTTPMethod.PATCH);
     request.addHeader(new HTTPHeader("Content-Type", "application/json"));
-    request.addHeader(new HTTPHeader("Authorization", "Bearer " + credential.getAccessToken()));
+    request.addHeader(new HTTPHeader("Authorization", "Bearer " + accessToken.getAccessToken()));
     request.setPayload(requestBody.getBytes());
     HTTPResponse response = null;
     try {
@@ -109,13 +89,5 @@ public class UrlFetchCloudTraceRequestFactory implements CloudTraceRequestFactor
       throw new CloudTraceException("Failed to write span, status = " + response.getResponseCode());
     }
     return new CloudTraceResponse("", response.getResponseCode());
-  }
-
-  public CredentialProvider getCredentialProvider() {
-    return this.credentialProvider;
-  }
-
-  public void setCredentialProvider(CredentialProvider credentialProvider) {
-    this.credentialProvider = credentialProvider;
   }
 }

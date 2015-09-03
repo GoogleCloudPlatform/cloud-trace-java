@@ -32,6 +32,10 @@ public class AppEngineCurrentTraceContext {
 
   @Nullable
   public TraceContext get() {
+    CloudTraceContext context = CloudTrace.getCurrentContext(env);
+    if (context == null) {
+      return null;
+    }
     return ContextTransformer.transform(CloudTrace.getCurrentContext(env));
   }
 
