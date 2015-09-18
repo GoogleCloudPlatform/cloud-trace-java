@@ -52,6 +52,25 @@ public class TraceSpanDataTest {
   }
   
   @Test
+  public void testPresetStartEndTimes() {
+    builder = new DefaultTraceSpanDataBuilder(TRACE_ID, TRACE_NAME) {
+      @Override
+      public long getStartTimeMillis() {
+        return 10;
+      }
+      
+      @Override
+      public long getEndTimeMillis() {
+        return 20;
+      }
+    };
+    TraceSpanData span = new TraceSpanData(builder);
+
+    assertEquals(10, span.getStartTimeMillis());
+    assertEquals(20, span.getEndTimeMillis());
+  }
+  
+  @Test
   public void testCreateIncludingLabel() {
     TraceSpanDataBuilder builder = new DefaultTraceSpanDataBuilder(TRACE_ID, TRACE_NAME) {
       @Override

@@ -55,6 +55,8 @@ public class DefaultTraceSpanDataBuilderTest {
     assertEquals(EVERY_TRACE_ID, builder.getTraceContext().getTraceId());
     assertEquals(EVERY_SPAN_ID, builder.getTraceContext().getSpanId());
     assertEquals(TraceContext.TRACE_ENABLED, builder.getTraceContext().getOptions());
+	assertEquals(0, builder.getStartTimeMillis());
+	assertEquals(0, builder.getEndTimeMillis());
   }
 
   @Test
@@ -64,6 +66,8 @@ public class DefaultTraceSpanDataBuilderTest {
     assertEquals("zzz", builder.getTraceContext().getTraceId());
     assertEquals(EVERY_SPAN_ID, builder.getTraceContext().getSpanId());
     assertEquals(TraceContext.TRACE_ENABLED, builder.getTraceContext().getOptions());
+	assertEquals(0, builder.getStartTimeMillis());
+	assertEquals(0, builder.getEndTimeMillis());
   }
 
   @Test

@@ -29,6 +29,10 @@ public interface TraceSpanDataBuilder {
 
   Map<String, TraceSpanLabel> getLabelMap();
   
+  long getStartTimeMillis();
+  
+  long getEndTimeMillis();
+  
   /**
    * Creates a new builder whose resulting trace span(s) will be children
    * of the span(s) built by this one.

@@ -31,6 +31,16 @@ public abstract class AbstractTraceSpanDataBuilder implements TraceSpanDataBuild
   }
 
   @Override
+  public long getStartTimeMillis() {
+	return 0;
+  }
+  
+  @Override
+  public long getEndTimeMillis() {
+	return 0;
+  }
+  
+  @Override
   public TraceSpanDataBuilder createChild(String childSpanName) {
     TraceContext parentContext = getTraceContext();
     TraceContext childContext = new TraceContext(

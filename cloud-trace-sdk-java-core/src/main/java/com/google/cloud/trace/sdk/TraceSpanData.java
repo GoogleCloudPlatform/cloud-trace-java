@@ -46,6 +46,13 @@ public class TraceSpanData {
     this.context = builder.getTraceContext();
     this.name = builder.getName();
     this.parentSpanId = builder.getParentSpanId();
+    
+    // The builder may supply start/end value if (for example) something other
+    // than this class is responsible for the timings. One example is if there
+    // is another tracing framework leveraging Cloud Trace for storage/analysis.
+    this.startTimeMillis = builder.getStartTimeMillis();
+    this.endTimeMillis = builder.getEndTimeMillis();
+    
     if (builder.getLabelMap() != null) {
       this.labelMap.putAll(builder.getLabelMap());
     }

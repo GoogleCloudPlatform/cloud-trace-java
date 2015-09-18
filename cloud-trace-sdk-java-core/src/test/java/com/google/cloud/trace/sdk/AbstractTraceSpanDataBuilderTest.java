@@ -54,6 +54,12 @@ public class AbstractTraceSpanDataBuilderTest {
   }
   
   @Test
+  public void testDefaults() {
+	assertEquals(0, builder.getStartTimeMillis());
+	assertEquals(0, builder.getEndTimeMillis());
+  }
+  
+  @Test
   public void testCreateChild() {
     TraceSpanDataBuilder childBuilder = builder.createChild(CHILD_SPAN_NAME);
     assertEquals(CHILD_SPAN_NAME, childBuilder.getName());
