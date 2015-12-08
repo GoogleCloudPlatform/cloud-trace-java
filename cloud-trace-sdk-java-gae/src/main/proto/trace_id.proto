@@ -1,0 +1,7 @@
+syntax = "proto2";
+package com.google.cloud.trace.sdk.gae;
+
+message TraceIdProto {
+  optional fixed64 hi = 1;
+  optional fixed64 lo = 2;
+}

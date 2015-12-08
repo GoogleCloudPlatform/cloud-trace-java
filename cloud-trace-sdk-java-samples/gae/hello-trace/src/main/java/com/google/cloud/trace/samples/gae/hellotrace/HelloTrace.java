@@ -14,10 +14,14 @@
 
 package com.google.cloud.trace.samples.gae.hellotrace;
 
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.cloud.trace.sdk.CloudTraceException;
-import com.google.cloud.trace.sdk.DefaultTraceSpanDataBuilder;
+import com.google.cloud.trace.sdk.ThreadTraceContextTraceSpanDataListener;
 import com.google.cloud.trace.sdk.TraceSpanData;
-import com.google.cloud.trace.sdk.gae.UrlFetchCloudTraceRequestFactory;
+import com.google.cloud.trace.sdk.gae.AppEngineTraceSpanDataBuilderFactory;
+import com.google.cloud.trace.sdk.gae.AppEngineTraceSpanDataListener;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -36,24 +40,33 @@ public class HelloTrace extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse res)
       throws IOException {
-    // Creates a span "/custom" of 500ms.
-    // TODO(liqian): Change to AppEngineTraceSpanDataBuilderFactory.getBuilder("/custom").
-    TraceSpanData span = new TraceSpanData(new DefaultTraceSpanDataBuilder("/custom"));
+    // Creates a custom span "/WhoAmI".
+    TraceSpanData.setListener(new AppEngineTraceSpanDataListener(
+        new ThreadTraceContextTraceSpanDataListener()));
+    TraceSpanData span =
+        new TraceSpanData(AppEngineTraceSpanDataBuilderFactory.getBuilder("/WhoAmI"));
     span.start();
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException e) {
+
+    UserService userService = UserServiceFactory.getUserService();
+    String who = "Trace";
+    if (userService.isUserLoggedIn()) {
+      User user = userService.getCurrentUser();
+      who = user.getNickname();
     }
+    String loginURL = userService.createLoginURL("/");
+    String logoutURL = userService.createLogoutURL("/");
     span.end();
 
     res.setContentType("text/html");
     res.getWriter().println("<html>");
     res.getWriter().println(" <head>");
-    res.getWriter().println("  <title>Hello Trace!</title>");
+    res.getWriter().println("  <title>Hello Trace</title>");
     res.getWriter().println(" </head>");
     res.getWriter().println(" <body>");
-    res.getWriter().println("  <h1>My first custom span: </h1>");
+    res.getWriter().println("  <h1>Hello " + who + "! Your first custom span: </h1>");
     res.getWriter().println("  <p>" + span + "</p>");
+    res.getWriter().println("  <p><a href=\"" + loginURL + "\">login</a></p>");
+    res.getWriter().println("  <p><a href=\"" + logoutURL + "\">logout</a></p>");
     res.getWriter().println(" </body>");
     res.getWriter().println("</html>");
 

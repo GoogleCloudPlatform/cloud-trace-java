@@ -15,6 +15,7 @@
 package com.google.cloud.trace.sdk.gae;
 
 import com.google.apphosting.api.ApiProxy;
+import com.google.apphosting.api.CloudTrace;
 import com.google.cloud.trace.sdk.TraceContext;
 
 import javax.annotation.Nullable;
@@ -23,30 +24,22 @@ import javax.annotation.Nullable;
  * A wrapper class over CloudTrace to get and set current trace context.
  */
 public class AppEngineCurrentTraceContext {
-  private final ApiProxy.Environment env;
   private static AppEngineCurrentTraceContext instance = new AppEngineCurrentTraceContext();
-
-  public AppEngineCurrentTraceContext() {
-    env = ApiProxy.getCurrentEnvironment();
-  }
 
   @Nullable
   public TraceContext get() {
-    CloudTraceContext context = CloudTrace.getCurrentContext(env);
-    if (context == null) {
-      return null;
-    }
-    return ContextTransformer.transform(CloudTrace.getCurrentContext(env));
+    return ContextTransformer.transform(
+        CloudTrace.getCurrentContext(ApiProxy.getCurrentEnvironment()));
   }
 
   public void set(@Nullable TraceContext context) {
-    CloudTrace.setCurrentContext(env, ContextTransformer.transform(context));
+    CloudTrace.setCurrentContext(
+        ApiProxy.getCurrentEnvironment(), ContextTransformer.transform(context));
   }
 
   public static void setInstance(AppEngineCurrentTraceContext current) {
     instance = current;
   }
-
   public static AppEngineCurrentTraceContext getInstance() {
     return instance;
   }

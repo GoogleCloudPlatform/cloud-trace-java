@@ -17,7 +17,6 @@ package com.google.cloud.trace.sdk.gae;
 import static org.junit.Assert.*;
 
 import com.google.cloud.trace.sdk.AbstractTraceSpanDataBuilder;
-import com.google.cloud.trace.sdk.DefaultTraceSpanDataBuilder;
 import com.google.cloud.trace.sdk.SpanIdGenerator;
 import com.google.cloud.trace.sdk.TraceContext;
 import com.google.cloud.trace.sdk.TraceIdGenerator;

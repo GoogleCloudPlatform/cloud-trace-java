@@ -14,10 +14,16 @@
 
 package com.google.cloud.trace.sdk.gae;
 
+import com.google.apphosting.api.CloudTraceContext;
 import com.google.cloud.trace.sdk.TraceContext;
+import com.google.cloud.trace.sdk.gae.TraceId.TraceIdProto;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.annotation.Nullable;
 
 /**
  * Transforms between two forms of trace context:
@@ -25,14 +31,50 @@ import java.nio.charset.StandardCharsets;
  *     com.google.cloud.trace.sdk.TraceContext
  */
 public final class ContextTransformer {
-  public static CloudTraceContext transform(TraceContext context) {
-    return new CloudTraceContext(context.getTraceId().getBytes(StandardCharsets.UTF_8),
+  private static final Logger logger = Logger.getLogger(ContextTransformer.class.getName());
+  private static final int HEX = 16;
+
+  @Nullable
+  public static TraceContext transform(@Nullable CloudTraceContext context) {
+    if (context == null) {
+      return null;
+    }
+    String traceId = traceIdBytesToString(context.getTraceId());
+    if (traceId == null) {
+      return null;
+    }
+
+    // Using this instead of BigInteger.valueOf(long) to ensure positive span IDs.
+    // Cloud Trace API doesn't accept negative span IDs.
+    BigInteger spanId = new BigInteger(Long.toHexString(context.getSpanId()), HEX);
+    TraceContext result = new TraceContext(traceId, spanId, context.getTraceMask());
+    return result;
+  }
+
+  @Nullable
+  public static CloudTraceContext transform(@Nullable TraceContext context) {
+    if (context == null) {
+      return null;
+    }
+    return new CloudTraceContext(traceIdStringToBytes(context.getTraceId()),
         context.getSpanId().longValue(), context.getOptions());
   }
 
-  public static TraceContext transform(CloudTraceContext context) {
-    return new TraceContext(new String(context.getTraceId(), StandardCharsets.UTF_8),
-        BigInteger.valueOf(context.getSpanId()), context.getTraceMask());
+  @Nullable
+  private static String traceIdBytesToString(byte[] traceId) {
+    try {
+      TraceIdProto proto = TraceIdProto.parseFrom(traceId);
+      return String.format("%016x%016x", proto.getHi(), proto.getLo());
+    } catch (InvalidProtocolBufferException e) {
+      logger.log(Level.SEVERE, "Failed to parse trace id: ", traceId);
+      return null;
+    }
+  }
+
+  private static byte[] traceIdStringToBytes(String traceId) {
+    TraceIdProto.Builder builder = TraceIdProto.newBuilder();
+    Long hi = new BigInteger(traceId.substring(0, 16), 16).longValue();
+    Long lo = new BigInteger(traceId.substring(16, 32), 16).longValue();
+    return builder.setHi(hi).setLo(lo).build().toByteArray();
   }
 }
-
