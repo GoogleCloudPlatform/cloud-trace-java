@@ -98,13 +98,13 @@ The main contribution of the Servlet submodule is a servlet Filter, TraceFilter,
 </code></pre>
 
 #### Google App Engine
-For Google App Engine, we trace requests and their outgoing API calls automatically. You can view Google App Engine traces [here][http://console.developers.google.com/traces].
+For Google App Engine, we trace requests and their outgoing API calls automatically. You can view Google App Engine traces in [Google Developers Console](http://console.developers.google.com/traces).
 
 Users can add additional spans to Google App Egnine traces by using this SDK.
-We provide a sample app [hello-trace][https://github.com/GoogleCloudPlatform/gcloud-trace-java/tree/master/cloud-trace-sdk-java-samples/gae/hello-trace] that shows how to add custom spans to Google App Engine traces.
+We provide a sample app [hello-trace](https://github.com/GoogleCloudPlatform/gcloud-trace-java/tree/master/cloud-trace-sdk-java-samples/gae/hello-trace)
+that shows how to add custom spans to Google App Engine traces.
 
-<pre><code>
-&lt;dependency&gt;
+<pre><code>&lt;dependency&gt;
 &nbsp;&nbsp;&lt;groupId&gt;com.google.cloud.trace&lt;/groupId&gt;
 &nbsp;&nbsp;&lt;artifactId&gt;google-cloud-trace-sdk-gae&lt;/artifactId&gt;
 &nbsp;&nbsp;&lt;version&gt;0.1-SNAPSHOT&lt;/version&gt;
