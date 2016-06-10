@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.google.cloud.trace</groupId>
+    <artifactId>sdk</artifactId>
+    <version>0.9-SNAPSHOT</version>
+  </parent>
+  <artifactId>guice</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Google Cloud Trace Java SDK Guice Support Libraries</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <modules>
+    <module>annotation</module>
+    <module>api</module>
+    <module>core</module>
+    <module>google-auth</module>
+    <module>grpc-sink</module>
+    <module>java-timestamp</module>
+    <module>servlet</module>
+    <module>single-thread-scheduler</module>
+    <module>v1</module>
+  </modules>
+</project>
