@@ -1,0 +1,50 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+  <filter>
+    <filter-name>guiceFilter</filter-name>
+    <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>guiceFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <listener>
+    <listener-class>com.google.cloud.trace.samples.guice.servlet.GuiceTraceServletContextListener</listener-class>
+  </listener>
+
+  <env-entry>
+    <description>The name of the file containing the client secrets for the API consumer project.</description>
+    <env-entry-name>clientSecretsFile</env-entry-name>
+    <env-entry-value><!-- ENTER FILENAME --></env-entry-value>
+    <env-entry-type>java.lang.String</env-entry-type>
+  </env-entry>
+
+  <env-entry>
+    <description>The name of the Google Cloud Platform project to trace.</description>
+    <env-entry-name>projectId</env-entry-name>
+    <env-entry-value><!-- ENTER PROJECT ID --></env-entry-value>
+    <env-entry-type>java.lang.String</env-entry-type>
+  </env-entry>
+
+  <env-entry>
+    <description>The size, in bytes, of the trace sink buffer.</description>
+    <env-entry-name>sinkBufferSize</env-entry-name>
+    <env-entry-value>65536</env-entry-value>
+    <env-entry-type>java.lang.Integer</env-entry-type>
+  </env-entry>
+
+  <env-entry>
+    <description>The number of seconds to schedule a flush of traces.</description>
+    <env-entry-name>sinkScheduledDelay</env-entry-name>
+    <env-entry-value>10</env-entry-value>
+    <env-entry-type>java.lang.Integer</env-entry-type>
+  </env-entry>
+
+  <env-entry>
+    <description>The ratio of requests to trace, from 0.0 to 1.0.</description>
+    <env-entry-name>naiveSamplingRate</env-entry-name>
+    <env-entry-value>1.0</env-entry-value>
+    <env-entry-type>java.lang.Double</env-entry-type>
+  </env-entry>
+</web-app>
