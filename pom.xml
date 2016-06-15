@@ -25,6 +25,5 @@
     <module>servlet</module>
     <module>v1</module>
     <module>samples</module>
-    <module>googleapis</module>
   </modules>
 </project>

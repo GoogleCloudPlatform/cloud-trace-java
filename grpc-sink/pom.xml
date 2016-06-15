@@ -25,9 +25,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>googleapis</artifactId>
-      <version>${project.version}</version>
+      <groupId>com.google.api.grpc</groupId>
+      <artifactId>grpc-cloudtrace-v1</artifactId>
+      <version>0.0.2</version>
     </dependency>
     <dependency>
       <groupId>com.google.auth</groupId>
