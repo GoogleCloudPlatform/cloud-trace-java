@@ -24,6 +24,5 @@
     <module>java-timestamp</module>
     <module>servlet</module>
     <module>v1</module>
-    <module>samples</module>
   </modules>
 </project>
