@@ -6,8 +6,8 @@ import com.google.cloud.trace.annotation.Name;
 import com.google.cloud.trace.annotation.Option;
 import com.google.cloud.trace.annotation.Span;
 import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.SpanKind;
 import com.google.cloud.trace.util.StackTrace;
+import com.google.cloud.trace.util.StartSpanOptions;
 import com.google.cloud.trace.util.ThrowableStackTraceHelper;
 import com.google.cloud.trace.util.TraceOptions;
 import com.google.common.base.CaseFormat;
@@ -87,10 +87,10 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
       if (overrideStackTraceEnabled != null) {
         traceOptions = traceOptions.overrideStackTraceEnabled(overrideStackTraceEnabled);
       }
-      tracer.startSpan(SpanKind.UNSPECIFIED, methodName, traceOptions);
+      tracer.startSpan(methodName, new StartSpanOptions().setTraceOptions(traceOptions));
       stackTraceEnabled = traceOptions.getStackTraceEnabled();
     } else {
-      tracer.startSpan(SpanKind.UNSPECIFIED, methodName);
+      tracer.startSpan(methodName);
       stackTraceEnabled = tracer.getCurrentTraceContext().getTraceOptions()
           .getStackTraceEnabled();
     }
