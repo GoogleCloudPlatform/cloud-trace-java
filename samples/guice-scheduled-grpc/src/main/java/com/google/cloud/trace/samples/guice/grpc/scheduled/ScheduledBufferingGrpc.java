@@ -20,8 +20,8 @@ import com.google.cloud.trace.guice.v1.ScheduledBufferingTraceSinkModule;
 import com.google.cloud.trace.guice.v1.SinkBufferSizePropertiesModule;
 import com.google.cloud.trace.guice.v1.SinkScheduledDelayPropertiesModule;
 import com.google.cloud.trace.guice.v1.RawTracerV1Module;
-import com.google.cloud.trace.util.SpanKind;
 import com.google.cloud.trace.util.StackTrace;
+import com.google.cloud.trace.util.StartSpanOptions;
 import com.google.cloud.trace.util.ThrowableStackTraceHelper;
 import com.google.cloud.trace.util.TraceOptions;
 import com.google.cloud.trace.v1.sink.FlushableTraceSink;
@@ -53,8 +53,9 @@ public class ScheduledBufferingGrpc {
 
     ManagedTracer tracer = injector.getInstance(ManagedTracer.class);
 
-    tracer.startSpan(SpanKind.RPC_CLIENT, "my span 1", TraceOptions.forTraceEnabled());
-    tracer.startSpan(SpanKind.RPC_CLIENT, "my span 2");
+    tracer.startSpan("my span 1",
+        new StartSpanOptions().setTraceOptions(TraceOptions.forTraceEnabled()));
+    tracer.startSpan("my span 2");
 
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
     tracer.setStackTrace(stackTraceBuilder.build());
