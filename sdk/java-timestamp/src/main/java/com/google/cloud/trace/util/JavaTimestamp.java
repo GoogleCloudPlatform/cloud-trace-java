@@ -15,12 +15,23 @@
 package com.google.cloud.trace.util;
 
 import com.google.common.base.MoreObjects;
-
 import java.time.Instant;
 
+/**
+ * A timestamp represented by a Java {@link Instant}.
+ *
+ * @see Instant
+ * @see JavaTimestampFactory
+ * @see Timestamp
+ */
 public class JavaTimestamp implements Timestamp {
   private final Instant instant;
 
+  /**
+   * Creates a Java timestamp.
+   *
+   * @param instant the instant to be represented by this timestamp.
+   */
   public JavaTimestamp(Instant instant) {
     this.instant = instant;
   }

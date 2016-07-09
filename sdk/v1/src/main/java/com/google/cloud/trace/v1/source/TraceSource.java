@@ -25,7 +25,30 @@ import com.google.cloud.trace.util.TraceId;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.TraceSpan;
 
+/**
+ * A class that contains helper methods to convert trace events to Stackdriver Trace API v1 trace
+ * messages. Each method creates a new trace message with a single span that represents the trace
+ * event.
+ *
+ * @see Labels
+ * @see SpanKind
+ * @see StackTrace
+ * @see Timestamp
+ * @see Trace
+ * @see TraceContext
+ */
 public class TraceSource {
+  /**
+   * Converts a start span event into an API v1 trace message.
+   *
+   * @param projectId     a string that contains the Google Cloud Platform project identifier.
+   * @param context       a trace context that represents the event span.
+   * @param parentContext a trace context that represents the parent span of the event span.
+   * @param spanKind      the span kind of the event span.
+   * @param name          a string containing the name of the event span.
+   * @param timestamp     a timestamp that represents the start time of the event span.
+   * @return a trace message that represents the start span event.
+   */
   public Trace generateStartSpan(String projectId, TraceContext context,
       TraceContext parentContext, SpanKind spanKind, String name, Timestamp timestamp) {
     Trace.Builder traceBuilder = Trace.newBuilder()
@@ -46,6 +69,14 @@ public class TraceSource {
     return traceBuilder.build();
   }
 
+  /**
+   * Converts an end span event into an API v1 trace message.
+   *
+   * @param projectId a string that contains the Google Cloud Platform project identifier.
+   * @param context   a trace context that represents the event span.
+   * @param timestamp a timestamp that represents the end time of the event span.
+   * @return a trace message that represents the end span event.
+   */
   public Trace generateEndSpan(String projectId, TraceContext context, Timestamp timestamp) {
     Trace.Builder traceBuilder = Trace.newBuilder()
         .setProjectId(projectId)
@@ -58,6 +89,14 @@ public class TraceSource {
     return traceBuilder.build();
   }
 
+  /**
+   * Converts a span label annotation event into an API v1 trace message.
+   *
+   * @param projectId a string that contains the Google Cloud Platform project identifier.
+   * @param context   a trace context that represents the event span.
+   * @param labels    a labels containing the label annotations for the event span.
+   * @return a trace message that represents the span label annotation event.
+   */
   public Trace generateAnnotateSpan(String projectId, TraceContext context, Labels labels) {
     Trace.Builder traceBuilder = Trace.newBuilder()
         .setProjectId(projectId)
@@ -73,6 +112,14 @@ public class TraceSource {
     return traceBuilder.build();
   }
 
+  /**
+   * Converts a stack trace annotation event into an API v1 trace message.
+   *
+   * @param projectId  a string that contains the Google Cloud Platform project identifier.
+   * @param context    a trace context that represents the event span.
+   * @param stackTrace a stack trace containing the stack trace annotations for the event span.
+   * @return a trace message that represents the stack trace annotation event.
+   */
   public Trace generateSetStackTrace(
       String projectId, TraceContext context, StackTrace stackTrace) {
     Trace.Builder traceBuilder = Trace.newBuilder()

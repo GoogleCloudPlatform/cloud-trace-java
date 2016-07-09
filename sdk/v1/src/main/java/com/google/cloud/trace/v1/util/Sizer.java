@@ -14,6 +14,17 @@
 
 package com.google.cloud.trace.v1.util;
 
+/**
+ * An interface for sizing elements.
+ *
+ * @param <T> the type of elements to be sized.
+ */
 public interface Sizer<T> {
+  /**
+   * Sizes an element.
+   *
+   * @param sizeable an element to be sized.
+   * @return the size of the element.
+   */
   int size(T sizeable);
 }

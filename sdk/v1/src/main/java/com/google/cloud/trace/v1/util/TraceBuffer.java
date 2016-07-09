@@ -18,17 +18,32 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.TraceSpan;
-
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A class that buffers trace messages. Trace messages added to this buffer are combined with
+ * existing trace messages when they contain the same trace identifiers, by combining the spans of
+ * the matching trace messages.
+ *
+ * @see Iterable
+ * @see Trace
+ */
 public class TraceBuffer {
   private final HashMap<TraceKey, SpanBuffer> traceMap;
 
+  /**
+   * Creates a trace buffer.
+   */
   public TraceBuffer() {
     this.traceMap = new HashMap<TraceKey, SpanBuffer>();
   }
 
+  /**
+   * Adds a trace message to this trace buffer.
+   *
+   * @param trace a trace message to add this trace buffer.
+   */
   public void put(Trace trace) {
     TraceKey traceKey = new TraceKey(trace.getProjectId(), trace.getTraceId());
     SpanBuffer spans = traceMap.get(traceKey);
@@ -41,6 +56,11 @@ public class TraceBuffer {
     }
   }
 
+  /**
+   * Returns all of the trace messages in this trace buffer.
+   *
+   * @return an iterable containing the trace messages in this trace buffer.
+   */
   public Iterable<Trace> getTraces() {
     return Iterables.transform(traceMap.entrySet(),
         new Function<Map.Entry<TraceKey, SpanBuffer>, Trace>(){
@@ -57,6 +77,9 @@ public class TraceBuffer {
     });
   }
 
+  /**
+   * Removes all of the trace messages from this trace buffer.
+   */
   public void clear() {
     traceMap.clear();
   }

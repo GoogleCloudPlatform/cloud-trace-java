@@ -15,16 +15,30 @@
 package com.google.cloud.trace.v1.util;
 
 import com.google.devtools.cloudtrace.v1.TraceSpan;
-
 import java.util.HashMap;
 
+/**
+ * A buffer for trace span messages that combines messages for the same span.
+ *
+ * @see Iterable
+ * @see TraceSpan
+ * @see TraceSpan#Builder
+ */
 public class SpanBuffer {
   private final HashMap<Long, TraceSpan.Builder> spanMap;
 
+  /**
+   * Creates a span buffer.
+   */
   public SpanBuffer() {
     this.spanMap = new HashMap<Long, TraceSpan.Builder>();
   }
 
+  /**
+   * Adds a trace span message to this span buffer.
+   *
+   * @param span the trace span message to add to this buffer.
+   */
   public void put(TraceSpan span) {
     long spanId = span.getSpanId();
     TraceSpan.Builder builder = spanMap.get(spanId);
@@ -35,6 +49,12 @@ public class SpanBuffer {
     }
   }
 
+  /**
+   * Gets builders for all of the trace span messages contained in this span buffer.
+   *
+   * @return an iterable containing builders for all of the trace span messages contained in this
+   * span buffer.
+   */
   public Iterable<TraceSpan.Builder> getSpans() {
     return spanMap.values();
   }

@@ -20,19 +20,33 @@ import com.google.devtools.cloudtrace.v1.PatchTracesRequest;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 import com.google.devtools.cloudtrace.v1.TraceServiceGrpc;
-
 import io.grpc.auth.ClientAuthInterceptor;
 import io.grpc.Channel;
 import io.grpc.ClientInterceptors;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-
 import java.util.concurrent.Executor;
 
+/**
+ * A trace sink that sends trace messages to the Stackdriver Trace API trace via gRPC.
+ *
+ * @see <a href="http://www.grpc.io">gRPC</a>
+ * @see Credentials
+ * @see Executor
+ * @see Trace
+ * @see TraceSink
+ */
 public class GrpcTraceSink implements TraceSink {
   private final ManagedChannel managedChannel;
   private final TraceServiceGrpc.TraceServiceBlockingStub traceService;
 
+  /**
+   * Creates a trace sink that sends trace messages to the Stackdriver Trace API via gRPC.
+   *
+   * @param apiHost     a string containing the API host name.
+   * @param credentials a credentials used to authenticate API calls.
+   * @param executor    an executor used for managing the credentials.
+   */
   public GrpcTraceSink(String apiHost, Credentials credentials, Executor executor) {
     this.managedChannel = ManagedChannelBuilder.forTarget(apiHost).build();
     Channel channel = ClientInterceptors.intercept(this.managedChannel,
@@ -48,6 +62,9 @@ public class GrpcTraceSink implements TraceSink {
     traceService.patchTraces(requestBuilder.build());
   }
 
+  /**
+   * Closes the resources held by this trace sink.
+   */
   public void close() {
     managedChannel.shutdown();
   }

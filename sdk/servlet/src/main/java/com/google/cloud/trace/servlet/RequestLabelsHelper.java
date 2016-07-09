@@ -15,16 +15,36 @@
 package com.google.cloud.trace.servlet;
 
 import com.google.cloud.trace.util.Labels;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Utilities for generating span data related to HTTP servlets.
+ *
+ * @see HttpServletRequest
+ * @see HttpServletResponse
+ * @see Labels
+ * @see Labels#Builder
+ */
 public class RequestLabelsHelper {
+  /**
+   * Returns a span name generated from the given HTTP servlet request.
+   *
+   * @param request the http servlet request used to generate the span name.
+   * @return a string that contains the span name.
+   */
   public static String overrideName(HttpServletRequest request) {
     String name = request.getContextPath() + request.getServletPath() + request.getPathInfo();
     return name;
   }
 
+  /**
+   * Adds span label annotations based on the given HTTP servlet request to the given labels
+   * builder.
+   *
+   * @param request       the http servlet request used to generate the span label annotations.
+   * @param labelsBuilder the labels builder to add span label annotations to.
+   */
   public static void addRequestLabels(HttpServletRequest request, Labels.Builder labelsBuilder) {
     labelsBuilder.add("trace.cloud.google.com/http/method", request.getMethod());
     labelsBuilder.add("trace.cloud.google.com/http/url", request.getRequestURL().toString());
@@ -38,6 +58,13 @@ public class RequestLabelsHelper {
     }
   }
 
+  /**
+   * Adds span label annotations based on the given HTTP servlet response to the given labels
+   * builder.
+   *
+   * @param response      the http servlet response used to generate the span label annotations.
+   * @param labelsBuilder the labels builder to add span label annotations to.
+   */
   public static void addResponseLabels(HttpServletResponse response, Labels.Builder labelsBuilder) {
     // Add "trace.cloud.google.com/http/status_code" to Integer.toString(response.getStatus()), if
     // GAE supports 3.0.

@@ -16,6 +16,13 @@ package com.google.cloud.trace.util;
 
 import java.time.Instant;
 
+/**
+ * A factory that creates Java timestamps.
+ *
+ * @see JavaTimestamp
+ * @see Timestamp
+ * @see TimestampFactory
+ */
 public class JavaTimestampFactory implements TimestampFactory {
   @Override
   public Timestamp now() {

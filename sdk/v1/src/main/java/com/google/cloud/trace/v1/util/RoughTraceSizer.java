@@ -16,10 +16,21 @@ package com.google.cloud.trace.v1.util;
 
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.TraceSpan;
-
 import java.util.Map;
 
+/**
+ * A class for sizing traces.
+ *
+ * @see Sizer
+ * @see Trace
+ */
 public class RoughTraceSizer implements Sizer<Trace> {
+  /**
+   * Sizes a trace.
+   *
+   * @param trace a trace to be sized.
+   * @return the size of the trace.
+   */
   @Override
   public int size(Trace trace) {
     int size = 0;

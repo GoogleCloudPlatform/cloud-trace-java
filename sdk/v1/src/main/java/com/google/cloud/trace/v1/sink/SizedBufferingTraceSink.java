@@ -18,6 +18,16 @@ import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
 import com.google.devtools.cloudtrace.v1.Trace;
 
+/**
+ * A flushable trace sink that auto-flushes when its buffered trace messages exceed its buffer size.
+ * This sink uses a trace sizer to estimate the size of its buffered trace messages. The operations
+ * on this trace sink are thread-safe.
+ *
+ * @see FlushableTraceSink
+ * @see Sizer
+ * @see Trace
+ * @see TraceSink
+ */
 public class SizedBufferingTraceSink implements FlushableTraceSink {
   private final TraceSink traceSink;
   private final Sizer<Trace> traceSizer;
@@ -28,6 +38,13 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
 
   private final Object monitor = new Object();
 
+  /**
+   * Creates a buffering trace sink.
+   *
+   * @param traceSink  a trace sink that serves as this trace sink's delegate.
+   * @param traceSizer a sizer used to estimate the size of trace messages.
+   * @param bufferSize the size of this trace sink's trace message buffer.
+   */
   public SizedBufferingTraceSink(TraceSink traceSink, Sizer<Trace> traceSizer, int bufferSize) {
     this.traceSink = traceSink;
     this.traceSizer = traceSizer;
