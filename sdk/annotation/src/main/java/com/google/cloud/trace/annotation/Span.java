@@ -26,19 +26,6 @@ import java.lang.annotation.Target;
  * <p>The use of this and the associated annotations requires the use of an appropriate support
  * library that processes them.
  *
- * @param trace       an option that indicates whether to generate a span for the annotated method.
- * @param stackTrace  an option that indicates whether to add a stack trace label to the span.
- * @param callLabels  an option used to indicate whether to add call labels to the span. Call labels
- *                    identify the method, class, and package of the method.
- * @param labels      a string array containing the names of labelers used to label this span. The
- *                    availability of functionality of labelers is determined by the annotation
- *                    processor used to processor this and associated annotations.
- * @param entry       a boolean that indicates whether the annotation method serves as the entry
- *                    point of the application. Additional labels will be generated for the entry
- *                    span.
- * @param labelPrefix a string used as the label key prefix for this method's parameters.
- * @param labelAll    a boolean that indicates whether to add labels for all of this method's
- *                    parameters.
  * @see Label
  * @see Name
  * @see Option
@@ -47,11 +34,56 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Span {
+  /**
+   * Indicates whether to generate a span for the annotated method.
+   *
+   * @return whether to generate a span for the annotated method.
+   */
   Option trace() default Option.DEFAULT;
+
+  /**
+   * Indicates whether to add a stack trace label to the annotated method's span.
+   *
+   * @return whether to add a stack trace label to the annotated method's span.
+   */
   Option stackTrace() default Option.DEFAULT;
+
+  /**
+   * Indicates whether to add call labels to the annotated method's span. Call labels identify the
+   * method, class, and package names of the method.
+   *
+   * @return whether to add call labels to the annotated method's span.
+   */
   Option callLabels() default Option.DEFAULT;
+
+  /**
+   * Returns the names of labelers used to label the annotated method's span. The availability of
+   * functionality of labelers is determined by the annotation processor used to process this and
+   * associated annotations.
+   *
+   * @return the names of labelers used to label the annotated method's span.
+   */
   String[] labels() default {};
+
+  /**
+   * Indicates whether the annotated method serves as the entry point of the application. Additional
+   * labels will be generated for the entry span.
+   *
+   * @return whether the annotated method serves as the entry point of the application.
+   */
   boolean entry() default false;
+
+  /**
+   * Returns the label key prefix for the annotated method's parameters.
+   *
+   * @return the label key prefix for the annotated method's parameters.
+   */
   String labelPrefix() default "/";
+
+  /**
+   * Determines whether to add labels for all of the annotated method's parameters.
+   *
+   * @return whether to add labels for all of the annotated method's parameters.
+   */
   boolean labelAll() default false;
 }

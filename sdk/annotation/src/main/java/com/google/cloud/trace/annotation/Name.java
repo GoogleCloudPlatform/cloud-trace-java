@@ -29,12 +29,16 @@ import java.lang.annotation.Target;
  * <p>The use of this and the associated annotations requires the use of an appropriate support
  * library that processes them.
  *
- * @param value a string used for the name of a span or span label.
  * @see Label
  * @see Span
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface Name {
+  /**
+   * Returns the name for a span or span label.
+   *
+   * @return the name for a span or span label.
+   */
   String value();
 }
