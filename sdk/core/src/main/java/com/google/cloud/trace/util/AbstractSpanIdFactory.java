@@ -14,10 +14,23 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * An abstract factory for generating span identifiers. This factory knows about the invalid span
+ * identifier value.
+ *
+ * @see IdFactory
+ * @see RandomSpanIdFactory
+ * @see SpanId
+ */
 public abstract class AbstractSpanIdFactory implements IdFactory<SpanId> {
   @Override
   public abstract SpanId nextId();
 
+  /**
+   * Returns the invalid span identifier value.
+   *
+   * @return the invalid span identifier value.
+   */
   @Override
   public SpanId invalid() {
     return new SpanId(0);

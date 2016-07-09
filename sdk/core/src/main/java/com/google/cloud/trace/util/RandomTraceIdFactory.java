@@ -17,23 +17,52 @@ package com.google.cloud.trace.util;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+/**
+ * An factory for generating trace identifiers. This factory uses a {@link SecureRandom} to produce
+ * trace identifiers.
+ *
+ * @see AbstractTraceIdFactory
+ * @see IdFactory
+ * @see SecureRandom
+ * @see TraceId
+ */
 public class RandomTraceIdFactory extends AbstractTraceIdFactory {
   private static final int TRACE_ID_BIT_LENGTH = 128;
 
   private final SecureRandom random;
 
+  /**
+   * Creates a new trace identifier factory. This constructor generates a {@code SecureRandom} using
+   * a default seed.
+   */
   public RandomTraceIdFactory() {
     this.random = new SecureRandom();
   }
 
+  /**
+   * Creates a new trace identifier factory. This constructor generates a {@code SecureRandom} using
+   * the given seed.
+   *
+   * @param seed a byte array used as the seed.
+   */
   public RandomTraceIdFactory(byte[] seed) {
     this.random = new SecureRandom(seed);
   }
 
+  /**
+   * Creates a new trace identifier factory.
+   *
+   * @param random a secure random used to generate trace identifiers.
+   */
   public RandomTraceIdFactory(SecureRandom random) {
     this.random = random;
   }
 
+  /**
+   * Generates a new trace identifier.
+   *
+   * @return the new trace identifier.
+   */
   @Override
   public TraceId nextId() {
     return new TraceId(new BigInteger(TRACE_ID_BIT_LENGTH, random));

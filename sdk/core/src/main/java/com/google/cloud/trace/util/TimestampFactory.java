@@ -14,6 +14,16 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * An interface for a factory that generates timestamps.
+ *
+ * @see Timestamp
+ */
 public interface TimestampFactory {
+  /**
+   * Returns a new timestamp that represents the instant this method was called.
+   *
+   * @return the new timestamp.
+   */
   Timestamp now();
 }

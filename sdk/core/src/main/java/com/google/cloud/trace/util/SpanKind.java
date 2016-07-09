@@ -14,6 +14,9 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * An enum whose values represent the kind of a span.
+ */
 public enum SpanKind {
   UNSPECIFIED,
   RPC_SERVER,

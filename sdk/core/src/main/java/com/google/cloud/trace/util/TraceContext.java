@@ -15,14 +15,29 @@
 package com.google.cloud.trace.util;
 
 import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 
+/**
+ * A class that represents a trace context. A trace context is the identifiers associated with a
+ * span and a set of options that determine how a span is traced.
+ *
+ * @see SpanId
+ * @see TraceContextFactory
+ * @see TraceOptions
+ * @see TraceId
+ */
 public class TraceContext {
   private final TraceId traceId;
   private final SpanId spanId;
   private final TraceOptions traceOptions;
 
+  /**
+   * Creates a trace context.
+   *
+   * @param traceId      the trace identifier of the trace context.
+   * @param spanId       the span identifier of the trace context.
+   * @param traceOptions the trace options for the trace context.
+   */
   public TraceContext(TraceId traceId, SpanId spanId, TraceOptions traceOptions) {
     this.traceId = traceId;
     this.spanId = spanId;
@@ -59,18 +74,39 @@ public class TraceContext {
         .toString();
   }
 
+  /**
+   * Returns the trace identifier.
+   *
+   * @return the trace identifier.
+   */
   public TraceId getTraceId() {
     return traceId;
   }
 
+  /**
+   * Returns the span identifier.
+   *
+   * @return the span identifier.
+   */
   public SpanId getSpanId() {
     return spanId;
   }
 
+  /**
+   * Returns the trace options.
+   *
+   * @return the trace options.
+   */
   public TraceOptions getTraceOptions() {
     return traceOptions;
   }
 
+  /**
+   * Generates a new trace context based on this trace context and the given trace options.
+   *
+   * @param overrideOptions a trace options set on the new trace context.
+   * @return the new trace context.
+   */
   public TraceContext overrideOptions(TraceOptions overrideOptions) {
     return new TraceContext(traceId, spanId, overrideOptions);
   }

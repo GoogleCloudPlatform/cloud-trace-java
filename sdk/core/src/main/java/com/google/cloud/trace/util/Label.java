@@ -15,13 +15,23 @@
 package com.google.cloud.trace.util;
 
 import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 
+/**
+ * A class that represents a span label. A span label is a key-value pair of strings.
+ *
+ * @see Labels
+ */
 public class Label {
   private final String key;
   private final String value;
 
+  /**
+   * Creates a span label.
+   *
+   * @param key   a string that is the label key.
+   * @param value a string that is the label value.
+   */
   public Label(String key, String value) {
     this.key = key;
     this.value = value;
@@ -55,10 +65,20 @@ public class Label {
         .toString();
   }
 
+  /**
+   * Returns the label key.
+   *
+   * @return the key.
+   */
   public String getKey() {
     return key;
   }
 
+  /**
+   * Returns the label value.
+   *
+   * @return the value.
+   */
   public String getValue() {
     return value;
   }

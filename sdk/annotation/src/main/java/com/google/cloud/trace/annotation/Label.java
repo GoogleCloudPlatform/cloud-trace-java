@@ -19,6 +19,27 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation type used to mark a method parameter that should be added as a label to the current
+ * span.
+ *
+ * <p>The generated label's key will be of the form {@code prefix[/name]}. The {@code prefix} will
+ * be taken from the parameter's method's {@link Span#labelPrefix}, if specified, otherwise it will
+ * be generated based on the method's name. This key will be overriden by the value of the {@link
+ * Name} annotation, if present.
+ *
+ * <p>The generated label's value will be the return value of a
+ * call to the parameter's {@link java.lang.Object#toString()} method.
+ *
+ * <p>The use of this and the associated annotations requires the use of an appropriate support
+ * library that processes them.
+ *
+ * @param name    a string used for the name portion of the label key. The name suffix is omitted if
+ *                blank.
+ * @param enabled a boolean that determines whether to add this label to the current span.
+ * @see Name
+ * @see Span
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface Label {

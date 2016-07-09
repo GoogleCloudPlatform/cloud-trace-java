@@ -14,7 +14,25 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * An interface for generating new trace options. This factory could be used to making trace
+ * sampling or stack trace collection decisions.
+ *
+ * @see TraceOptions
+ */
 public interface TraceOptionsFactory {
+  /**
+   * Returns a new trace options with default options values.
+   *
+   * @return the new trace options.
+   */
   TraceOptions create();
+
+  /**
+   * Returns a new trace options with options values based on the given parent trace options.
+   *
+   * @param parent a trace options used as the basis for the new trace options' options values.
+   * @return the new trace options.
+   */
   TraceOptions create(TraceOptions parent);
 }

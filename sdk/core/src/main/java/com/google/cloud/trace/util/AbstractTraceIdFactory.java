@@ -16,10 +16,23 @@ package com.google.cloud.trace.util;
 
 import java.math.BigInteger;
 
+/**
+ * An abstract factory for generating trace identifiers. This factory knows about the invalid trace
+ * identifier value.
+ *
+ * @see IdFactory
+ * @see RandomTraceIdFactory
+ * @see TraceId
+ */
 public abstract class AbstractTraceIdFactory implements IdFactory<TraceId> {
   @Override
   public abstract TraceId nextId();
 
+  /**
+   * Returns the invalid trace identifier value.
+   *
+   * @return the invalid trace identifier value.
+   */
   @Override
   public TraceId invalid() {
     return new TraceId(BigInteger.ZERO);

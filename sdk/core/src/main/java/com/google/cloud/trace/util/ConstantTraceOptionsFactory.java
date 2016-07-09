@@ -14,9 +14,22 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * A factory for generating new trace options with constant option values.
+ *
+ * @see TraceOptions
+ * @see TraceOptionsFactory
+ */
 public class ConstantTraceOptionsFactory implements TraceOptionsFactory {
   private final TraceOptions traceOptions;
 
+  /**
+   * Creates a trace options factory that generates trace options with the given option values.
+   *
+   * @param traceEnabled      a boolean that is the value of the new trace options' trace option.
+   * @param stackTraceEnabled a boolean that is the value of the new trace options' stack trace
+   *                          option.
+   */
   public ConstantTraceOptionsFactory(boolean traceEnabled, boolean stackTraceEnabled) {
     this.traceOptions = new TraceOptions()
         .overrideTraceEnabled(traceEnabled).overrideStackTraceEnabled(stackTraceEnabled);
