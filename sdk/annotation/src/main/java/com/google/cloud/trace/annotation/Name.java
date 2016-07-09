@@ -19,6 +19,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation type used to set the name of a span or span label.
+ *
+ * <p>If this annotation appears on a method marked with {@link Span}, the value of this annotation
+ * will be used for the method's span's name. If this annotation is used on a parameter, it will
+ * serve as the parameter's label's name, if a span label is generated for the parameter.
+ *
+ * <p>The use of this and the associated annotations requires the use of an appropriate support
+ * library that processes them.
+ *
+ * @param value a string used for the name of a span or span label.
+ * @see Label
+ * @see Span
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.PARAMETER})
 public @interface Name {

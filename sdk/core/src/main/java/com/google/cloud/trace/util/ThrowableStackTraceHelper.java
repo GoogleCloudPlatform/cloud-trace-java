@@ -14,11 +14,32 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * Utilities for creating stack traces from throwables.
+ *
+ * @see StackFrame
+ * @see StackTrace
+ * @see StackTrace#Builder
+ * @see Throwable
+ */
 public class ThrowableStackTraceHelper {
+  /**
+   * Generates a new stack trace builder from the given throwable.
+   *
+   * @param throwable a throwable used to generate a new stack trace builder.
+   * @return the new stack trace builder.
+   */
   public static StackTrace.Builder createBuilder(Throwable throwable) {
     return addFrames(StackTrace.builder(), throwable);
   }
 
+  /**
+   * Adds stack frames from the given throwable to the given stack trace builder.
+   *
+   * @param builder   a builder that will receive new stack frames.
+   * @param throwable a throwable whose frames will be added to the builder.
+   * @return the stack trace builder.
+   */
   public static StackTrace.Builder addFrames(StackTrace.Builder builder, Throwable throwable) {
     for (StackTraceElement element : throwable.getStackTrace()) {
       Integer lineNumber;

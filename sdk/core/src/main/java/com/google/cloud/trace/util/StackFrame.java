@@ -15,9 +15,13 @@
 package com.google.cloud.trace.util;
 
 import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 
+/**
+ * A class that represents a stack frame.
+ *
+ * @see StackTrace
+ */
 public class StackFrame {
   private final String className;
   private final String methodName;
@@ -25,6 +29,15 @@ public class StackFrame {
   private final Integer lineNumber;
   private final Integer columnNumber;
 
+  /**
+   * Creates a stack frame.
+   *
+   * @param className    a string that represents the class name of the stack frame.
+   * @param methodName   a string that represents the method name of the stack frame.
+   * @param fileName     a string that represents the file name of the stack frame.
+   * @param lineNumber   the line number of the stack frame.
+   * @param columnNumber the column number of the stack frame.
+   */
   public StackFrame(String className, String methodName, String fileName, Integer lineNumber,
       Integer columnNumber) {
     this.className = className;
@@ -68,22 +81,47 @@ public class StackFrame {
         .toString();
   }
 
+  /**
+   * Returns the class name.
+   *
+   * @return the class name or null if not set.
+   */
   public String getClassName() {
     return className;
   }
 
+  /**
+   * Returns the method name.
+   *
+   * @return the method name or null if not set.
+   */
   public String getMethodName() {
     return methodName;
   }
 
+  /**
+   * Returns the file name.
+   *
+   * @return the file name or null if not set.
+   */
   public String getFileName() {
     return fileName;
   }
 
+  /**
+   * Returns the line number.
+   *
+   * @return the line number or null if not set.
+   */
   public Integer getLineNumber() {
     return lineNumber;
   }
 
+  /**
+   * Returns the column number.
+   *
+   * @return the column number or null if not set.
+   */
   public Integer getColumnNumber() {
     return columnNumber;
   }

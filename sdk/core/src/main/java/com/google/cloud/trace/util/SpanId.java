@@ -16,12 +16,19 @@ package com.google.cloud.trace.util;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.UnsignedLongs;
-
 import java.util.Objects;
 
+/**
+ * A class that represents a span identifier. A span identifier is a 64-bit, unsigned integer.
+ */
 public class SpanId {
   private final long spanId;
 
+  /**
+   * Creates a span identifier whose value is taken from the given {@code long}.
+   *
+   * @param spanId a long used as the span identifier.
+   */
   public SpanId(long spanId) {
     this.spanId = spanId;
   }
@@ -52,10 +59,20 @@ public class SpanId {
         .toString();
   }
 
+  /**
+   * Returns whether the span identifier is valid. A valid span identifer is non-zero long value.
+   *
+   * @return whether the span identifier is valid.
+   */
   public boolean isValid() {
     return spanId != 0;
   }
 
+  /**
+   * Returns the long that represents the span identifier.
+   *
+   * @return the span identifier.
+   */
   public long getSpanId() {
     return spanId;
   }

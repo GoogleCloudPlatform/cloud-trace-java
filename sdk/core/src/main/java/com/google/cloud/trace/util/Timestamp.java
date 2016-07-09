@@ -14,7 +14,25 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * A representation of an instant in time. The instant is the number of nanoseconds after the number
+ * of seconds since the Unix Epoch.
+ *
+ * @see TimestampFactory
+ */
 public interface Timestamp {
+  /**
+   * Returns the number of seconds since the Unix Epoch represented by this timestamp.
+   *
+   * @return the number of seconds since the Unix Epoch.
+   */
   long getSeconds();
+
+  /**
+   * Returns the number of nanoseconds after the number of seconds since the Unix Epoch represented
+   * by this timestamp.
+   *
+   * @return the number of nanoseconds after the number of seconds since the Unix Epoch.
+   */
   int getNanos();
 }

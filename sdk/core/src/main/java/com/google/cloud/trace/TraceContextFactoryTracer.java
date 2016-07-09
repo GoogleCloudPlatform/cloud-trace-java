@@ -25,14 +25,34 @@ import com.google.cloud.trace.util.TraceContext;
 import com.google.cloud.trace.util.TraceContextFactory;
 import com.google.cloud.trace.util.TraceOptions;
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Set;
 
+/**
+ * A tracer used to trace application code.
+ *
+ * <p>This tracer sends trace data out to a set of raw tracers. It uses a trace context factory to
+ * generate a new trace context from a parent trace context when starting a new span, and it uses a
+ * timestamp factory to generate start and end timestamps for spans.
+ *
+ * @see RawTracer
+ * @see Timestamp
+ * @see TimestampFactory
+ * @see TraceContext
+ * @see TraceContextFactory
+ * @see Tracer
+ */
 public class TraceContextFactoryTracer implements Tracer {
   private final ImmutableSet<RawTracer> tracers;
   private final TraceContextFactory traceContextFactory;
   private final TimestampFactory timestampFactory;
 
+  /**
+   * Creates a new tracer.
+   *
+   * @param tracers             a set of raw tracers that this tracer will send trace data to.
+   * @param traceContextFactory a trace context factory used to generate new trace contexts.
+   * @param timestampFactory    a timestamp factory used to generate new timestamps.
+   */
   public TraceContextFactoryTracer(Set<RawTracer> tracers, TraceContextFactory traceContextFactory,
       TimestampFactory timestampFactory) {
     this.tracers = ImmutableSet.copyOf(tracers);
@@ -40,6 +60,13 @@ public class TraceContextFactoryTracer implements Tracer {
     this.timestampFactory = timestampFactory;
   }
 
+  /**
+   * Creates a new tracer.
+   *
+   * @param tracer              a raw tracer that this tracer will send trace data to.
+   * @param traceContextFactory a trace context factory used to generate new trace contexts.
+   * @param timestampFactory    a timestamp factory used to generate new timestamps.
+   */
   public TraceContextFactoryTracer(RawTracer tracer, TraceContextFactory traceContextFactory,
       TimestampFactory timestampFactory) {
     this(ImmutableSet.of(tracer), traceContextFactory, timestampFactory);

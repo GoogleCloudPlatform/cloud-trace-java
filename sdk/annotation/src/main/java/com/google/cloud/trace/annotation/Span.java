@@ -19,6 +19,31 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Annotation type used to create a trace span for a method. The span will be created as a child of
+ * the current span.
+ *
+ * <p>The use of this and the associated annotations requires the use of an appropriate support
+ * library that processes them.
+ *
+ * @param trace       an option that indicates whether to generate a span for the annotated method.
+ * @param stackTrace  an option that indicates whether to add a stack trace label to the span.
+ * @param callLabels  an option used to indicate whether to add call labels to the span. Call labels
+ *                    identify the method, class, and package of the method.
+ * @param labels      a string array containing the names of labelers used to label this span. The
+ *                    availability of functionality of labelers is determined by the annotation
+ *                    processor used to processor this and associated annotations.
+ * @param entry       a boolean that indicates whether the annotation method serves as the entry
+ *                    point of the application. Additional labels will be generated for the entry
+ *                    span.
+ * @param labelPrefix a string used as the label key prefix for this method's parameters.
+ * @param labelAll    a boolean that indicates whether to add labels for all of this method's
+ *                    parameters.
+ * @see Label
+ * @see Name
+ * @see Option
+ * @see Span
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Span {

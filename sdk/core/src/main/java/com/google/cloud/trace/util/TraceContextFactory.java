@@ -15,22 +15,51 @@
 package com.google.cloud.trace.util;
 
 import com.google.common.primitives.UnsignedLongs;
-
 import java.math.BigInteger;
 
+/**
+ * A class that generates trace contexts.
+ *
+ * @see IdFactory
+ * @see RandomSpanIdFactory
+ * @see RandomTraceIdFactory
+ * @see SpanId
+ * @see TraceContext
+ * @see TraceId
+ * @see TraceOptionsFactory
+ */
 public class TraceContextFactory {
   private final TraceOptionsFactory traceOptionsFactory;
   private final IdFactory<TraceId> traceIdFactory;
   private final IdFactory<SpanId> spanIdFactory;
 
+  /**
+   * Returns the name of the trace context header.
+   *
+   * @return the name of the trace context header.
+   */
   public static String headerKey() {
     return "X-Cloud-Trace-Context";
   }
 
+  /**
+   * Creates a trace context factory that uses the given trace options factory and new random trace
+   * and span identifier factory to generate trace contexts.
+   *
+   * @param traceOptionsFactory a trace options factory used to generate trace options.
+   */
   public TraceContextFactory(TraceOptionsFactory traceOptionsFactory) {
     this(traceOptionsFactory, new RandomTraceIdFactory(), new RandomSpanIdFactory());
   }
 
+  /**
+   * Creates a trace context factory that uses the given trace options factory and trace and span
+   * identifier factories to generate trace contexts.
+   *
+   * @param traceOptionsFactory a trace options factory used to generate trace options.
+   * @param traceIdFactory      a trace identifier factory used to generate trace identifiers.
+   * @param spanIdFactory       a span identifier factory used to generate span identifiers.
+   */
   public TraceContextFactory(TraceOptionsFactory traceOptionsFactory,
       IdFactory<TraceId> traceIdFactory, IdFactory<SpanId> spanIdFactory) {
     this.traceOptionsFactory = traceOptionsFactory;
@@ -38,6 +67,14 @@ public class TraceContextFactory {
     this.spanIdFactory = spanIdFactory;
   }
 
+  /**
+   * Generates a new trace context based on the parent context with a new span identifier. If the
+   * parent context has an invalid trace identifier, the new trace context will also have a new
+   * trace identifier.
+   *
+   * @param parentContext a trace context that is the parent of the new trace context.
+   * @return the new trace context.
+   */
   public TraceContext childContext(TraceContext parentContext) {
     if (parentContext.getTraceId().isValid()) {
       return new TraceContext(parentContext.getTraceId(), spanIdFactory.nextId(),
@@ -47,15 +84,34 @@ public class TraceContextFactory {
         traceOptionsFactory.create(parentContext.getTraceOptions()));
   }
 
+  /**
+   * Generates a new trace context with invalid trace and span identifiers and default trace
+   * options. This method does not invoke the trace options factory, so no sampling decision is
+   * made.
+   *
+   * @return the new trace context.
+   */
   public TraceContext initialContext() {
     return new TraceContext(traceIdFactory.invalid(), spanIdFactory.invalid(), new TraceOptions());
   }
 
+  /**
+   * Generates a new trace context with invalid trace and span identifiers and new trace options.
+   * This method invokes the trace options factory, so a sampling decision is made.
+   *
+   * @return the new trace context.
+   */
   public TraceContext rootContext() {
     return new TraceContext(traceIdFactory.invalid(), spanIdFactory.invalid(),
         traceOptionsFactory.create());
   }
 
+  /**
+   * Generates a new trace context based on the value of a trace context header.
+   *
+   * @param header a string that is the value of a trace context header.
+   * @return the new trace context.
+   */
   public TraceContext fromHeader(String header) {
     int index = header.indexOf('/');
     if (index == -1) {

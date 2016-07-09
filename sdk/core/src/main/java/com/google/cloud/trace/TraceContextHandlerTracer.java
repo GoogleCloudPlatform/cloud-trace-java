@@ -22,15 +22,26 @@ import com.google.cloud.trace.util.StartSpanOptions;
 import com.google.cloud.trace.util.Timestamp;
 import com.google.cloud.trace.util.TraceContext;
 import com.google.cloud.trace.util.TraceOptions;
-
 import java.util.logging.Logger;
 
+/**
+ * A managed tracer user to trace application code.
+ *
+ * <p>This tracer maintains a stack of trace contexts in a trace context handler and delegates calls
+ * to another tracer.
+ */
 public class TraceContextHandlerTracer implements Tracer, ManagedTracer  {
   private static final Logger logger = Logger.getLogger(TraceContextHandlerTracer.class.getName());
 
   private final Tracer tracer;
   private final TraceContextHandler contextHandler;
 
+  /**
+   * Creates a new managed tracer.
+   *
+   * @param tracer         a tracer that serves as a delegate for all tracer functionality.
+   * @param contextHandler a trace context handler that manages a stack of trace contexts.
+   */
   public TraceContextHandlerTracer(Tracer tracer, TraceContextHandler contextHandler) {
     this.tracer = tracer;
     this.contextHandler = contextHandler;

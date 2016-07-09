@@ -15,15 +15,24 @@
 package com.google.cloud.trace.util;
 
 import com.google.common.base.MoreObjects;
-
 import java.math.BigInteger;
 import java.util.Objects;
 
+/**
+ * A class that represents a trace identifier. A trace identifier is a 128-bit, unsigned integer.
+ *
+ * @see BigInteger
+ */
 public class TraceId {
   private static final int TRACE_ID_BIT_LENGTH = 128;
 
   private final BigInteger traceId;
 
+  /**
+   * Creates a trace identifier whose value is taken from the given {@link BigInteger}.
+   *
+   * @param traceId a big integer used as the trace identifier.
+   */
   public TraceId(BigInteger traceId) {
     this.traceId = traceId;
   }
@@ -54,10 +63,21 @@ public class TraceId {
         .toString();
   }
 
+  /**
+   * Returns whether the trace identifier is valid. A valid trace identifer is non-zero integer
+   * value that fits within 128 bits.
+   *
+   * @return whether the trace identifier is valid.
+   */
   public boolean isValid() {
     return (traceId.signum() > 0) && (traceId.bitLength() <= TRACE_ID_BIT_LENGTH);
   }
 
+  /**
+   * Returns the big integer that represents the trace identifier.
+   *
+   * @return the trace identifier.
+   */
   public BigInteger getTraceId() {
     return traceId;
   }

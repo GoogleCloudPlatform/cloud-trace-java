@@ -14,6 +14,9 @@
 
 package com.google.cloud.trace.annotation;
 
+/**
+ * An enum whose values represent true, false, and default.
+ */
 public enum Option {
   DEFAULT(null),
   TRUE(true),
@@ -25,6 +28,11 @@ public enum Option {
     this.value = value;
   }
 
+  /**
+   * Returns a boolean representation of the option.
+   *
+   * @return true if TRUE, false if FALSE, or null if DEFAULT.
+   */
   public Boolean getBooleanValue() {
     return value;
   }

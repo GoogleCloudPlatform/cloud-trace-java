@@ -15,27 +15,48 @@
 package com.google.cloud.trace.util;
 
 import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 
+/**
+ * A class that represents trace options. These options determine options such as whether a span
+ * should be traced or whether stack trace information should be collected.
+ */
 public class TraceOptions {
   private final static int TRACE_ENABLED = 0x1;
   private final static int STACK_TRACE_ENABLED = 0x2;
 
   private final int optionsMask;
 
+  /**
+   * Returns a new trace options with the trace option disabled.
+   *
+   * @return the new trace options.
+   */
   public static TraceOptions forTraceDisabled() {
     return new TraceOptions();
   }
 
+  /**
+   * Returns a new trace options with the trace option enabled.
+   *
+   * @return the new trace options.
+   */
   public static TraceOptions forTraceEnabled() {
     return new TraceOptions(TRACE_ENABLED);
   }
 
+  /**
+   * Creates a new trace options with default options values.
+   */
   public TraceOptions() {
     this(0);
   }
 
+  /**
+   * Creates a new trace options with the given options mask.
+   *
+   * @param optionsMask an options mask for the new trace options.
+   */
   public TraceOptions(int optionsMask) {
     this.optionsMask = optionsMask;
   }
@@ -66,22 +87,45 @@ public class TraceOptions {
         .toString();
   }
 
+  /**
+   * Returns the options mask.
+   *
+   * @return the options mask.
+   */
   public int getOptionsMask() {
     return optionsMask;
   }
 
+  /**
+   * Returns whether the trace option is enabled.
+   *
+   * @return a boolean indicating whether the trace option is enabled.
+   */
   public boolean getTraceEnabled() {
     return applyMask(TRACE_ENABLED);
   }
 
+  /**
+   * Returns whether the stack trace option is enabled.
+   *
+   * @return a boolean indicating whether the stack trace option is enabled.
+   */
   public boolean getStackTraceEnabled() {
     return applyMask(STACK_TRACE_ENABLED);
   }
 
+  /**
+   * Returns a new trace options with this trace options' options values, overriden with the given
+   * trace option.
+   */
   public TraceOptions overrideTraceEnabled(boolean enabled) {
     return new TraceOptions(enabled ? set(TRACE_ENABLED) : clear(TRACE_ENABLED));
   }
 
+  /**
+   * Returns a new trace options with this trace options' options values, overriden with the given
+   * stack trace option.
+   */
   public TraceOptions overrideStackTraceEnabled(boolean enabled) {
     return new TraceOptions(enabled ? set(STACK_TRACE_ENABLED) : clear(STACK_TRACE_ENABLED));
   }

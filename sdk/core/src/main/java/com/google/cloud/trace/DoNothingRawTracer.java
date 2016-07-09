@@ -20,6 +20,9 @@ import com.google.cloud.trace.util.StackTrace;
 import com.google.cloud.trace.util.Timestamp;
 import com.google.cloud.trace.util.TraceContext;
 
+/**
+ * A raw tracer that does nothing.
+ */
 public class DoNothingRawTracer implements RawTracer {
   @Override
   public void startSpan(TraceContext context, TraceContext parentContext, SpanKind spanKind,

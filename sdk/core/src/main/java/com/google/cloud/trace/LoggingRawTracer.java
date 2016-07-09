@@ -19,14 +19,22 @@ import com.google.cloud.trace.util.SpanKind;
 import com.google.cloud.trace.util.StackTrace;
 import com.google.cloud.trace.util.Timestamp;
 import com.google.cloud.trace.util.TraceContext;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A raw tracer that logs trace events.
+ */
 public class LoggingRawTracer implements RawTracer {
   private final Logger logger;
   private final Level level;
 
+  /**
+   * Creates a new raw tracer.
+   *
+   * @param logger a logger used to log trace events.
+   * @param level a level used for trace event log messages.
+   */
   public LoggingRawTracer(Logger logger, Level level) {
     this.logger = logger;
     this.level = level;

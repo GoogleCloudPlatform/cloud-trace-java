@@ -14,13 +14,29 @@
 
 package com.google.cloud.trace.util;
 
+/**
+ * A class that contains values that can override the default values used when ending a span.
+ *
+ * @see Timestamp
+ */
 public class EndSpanOptions {
   private Timestamp timestamp;
 
+  /**
+   * Returns the timestamp.
+   *
+   * @return the timestamp or the default if null.
+   */
   public Timestamp getTimestamp() {
     return timestamp;
   }
 
+  /**
+   * Sets the timestamp.
+   *
+   * @param timestamp the timestamp or the default if null.
+   * @return this.
+   */
   public EndSpanOptions setTimestamp(Timestamp timestamp) {
     this.timestamp = timestamp;
     return this;
