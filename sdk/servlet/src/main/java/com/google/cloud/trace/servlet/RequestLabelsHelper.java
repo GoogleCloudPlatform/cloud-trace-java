@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @see HttpServletRequest
  * @see HttpServletResponse
  * @see Labels
- * @see Labels#Builder
+ * @see Labels.Builder
  */
 public class RequestLabelsHelper {
   /**

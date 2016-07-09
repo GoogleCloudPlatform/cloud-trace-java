@@ -117,6 +117,9 @@ public class TraceOptions {
   /**
    * Returns a new trace options with this trace options' options values, overriden with the given
    * trace option.
+   *
+   * @param enabled a boolean that indicates the trace option.
+   * @return the new trace options.
    */
   public TraceOptions overrideTraceEnabled(boolean enabled) {
     return new TraceOptions(enabled ? set(TRACE_ENABLED) : clear(TRACE_ENABLED));
@@ -125,6 +128,9 @@ public class TraceOptions {
   /**
    * Returns a new trace options with this trace options' options values, overriden with the given
    * stack trace option.
+   *
+   * @param enabled a boolean that indicates the stack trace option.
+   * @return the new trace options.
    */
   public TraceOptions overrideStackTraceEnabled(boolean enabled) {
     return new TraceOptions(enabled ? set(STACK_TRACE_ENABLED) : clear(STACK_TRACE_ENABLED));

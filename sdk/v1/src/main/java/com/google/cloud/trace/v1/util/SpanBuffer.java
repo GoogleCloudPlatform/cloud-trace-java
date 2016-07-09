@@ -22,7 +22,7 @@ import java.util.HashMap;
  *
  * @see Iterable
  * @see TraceSpan
- * @see TraceSpan#Builder
+ * @see TraceSpan.Builder
  */
 public class SpanBuffer {
   private final HashMap<Long, TraceSpan.Builder> spanMap;

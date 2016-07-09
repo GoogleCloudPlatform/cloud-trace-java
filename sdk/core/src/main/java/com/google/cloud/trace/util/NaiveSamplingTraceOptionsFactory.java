@@ -24,8 +24,8 @@ import java.util.Random;
  *
  * @see Random
  * @see SecureRandom
- * @see TraceOption
- * @see TraceOptionFactory
+ * @see TraceOptions
+ * @see TraceOptionsFactory
  */
 public class NaiveSamplingTraceOptionsFactory implements TraceOptionsFactory {
   private final Random random;

@@ -22,6 +22,8 @@ import com.google.cloud.trace.util.TraceContext;
 public interface TraceContextHandler {
   /**
    * Returns the current trace context.
+   *
+   * @return the current trace context.
    */
   TraceContext current();
 
