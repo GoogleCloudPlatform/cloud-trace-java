@@ -29,7 +29,7 @@ public class TraceKey {
    * Creates a trace key.
    *
    * @param projectId a string that contains the Google Cloud Platform project identifier.
-   * @param traeId    a string that contains the trace identifier.
+   * @param traceId    a string that contains the trace identifier.
    */
   public TraceKey(String projectId, String traceId) {
     this.projectId = projectId;

@@ -43,6 +43,7 @@ public class StackTrace {
      * @param fileName     a string that represents the file name of the stack frame.
      * @param lineNumber   the line number of the stack frame.
      * @param columnNumber the column number of the stack frame.
+     * @return this.
      */
     public Builder add(String className, String methodName, String fileName, Integer lineNumber,
         Integer columnNumber) {

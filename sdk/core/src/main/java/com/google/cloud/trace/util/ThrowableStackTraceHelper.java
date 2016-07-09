@@ -19,7 +19,7 @@ package com.google.cloud.trace.util;
  *
  * @see StackFrame
  * @see StackTrace
- * @see StackTrace#Builder
+ * @see StackTrace.Builder
  * @see Throwable
  */
 public class ThrowableStackTraceHelper {
