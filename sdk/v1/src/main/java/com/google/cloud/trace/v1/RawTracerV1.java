@@ -20,16 +20,42 @@ import com.google.cloud.trace.util.SpanKind;
 import com.google.cloud.trace.util.StackTrace;
 import com.google.cloud.trace.util.Timestamp;
 import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceContextFactory;
 import com.google.cloud.trace.v1.sink.TraceSink;
 import com.google.cloud.trace.v1.source.TraceSource;
 import com.google.devtools.cloudtrace.v1.Trace;
 
+/**
+ * A raw tracer that converts trace events to Stackdriver Trace API v1 trace messages and dispatches
+ * them to a trace sink.
+ *
+ * <p>Each method examines the trace options on the given trace context. If the trace enabled option
+ * is set, the corresponding method on the trace source is called, and the resulting trace message
+ * is sent to the trace sink. If the trace enabled option is not set, the trace event is ignored.
+ *
+ * <p>Stackdriver Trace API v1 trace messages contain the project identifier of the Google Cloud
+ * Platform project that owns the trace information. The project identifier is either the Project ID
+ * string for the project as seen in the Google Cloud Console or a decimal string representation of
+ * the Project Number of the project.
+ *
+ * @see <a href="https://cloud.google.com/trace/api">Stackdriver Trace API</a>
+ * @see RawTracer
+ * @see Trace
+ * @see TraceSink
+ * @see TraceSource
+ */
 public class RawTracerV1 implements RawTracer {
   private final String projectId;
   private final TraceSource traceSource;
   private final TraceSink traceSink;
 
+  /**
+   * Creates a raw tracer.
+   *
+   * @param projectId   a string containing the project identifier of the Google Cloud Platform
+   *                    project that owns the trace information.
+   * @param traceSource a trace source that converts trace events to API v1 trace messages.
+   * @param traceSink   a trace sink that accepts API v1 trace messages.
+   */
   public RawTracerV1(String projectId, TraceSource traceSource, TraceSink traceSink) {
     this.projectId = projectId;
     this.traceSource = traceSource;

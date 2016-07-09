@@ -17,12 +17,26 @@ package com.google.cloud.trace.v1.sink;
 import com.google.cloud.trace.v1.util.TraceBuffer;
 import com.google.devtools.cloudtrace.v1.Trace;
 
+/**
+ * A trace sink that buffers trace messages until it is flushed. When flushed, this sink sends its
+ * buffered trace messages to a delegate trace sink. The operations on this trace sink are
+ * thread-safe.
+ *
+ * @see FlushableTraceSink
+ * @see Trace
+ * @see TraceSink
+ */
 public class SimpleBufferingTraceSink implements FlushableTraceSink {
   private final TraceSink traceSink;
   private final TraceBuffer traceBuffer;
 
   private final Object monitor = new Object();
 
+  /**
+   * Creates a trace sink that buffers trace messages until it is flushed.
+   *
+   * @param traceSink a trace sink that serves as the delegate of this trace sink.
+   */
   public SimpleBufferingTraceSink(TraceSink traceSink) {
     this.traceSink = traceSink;
     this.traceBuffer = new TraceBuffer();

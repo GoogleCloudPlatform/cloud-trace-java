@@ -15,14 +15,27 @@
 package com.google.cloud.trace.v1.sink;
 
 import com.google.devtools.cloudtrace.v1.Trace;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * A trace sink that logs the trace messages that it receives.
+ *
+ * @see Level
+ * @see Logger
+ * @see Trace
+ * @see TraceSink
+ */
 public class LoggingTraceSink implements TraceSink {
   private final Logger logger;
   private final Level level;
 
+  /**
+   * Creates a logging trace sink.
+   *
+   * @param logger a logger that logs trace messages.
+   * @param level  the level to log trace messages.
+   */
   public LoggingTraceSink(Logger logger, Level level) {
     this.logger = logger;
     this.level = level;

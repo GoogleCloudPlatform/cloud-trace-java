@@ -14,6 +14,14 @@
 
 package com.google.cloud.trace.v1.sink;
 
+/**
+ * An interface for a trace sink that can be flushed.
+ *
+ * @see TraceSink
+ */
 public interface FlushableTraceSink extends TraceSink {
+  /**
+   * Flushes this trace sink.
+   */
   void flush();
 }

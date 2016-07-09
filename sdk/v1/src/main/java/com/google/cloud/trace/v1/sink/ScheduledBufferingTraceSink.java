@@ -18,12 +18,21 @@ import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.cloudtrace.v1.Trace;
-
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A flushable trace sink that auto-flushes when its buffered trace messages exceed its buffer size
+ * or have been buffered for longer than its scheduled delay. The operations on this trace sink are
+ * thread-safe.
+ *
+ * @see FlushableTraceSink
+ * @see Sizer
+ * @see Trace
+ * @see TraceSink
+ */
 public class ScheduledBufferingTraceSink implements FlushableTraceSink {
   private final TraceSink traceSink;
   private final Sizer<Trace> traceSizer;
@@ -39,6 +48,15 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
   private Future<?> autoFlusher = null;
   private ScheduledFuture<?> flusher = null;
 
+  /**
+   * Creates a buffering trace sink.
+   *
+   * @param traceSink      a trace sink that serves as this trace sink's delegate.
+   * @param traceSizer     a sizer used to estimate the size of trace messages.
+   * @param bufferSize     the size of this trace sink's trace message buffer.
+   * @param scheduledDelay the scheduled delay of this trace sink in seconds.
+   * @param scheduler      a scheduled executor service used to automatically flush this trace sink.
+   */
   public ScheduledBufferingTraceSink(TraceSink traceSink, Sizer<Trace> traceSizer, int bufferSize,
       int scheduledDelay, ScheduledExecutorService scheduler) {
     this.traceSink = traceSink;

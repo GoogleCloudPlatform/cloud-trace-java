@@ -15,13 +15,22 @@
 package com.google.cloud.trace.v1.util;
 
 import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 
+/**
+ * A class that represents a trace key. A trace key consists of the project identifier of the Google
+ * Cloud Platform project that owns the trace and the trace identifier of the trace.
+ */
 public class TraceKey {
   private final String projectId;
   private final String traceId;
 
+  /**
+   * Creates a trace key.
+   *
+   * @param projectId a string that contains the Google Cloud Platform project identifier.
+   * @param traeId    a string that contains the trace identifier.
+   */
   public TraceKey(String projectId, String traceId) {
     this.projectId = projectId;
     this.traceId = traceId;
@@ -55,10 +64,20 @@ public class TraceKey {
         .toString();
   }
 
+  /**
+   * Returns the project identifier.
+   *
+   * @return the project identifier.
+   */
   public String getProjectId() {
     return projectId;
   }
 
+  /**
+   * Returns the trace identifier.
+   *
+   * @return the trace identifier.
+   */
   public String getTraceId() {
     return traceId;
   }
