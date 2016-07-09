@@ -24,6 +24,7 @@ public interface IdFactory<T> {
    * Generates a new identifier.
    *
    * @return the new identifier.
+   */
   T nextId();
 
   /**
