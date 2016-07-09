@@ -34,15 +34,23 @@ import java.lang.annotation.Target;
  * <p>The use of this and the associated annotations requires the use of an appropriate support
  * library that processes them.
  *
- * @param name    a string used for the name portion of the label key. The name suffix is omitted if
- *                blank.
- * @param enabled a boolean that determines whether to add this label to the current span.
  * @see Name
  * @see Span
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.PARAMETER})
 public @interface Label {
+  /**
+   * Returns the name portion of the label key.
+   *
+   * @return the name portion of the label key. The name suffix is omitted if blank.
+   */
   String name() default "/";
+
+  /**
+   * Determines whether to add this label to the current span.
+   *
+   * @return whether to add this label to the current span.
+   */
   boolean enabled() default true;
 }
