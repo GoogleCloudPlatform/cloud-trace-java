@@ -26,8 +26,6 @@ import java.security.SecureRandom;
  * @see SpanId
  */
 public class RandomSpanIdFactory extends AbstractSpanIdFactory {
-  private static final int SPAN_ID_BIT_LENGTH = 64;
-
   private final SecureRandom random;
 
   /**
