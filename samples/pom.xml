@@ -23,5 +23,6 @@
     <module>buffering-grpc</module>
     <module>guice-scheduled-grpc</module>
     <module>guice-servlet-grpc</module>
+    <module>managed-grpc</module>
   </modules>
 </project>
