@@ -106,7 +106,7 @@ public class TraceSource {
         .setSpanId(context.getSpanId().getSpanId());
 
     for (Label label : labels.getLabels()) {
-      spanBuilder.getMutableLabels().put(label.getKey(), label.getValue());
+      spanBuilder.putLabels(label.getKey(), label.getValue());
     }
 
     return traceBuilder.build();
@@ -153,7 +153,7 @@ public class TraceSource {
     }
     stackTraceValue.append("]}");
 
-    spanBuilder.getMutableLabels().put(
+    spanBuilder.putLabels(
         "trace.cloud.google.com/stacktrace", stackTraceValue.toString());
 
     return traceBuilder.build();
