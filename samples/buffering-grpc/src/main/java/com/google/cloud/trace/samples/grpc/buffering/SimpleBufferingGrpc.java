@@ -45,11 +45,9 @@ public class SimpleBufferingGrpc {
 
     // Create the raw tracer.
     TraceSource traceSource = new TraceSource();
-    ExecutorService executor = Executors.newSingleThreadExecutor();
     TraceSink traceSink = new GrpcTraceSink("cloudtrace.googleapis.com",
         GoogleCredentials.fromStream(new FileInputStream(clientSecretsFile))
-            .createScoped(Arrays.asList("https://www.googleapis.com/auth/trace.append")),
-        executor);
+            .createScoped(Arrays.asList("https://www.googleapis.com/auth/trace.append")));
     FlushableTraceSink flushableSink = new SimpleBufferingTraceSink(traceSink);
     RawTracer rawTracer = new RawTracerV1(projectId, traceSource, traceSink);
 
@@ -71,7 +69,5 @@ public class SimpleBufferingGrpc {
     tracer.endSpan(context1);
 
     flushableSink.flush();
-
-    executor.shutdownNow();
   }
 }
