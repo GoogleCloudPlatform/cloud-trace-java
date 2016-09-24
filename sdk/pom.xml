@@ -4,9 +4,12 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.google.cloud.trace</groupId>
+  <parent>
+    <groupId>com.google.cloud.trace</groupId>
+    <artifactId>root</artifactId>
+    <version>0.9-SNAPSHOT</version>
+  </parent>
   <artifactId>sdk</artifactId>
-  <version>0.9-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Google Cloud Trace Java SDK Parent Project</name>

@@ -4,25 +4,20 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>com.google.cloud.trace</groupId>
-    <artifactId>root</artifactId>
-    <version>0.9-SNAPSHOT</version>
-  </parent>
-  <artifactId>samples</artifactId>
+  <groupId>com.google.cloud.trace</groupId>
+  <artifactId>root</artifactId>
+  <version>0.9-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>Google Cloud Trace Java SDK Samples</name>
+  <name>Google Cloud Trace Java SDK Root Project</name>
+  <url>http://cloud.google.com/trace</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
   <modules>
-    <module>basic-logging</module>
-    <module>buffering-grpc</module>
-    <module>guice-scheduled-grpc</module>
-    <module>guice-servlet-grpc</module>
-    <module>managed-grpc</module>
+    <module>sdk</module>
+    <module>samples</module>
   </modules>
 </project>
