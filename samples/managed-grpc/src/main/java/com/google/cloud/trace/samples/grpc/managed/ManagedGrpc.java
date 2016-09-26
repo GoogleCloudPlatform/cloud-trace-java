@@ -58,7 +58,7 @@ public class ManagedGrpc {
 
     // Create the managed tracer.
     TraceContextHandler traceContextHandler = new DefaultTraceContextHandler(
-        traceContextFactory.initialContext());
+        traceContextFactory.rootContext());
     ManagedTracer managedTracer = new TraceContextHandlerTracer(tracer, traceContextHandler);
 
     // Create some trace data.
