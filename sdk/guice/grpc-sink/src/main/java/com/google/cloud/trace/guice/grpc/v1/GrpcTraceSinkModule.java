@@ -23,8 +23,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
-import java.util.concurrent.Executors;
-
 public class GrpcTraceSinkModule extends AbstractModule {
   @Override
   protected void configure() {}
