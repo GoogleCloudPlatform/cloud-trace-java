@@ -63,7 +63,7 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
               invocation.getMethod().getDeclaringClass().getPackage().getName());
     }
     if (span.entry()) {
-      labelsBeforeCallBuilder.add("trace.cloud.google.com/agent", "coud-trace-java/0.1");
+      labelsBeforeCallBuilder.add("trace.cloud.google.com/agent", "cloud-trace-java/0.1");
     }
 
     String methodName;

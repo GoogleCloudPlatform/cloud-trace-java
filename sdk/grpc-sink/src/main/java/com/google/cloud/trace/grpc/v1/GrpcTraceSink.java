@@ -20,11 +20,9 @@ import com.google.devtools.cloudtrace.v1.PatchTracesRequest;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 import com.google.devtools.cloudtrace.v1.TraceServiceGrpc;
-import io.grpc.auth.ClientAuthInterceptor;
-import io.grpc.Channel;
-import io.grpc.ClientInterceptors;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.auth.MoreCallCredentials;
 import java.util.concurrent.Executor;
 
 /**
@@ -45,13 +43,13 @@ public class GrpcTraceSink implements TraceSink {
    *
    * @param apiHost     a string containing the API host name.
    * @param credentials a credentials used to authenticate API calls.
-   * @param executor    an executor used for managing the credentials.
    */
-  public GrpcTraceSink(String apiHost, Credentials credentials, Executor executor) {
+  public GrpcTraceSink(String apiHost, Credentials credentials) {
+    MoreCallCredentials.from(credentials);
     this.managedChannel = ManagedChannelBuilder.forTarget(apiHost).build();
-    Channel channel = ClientInterceptors.intercept(this.managedChannel,
-        new ClientAuthInterceptor(credentials, executor));
-    this.traceService = TraceServiceGrpc.newBlockingStub(channel);
+
+    this.traceService = TraceServiceGrpc.newBlockingStub(managedChannel)
+        .withCallCredentials(MoreCallCredentials.from(credentials));
   }
 
   @Override

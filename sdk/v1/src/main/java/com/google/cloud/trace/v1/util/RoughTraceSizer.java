@@ -56,7 +56,7 @@ public class RoughTraceSizer implements Sizer<Trace> {
 
   private int labelsSize(TraceSpan span) {
     int size = 0;
-    for (Map.Entry<String, String> label : span.getLabels().entrySet()) {
+    for (Map.Entry<String, String> label : span.getLabelsMap().entrySet()) {
       size += label.getKey().length() + label.getValue().length();
     }
     return size;

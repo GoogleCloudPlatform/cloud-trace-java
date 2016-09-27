@@ -44,10 +44,8 @@ public class ManagedGrpc {
 
     // Create the raw tracer.
     TraceSource traceSource = new TraceSource();
-    ExecutorService executor = Executors.newSingleThreadExecutor();
     TraceSink traceSink = new GrpcTraceSink("cloudtrace.googleapis.com",
-        GoogleCredentials.getApplicationDefault(),
-        executor);
+        GoogleCredentials.getApplicationDefault());
     RawTracer rawTracer = new RawTracerV1(projectId, traceSource, traceSink);
 
     // Create the tracer.
@@ -71,7 +69,5 @@ public class ManagedGrpc {
     managedTracer.endSpan();
 
     managedTracer.endSpan();
-
-    executor.shutdownNow();
   }
 }

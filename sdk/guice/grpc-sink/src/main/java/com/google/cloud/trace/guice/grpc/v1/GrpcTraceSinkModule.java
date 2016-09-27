@@ -33,7 +33,6 @@ public class GrpcTraceSinkModule extends AbstractModule {
   @ApiTraceSink
   @Singleton
   TraceSink provideTraceSink(@ApiHost String apiHost, Credentials credentials) {
-    // The executor does not yet appear to be used by the gRPC client auth interceptor.
-    return new GrpcTraceSink(apiHost, credentials, Executors.newSingleThreadExecutor());
+    return new GrpcTraceSink(apiHost, credentials);
   }
 }
