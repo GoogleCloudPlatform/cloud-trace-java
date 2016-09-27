@@ -18,7 +18,6 @@ import com.google.auth.Credentials;
 import com.google.cloud.trace.v1.sink.TraceSink;
 import com.google.devtools.cloudtrace.v1.PatchTracesRequest;
 import com.google.devtools.cloudtrace.v1.Trace;
-import com.google.devtools.cloudtrace.v1.Traces;
 import com.google.devtools.cloudtrace.v1.TraceServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
