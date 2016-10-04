@@ -51,20 +51,23 @@ public class TraceSource {
    */
   public Trace generateStartSpan(String projectId, TraceContext context,
       TraceContext parentContext, SpanKind spanKind, String name, Timestamp timestamp) {
-    Trace.Builder traceBuilder = Trace.newBuilder()
-        .setProjectId(projectId)
-        .setTraceId(formatTraceId(context.getTraceId()));
-
-    TraceSpan.Builder spanBuilder = traceBuilder.addSpansBuilder()
-        .setSpanId(context.getSpanId().getSpanId())
-        .setKind(toSpanKindProto(spanKind))
-        .setName(name)
-        .setStartTime(toTimestamp(timestamp));
+    TraceSpan.Builder spanBuilder =
+        TraceSpan.newBuilder()
+            .setSpanId(context.getSpanId().getSpanId())
+            .setKind(toSpanKindProto(spanKind))
+            .setName(name)
+            .setStartTime(toTimestamp(timestamp));
 
     if (parentContext.getTraceId().equals(context.getTraceId())
         && parentContext.getSpanId().isValid()) {
       spanBuilder.setParentSpanId(parentContext.getSpanId().getSpanId());
     }
+
+    Trace.Builder traceBuilder =
+        Trace.newBuilder()
+            .setProjectId(projectId)
+            .setTraceId(formatTraceId(context.getTraceId()))
+            .addSpans(spanBuilder.build());
 
     return traceBuilder.build();
   }
@@ -78,13 +81,16 @@ public class TraceSource {
    * @return a trace message that represents the end span event.
    */
   public Trace generateEndSpan(String projectId, TraceContext context, Timestamp timestamp) {
-    Trace.Builder traceBuilder = Trace.newBuilder()
-        .setProjectId(projectId)
-        .setTraceId(formatTraceId(context.getTraceId()));
+    TraceSpan.Builder spanBuilder =
+        TraceSpan.newBuilder()
+            .setSpanId(context.getSpanId().getSpanId())
+            .setEndTime(toTimestamp(timestamp));
 
-    TraceSpan.Builder spanBuilder = traceBuilder.addSpansBuilder()
-        .setSpanId(context.getSpanId().getSpanId())
-        .setEndTime(toTimestamp(timestamp));
+    Trace.Builder traceBuilder =
+        Trace.newBuilder()
+            .setProjectId(projectId)
+            .setTraceId(formatTraceId(context.getTraceId()))
+            .addSpans(spanBuilder.build());
 
     return traceBuilder.build();
   }
@@ -98,16 +104,18 @@ public class TraceSource {
    * @return a trace message that represents the span label annotation event.
    */
   public Trace generateAnnotateSpan(String projectId, TraceContext context, Labels labels) {
-    Trace.Builder traceBuilder = Trace.newBuilder()
-        .setProjectId(projectId)
-        .setTraceId(formatTraceId(context.getTraceId()));
-
-    TraceSpan.Builder spanBuilder = traceBuilder.addSpansBuilder()
-        .setSpanId(context.getSpanId().getSpanId());
+    TraceSpan.Builder spanBuilder =
+        TraceSpan.newBuilder().setSpanId(context.getSpanId().getSpanId());
 
     for (Label label : labels.getLabels()) {
       spanBuilder.putLabels(label.getKey(), label.getValue());
     }
+
+    Trace.Builder traceBuilder =
+        Trace.newBuilder()
+            .setProjectId(projectId)
+            .setTraceId(formatTraceId(context.getTraceId()))
+            .addSpans(spanBuilder.build());
 
     return traceBuilder.build();
   }
@@ -122,12 +130,9 @@ public class TraceSource {
    */
   public Trace generateSetStackTrace(
       String projectId, TraceContext context, StackTrace stackTrace) {
-    Trace.Builder traceBuilder = Trace.newBuilder()
-        .setProjectId(projectId)
-        .setTraceId(formatTraceId(context.getTraceId()));
 
-    TraceSpan.Builder spanBuilder = traceBuilder.addSpansBuilder()
-        .setSpanId(context.getSpanId().getSpanId());
+    TraceSpan.Builder spanBuilder =
+        TraceSpan.newBuilder().setSpanId(context.getSpanId().getSpanId());
 
     StringBuffer stackTraceValue = new StringBuffer("{\"stack_frame\":[");
     for (int i = 0; i < stackTrace.getStackFrames().size(); i++) {
@@ -155,6 +160,12 @@ public class TraceSource {
 
     spanBuilder.putLabels(
         "trace.cloud.google.com/stacktrace", stackTraceValue.toString());
+
+    Trace.Builder traceBuilder =
+        Trace.newBuilder()
+            .setProjectId(projectId)
+            .setTraceId(formatTraceId(context.getTraceId()))
+            .addSpans(spanBuilder.build());
 
     return traceBuilder.build();
   }

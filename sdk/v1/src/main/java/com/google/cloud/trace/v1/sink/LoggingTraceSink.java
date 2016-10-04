@@ -43,6 +43,6 @@ public class LoggingTraceSink implements TraceSink {
 
   @Override
   public void receive(Trace trace) {
-    logger.log(level, "Received trace:\n{0}", trace);
+    logger.log(level, "Received trace: " + trace);
   }
 }

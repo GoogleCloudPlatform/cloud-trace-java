@@ -22,7 +22,6 @@ import com.google.devtools.cloudtrace.v1.TraceServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.auth.MoreCallCredentials;
-import java.util.concurrent.Executor;
 
 /**
  * A trace sink that sends trace messages to the Stackdriver Trace API trace via gRPC.
@@ -53,9 +52,14 @@ public class GrpcTraceSink implements TraceSink {
 
   @Override
   public void receive(Trace trace) {
-    PatchTracesRequest.Builder requestBuilder = PatchTracesRequest.newBuilder()
-        .setProjectId(trace.getProjectId());
-    requestBuilder.getTracesBuilder().addTraces(trace);
+
+    Traces.Builder tracesBuilder = Traces.newBuilder().addTraces(trace);
+
+    PatchTracesRequest.Builder requestBuilder =
+        PatchTracesRequest.newBuilder()
+            .setProjectId(trace.getProjectId())
+            .setTraces(tracesBuilder.build());
+
     traceService.patchTraces(requestBuilder.build());
   }
 
