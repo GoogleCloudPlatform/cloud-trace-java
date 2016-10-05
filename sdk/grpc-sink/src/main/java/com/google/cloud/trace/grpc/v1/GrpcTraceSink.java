@@ -30,7 +30,6 @@ import io.grpc.auth.MoreCallCredentials;
  *
  * @see <a href="http://www.grpc.io">gRPC</a>
  * @see Credentials
- * @see Executor
  * @see Trace
  * @see TraceSink
  */
@@ -45,9 +44,7 @@ public class GrpcTraceSink implements TraceSink {
    * @param credentials a credentials used to authenticate API calls.
    */
   public GrpcTraceSink(String apiHost, Credentials credentials) {
-    MoreCallCredentials.from(credentials);
     this.managedChannel = ManagedChannelBuilder.forTarget(apiHost).build();
-
     this.traceService = TraceServiceGrpc.newBlockingStub(managedChannel)
         .withCallCredentials(MoreCallCredentials.from(credentials));
   }
