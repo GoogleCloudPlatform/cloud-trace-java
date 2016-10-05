@@ -88,6 +88,6 @@ public class TraceId {
    * @return The trace identifier formatted for API consumption.
    */
   public String getApiString(){
-    return String.format("%032x", traceId.getTraceId());
+    return String.format("%032x", traceId);
   }
 }
