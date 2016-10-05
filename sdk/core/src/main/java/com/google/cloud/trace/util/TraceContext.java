@@ -75,6 +75,23 @@ public class TraceContext {
   }
 
   /**
+   * Transforms this context into an HTTP request header.
+   *
+   * @return this context as a header.
+   */
+  public String toHeader() {
+    StringBuilder builder =
+        new StringBuilder()
+            .append(traceId.getTraceId().toString(16))
+            .append('/')
+            .append(spanId.getSpanId())
+            .append(";o=")
+            .append(traceOptions.getOptionsMask());
+
+    return builder.toString();
+  }
+
+  /**
    * Returns the trace identifier.
    *
    * @return the trace identifier.
