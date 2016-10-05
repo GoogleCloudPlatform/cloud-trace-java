@@ -59,7 +59,7 @@ public class TraceId {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("traceId", String.format("%032x", traceId))
+        .add("traceId", getApiString())
         .toString();
   }
 
@@ -87,7 +87,7 @@ public class TraceId {
    *
    * @return The trace identifier formatted for API consumption.
    */
-  public String getApiString(){
+  public String getApiString() {
     return String.format("%032x", traceId);
   }
 }
