@@ -59,7 +59,7 @@ public class TraceId {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("traceId", String.format("%032x", traceId))
+        .add("traceId", getApiString())
         .toString();
   }
 
@@ -80,5 +80,14 @@ public class TraceId {
    */
   public BigInteger getTraceId() {
     return traceId;
+  }
+
+  /**
+   * Returns this trace id formatted as a hex string, 32 characters long.
+   *
+   * @return The trace identifier formatted for API consumption.
+   */
+  public String getApiString() {
+    return String.format("%032x", traceId);
   }
 }
