@@ -80,12 +80,9 @@ public class TraceContext {
    * @return this context as a header.
    */
   public String toHeader() {
-    // Pad traceId, otherwise API might not accept it.
-    String unpaddedTraceId = traceId.getTraceId().toString(16);
-    String paddedTraceId = String.format("%32s", unpaddedTraceId).replace(' ', '0');
     StringBuilder builder =
         new StringBuilder()
-            .append(paddedTraceId)
+            .append(traceId.getApiString())
             .append('/')
             .append(spanId.getSpanId())
             .append(";o=")
