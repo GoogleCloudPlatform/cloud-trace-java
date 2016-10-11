@@ -20,6 +20,13 @@
     </license>
   </licenses>
 
+  <developers>
+    <developer>
+      <organization>Google Inc.</organization>
+      <organizationUrl>http://www.google.com</organizationUrl>
+    </developer>
+  </developers>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
