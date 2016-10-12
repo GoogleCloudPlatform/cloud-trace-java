@@ -1,6 +1,6 @@
 # Google Cloud Trace SDK for Java
 
-[![Build Status][travis-image]][travis-url]
+[![Build Status][travis-image]][travis-url] [![Maven Central][maven-image]][maven-url]
 
 Google Cloud Trace SDK for Java is a Java library that provides tools, best practices, and examples for integrating with Google Cloud Trace, a feature of Google Cloud Platform that collects, displays, and analyzes latency data from applications.
 
@@ -8,3 +8,5 @@ We're making some revisions to the API, and we'll update the documentation when 
 
 [travis-image]: https://travis-ci.org/GoogleCloudPlatform/cloud-trace-java.svg?branch=master
 [travis-url]: https://travis-ci.org/GoogleCloudPlatform/cloud-trace-java
+[maven-image]: https://maven-badges.herokuapp.com/maven-central/com.google.cloud.trace/sdk/badge.svg
+[maven-url]: https://maven-badges.herokuapp.com/maven-central/com.google.cloud.trace/sdk
