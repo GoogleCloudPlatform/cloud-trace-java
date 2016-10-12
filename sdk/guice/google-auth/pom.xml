@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.google.cloud.trace</groupId>
     <artifactId>guice</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
   </parent>
   <artifactId>guice-google-auth</artifactId>
   <packaging>jar</packaging>
