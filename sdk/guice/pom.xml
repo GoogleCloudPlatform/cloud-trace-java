@@ -22,6 +22,7 @@
     <module>google-auth</module>
     <module>grpc-sink</module>
     <module>java-timestamp</module>
+    <module>joda-timestamp</module>
     <module>servlet</module>
     <module>single-thread-scheduler</module>
     <module>v1</module>
