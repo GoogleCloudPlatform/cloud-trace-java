@@ -17,6 +17,7 @@ package com.google.cloud.trace.v1.sink;
 import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
 import com.google.devtools.cloudtrace.v1.Trace;
+import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
  * A flushable trace sink that auto-flushes when its buffered trace messages exceed its buffer size.
@@ -66,12 +67,14 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
 
   @Override
   public void flush() {
+    Traces traces;
     synchronized(monitor) {
-      for (Trace trace : traceBuffer.getTraces()) {
-        traceSink.receive(trace);
-      }
+      traces = traceBuffer.getTraces();
       traceBuffer.clear();
       size = 0;
+    }
+    for (Trace trace : traces.getTracesList()) {
+      traceSink.receive(trace);
     }
   }
 }

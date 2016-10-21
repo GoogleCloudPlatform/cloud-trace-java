@@ -18,6 +18,7 @@ import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
 import com.google.common.collect.ImmutableList;
 import com.google.devtools.cloudtrace.v1.Trace;
+import com.google.devtools.cloudtrace.v1.Traces;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -85,9 +86,9 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
 
   @Override
   public void flush() {
-    ImmutableList<Trace> traces;
+    Traces traces;
     synchronized(monitor) {
-      traces = ImmutableList.copyOf(traceBuffer.getTraces());
+      traces = traceBuffer.getTraces();
       traceBuffer.clear();
       size = 0;
       if (autoFlusher != null) {
@@ -99,7 +100,7 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
         flusher = null;
       }
     }
-    for (Trace trace : traces) {
+    for (Trace trace : traces.getTracesList()) {
       traceSink.receive(trace);
     }
   }
