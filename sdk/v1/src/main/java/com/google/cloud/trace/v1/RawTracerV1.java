@@ -23,6 +23,7 @@ import com.google.cloud.trace.util.TraceContext;
 import com.google.cloud.trace.v1.sink.TraceSink;
 import com.google.cloud.trace.v1.source.TraceSource;
 import com.google.devtools.cloudtrace.v1.Trace;
+import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
  * A raw tracer that converts trace events to Stackdriver Trace API v1 trace messages and dispatches
@@ -68,7 +69,7 @@ public class RawTracerV1 implements RawTracer {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateStartSpan(
           projectId, context, parentContext, spanKind, name, timestamp);
-      traceSink.receive(trace);
+      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 
@@ -76,7 +77,7 @@ public class RawTracerV1 implements RawTracer {
   public void endSpan(TraceContext context, Timestamp timestamp) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateEndSpan(projectId, context, timestamp);
-      traceSink.receive(trace);
+      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 
@@ -84,7 +85,7 @@ public class RawTracerV1 implements RawTracer {
   public void annotateSpan(TraceContext context, Labels labels) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateAnnotateSpan(projectId, context, labels);
-      traceSink.receive(trace);
+      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 
@@ -92,7 +93,7 @@ public class RawTracerV1 implements RawTracer {
   public void setStackTrace(TraceContext context, StackTrace stackTrace) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateSetStackTrace(projectId, context, stackTrace);
-      traceSink.receive(trace);
+      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 }

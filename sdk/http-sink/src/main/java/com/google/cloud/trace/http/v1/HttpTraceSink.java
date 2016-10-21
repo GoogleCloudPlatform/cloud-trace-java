@@ -30,8 +30,12 @@ public class HttpTraceSink implements TraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
-    processTraces(Traces.newBuilder().addTraces(trace).build(), trace.getProjectId());
+  public void receive(Traces traces) {
+    if (traces.getTracesCount() == 0) {
+      return;
+    }
+    String projectId = traces.getTraces(0).getProjectId();
+    processTraces(traces, projectId);
   }
 
   private void processTraces(Traces traces, String projectId) {

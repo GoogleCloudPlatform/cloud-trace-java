@@ -24,7 +24,7 @@ import com.google.devtools.cloudtrace.v1.Traces;
  * thread-safe.
  *
  * @see FlushableTraceSink
- * @see Trace
+ * @see Traces
  * @see TraceSink
  */
 public class SimpleBufferingTraceSink implements FlushableTraceSink {
@@ -44,9 +44,11 @@ public class SimpleBufferingTraceSink implements FlushableTraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
+  public void receive(Traces traces) {
     synchronized(monitor) {
-      traceBuffer.put(trace);
+      for (Trace trace : traces.getTracesList()) {
+        traceBuffer.put(trace);
+      }
     }
   }
 
@@ -56,8 +58,6 @@ public class SimpleBufferingTraceSink implements FlushableTraceSink {
     synchronized(monitor) {
       traces = traceBuffer.getTraces();
     }
-    for (Trace trace : traces.getTracesList()) {
-      traceSink.receive(trace);
-    }
+    traceSink.receive(traces);
   }
 }

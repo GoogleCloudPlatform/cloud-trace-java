@@ -16,7 +16,6 @@ package com.google.cloud.trace.v1.sink;
 
 import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
-import com.google.common.collect.ImmutableList;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 import java.util.concurrent.Future;
@@ -31,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @see FlushableTraceSink
  * @see Sizer
- * @see Trace
+ * @see Traces
  * @see TraceSink
  */
 public class ScheduledBufferingTraceSink implements FlushableTraceSink {
@@ -68,17 +67,19 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
+  public void receive(Traces traces) {
     synchronized(monitor) {
-      traceBuffer.put(trace);
-      size += traceSizer.size(trace);
-      if (size >= bufferSize) {
-        if (autoFlusher == null) {
-          autoFlusher = scheduler.submit(flushable());
-        }
-      } else {
-        if ((flusher == null) && (autoFlusher == null)) {
-          flusher = scheduler.schedule(flushable(), scheduledDelay, TimeUnit.SECONDS);
+      for (Trace trace : traces.getTracesList()) {
+        traceBuffer.put(trace);
+        size += traceSizer.size(trace);
+        if (size >= bufferSize) {
+          if (autoFlusher == null) {
+            autoFlusher = scheduler.submit(flushable());
+          }
+        } else {
+          if ((flusher == null) && (autoFlusher == null)) {
+            flusher = scheduler.schedule(flushable(), scheduledDelay, TimeUnit.SECONDS);
+          }
         }
       }
     }
@@ -100,9 +101,7 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
         flusher = null;
       }
     }
-    for (Trace trace : traces.getTracesList()) {
-      traceSink.receive(trace);
-    }
+    traceSink.receive(traces);
   }
 
   private Runnable flushable() {

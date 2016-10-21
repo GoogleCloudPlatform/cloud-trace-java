@@ -26,7 +26,7 @@ import com.google.devtools.cloudtrace.v1.Traces;
  *
  * @see FlushableTraceSink
  * @see Sizer
- * @see Trace
+ * @see Traces
  * @see TraceSink
  */
 public class SizedBufferingTraceSink implements FlushableTraceSink {
@@ -55,12 +55,14 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
+  public void receive(Traces traces) {
     synchronized(monitor) {
-      size += traceSizer.size(trace);
-      traceBuffer.put(trace);
-      if (size >= bufferSize) {
-        flush();
+      for (Trace trace : traces.getTracesList()) {
+        size += traceSizer.size(trace);
+        traceBuffer.put(trace);
+        if (size >= bufferSize) {
+          flush();
+        }
       }
     }
   }
@@ -73,8 +75,6 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
       traceBuffer.clear();
       size = 0;
     }
-    for (Trace trace : traces.getTracesList()) {
-      traceSink.receive(trace);
-    }
+    traceSink.receive(traces);
   }
 }
