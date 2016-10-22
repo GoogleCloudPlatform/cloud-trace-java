@@ -57,6 +57,7 @@ public class SimpleBufferingTraceSink implements FlushableTraceSink {
     Traces traces;
     synchronized(monitor) {
       traces = traceBuffer.getTraces();
+      traceBuffer.clear();
     }
     traceSink.receive(traces);
   }
