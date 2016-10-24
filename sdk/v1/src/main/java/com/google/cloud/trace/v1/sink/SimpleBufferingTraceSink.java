@@ -29,7 +29,7 @@ import com.google.devtools.cloudtrace.v1.Traces;
  */
 public class SimpleBufferingTraceSink implements FlushableTraceSink {
   private final TraceSink traceSink;
-  private final TraceBuffer traceBuffer;
+  private TraceBuffer traceBuffer;
 
   private final Object monitor = new Object();
 
@@ -54,11 +54,14 @@ public class SimpleBufferingTraceSink implements FlushableTraceSink {
 
   @Override
   public void flush() {
-    Traces traces;
+    TraceBuffer previous;
     synchronized(monitor) {
-      traces = traceBuffer.getTraces();
-      traceBuffer.clear();
+      previous = traceBuffer;
+      traceBuffer = new TraceBuffer();
     }
-    traceSink.receive(traces);
+    if (!previous.isEmpty()) {
+      Traces traces = previous.getTraces();
+      traceSink.receive(traces);
+    }
   }
 }

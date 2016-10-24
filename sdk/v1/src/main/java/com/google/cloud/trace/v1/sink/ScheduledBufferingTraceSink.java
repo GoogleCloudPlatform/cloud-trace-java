@@ -40,7 +40,7 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
   private final int scheduledDelay;
   private final ScheduledExecutorService scheduler;
 
-  private final TraceBuffer traceBuffer = new TraceBuffer();
+  private TraceBuffer traceBuffer = new TraceBuffer();
 
   private final Object monitor = new Object();
 
@@ -87,10 +87,10 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
 
   @Override
   public void flush() {
-    Traces traces;
+    TraceBuffer previous;
     synchronized(monitor) {
-      traces = traceBuffer.getTraces();
-      traceBuffer.clear();
+      previous = traceBuffer;
+      traceBuffer = new TraceBuffer();
       size = 0;
       if (autoFlusher != null) {
         autoFlusher.cancel(false);
@@ -101,7 +101,10 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
         flusher = null;
       }
     }
-    traceSink.receive(traces);
+    if (!previous.isEmpty()) {
+      Traces traces = previous.getTraces();
+      traceSink.receive(traces);
+    }
   }
 
   private Runnable flushable() {

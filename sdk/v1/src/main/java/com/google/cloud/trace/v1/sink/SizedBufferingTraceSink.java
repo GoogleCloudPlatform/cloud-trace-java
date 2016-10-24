@@ -33,7 +33,7 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
   private final TraceSink traceSink;
   private final Sizer<Trace> traceSizer;
   private final int bufferSize;
-  private final TraceBuffer traceBuffer;
+  private TraceBuffer traceBuffer;
 
   private int size;
 
@@ -69,12 +69,15 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
 
   @Override
   public void flush() {
-    Traces traces;
+    TraceBuffer previous;
     synchronized(monitor) {
-      traces = traceBuffer.getTraces();
-      traceBuffer.clear();
+      previous = traceBuffer;
+      traceBuffer = new TraceBuffer();
       size = 0;
     }
-    traceSink.receive(traces);
+    if (!previous.isEmpty()) {
+      Traces traces = previous.getTraces();
+      traceSink.receive(traces);
+    }
   }
 }

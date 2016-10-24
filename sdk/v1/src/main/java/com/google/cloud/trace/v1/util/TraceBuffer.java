@@ -75,9 +75,9 @@ public class TraceBuffer {
   }
 
   /**
-   * Removes all of the trace messages from this trace buffer.
+   * Returns true if the TraceBuffer is empty.
    */
-  public void clear() {
-    traceMap.clear();
+  public boolean isEmpty() {
+    return traceMap.isEmpty();
   }
 }
