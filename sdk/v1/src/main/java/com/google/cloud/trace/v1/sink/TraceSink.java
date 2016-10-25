@@ -15,6 +15,7 @@
 package com.google.cloud.trace.v1.sink;
 
 import com.google.devtools.cloudtrace.v1.Trace;
+import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
  * An interface for a trace sink that accepts Stackdriver Trace API v1 trace messages.
@@ -27,5 +28,5 @@ public interface TraceSink {
    *
    * @param trace a trace that is accepted by this sink.
    */
-  void receive(Trace trace);
+  void receive(Traces trace);
 }

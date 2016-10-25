@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.v1.sink;
 
-import com.google.devtools.cloudtrace.v1.Trace;
+import com.google.devtools.cloudtrace.v1.Traces;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  *
  * @see Level
  * @see Logger
- * @see Trace
+ * @see Traces
  * @see TraceSink
  */
 public class LoggingTraceSink implements TraceSink {
@@ -42,7 +42,7 @@ public class LoggingTraceSink implements TraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
-    logger.log(level, "Received trace: " + trace);
+  public void receive(Traces traces) {
+    logger.log(level, "Received traces: " + traces);
   }
 }

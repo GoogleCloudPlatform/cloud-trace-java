@@ -14,10 +14,9 @@
 
 package com.google.cloud.trace.v1.util;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.TraceSpan;
+import com.google.devtools.cloudtrace.v1.Traces;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ import java.util.Map;
  * existing trace messages when they contain the same trace identifiers, by combining the spans of
  * the matching trace messages.
  *
- * @see Iterable
+ * @see Traces
  * @see Trace
  */
 public class TraceBuffer {
@@ -61,26 +60,24 @@ public class TraceBuffer {
    *
    * @return an iterable containing the trace messages in this trace buffer.
    */
-  public Iterable<Trace> getTraces() {
-    return Iterables.transform(traceMap.entrySet(),
-        new Function<Map.Entry<TraceKey, SpanBuffer>, Trace>(){
-      @Override
-      public Trace apply(Map.Entry<TraceKey, SpanBuffer> entry) {
-        Trace.Builder traceBuilder = Trace.newBuilder()
-            .setProjectId(entry.getKey().getProjectId())
-            .setTraceId(entry.getKey().getTraceId());
-        for (TraceSpan.Builder spanBuilder : entry.getValue().getSpans()) {
-          traceBuilder.addSpans(spanBuilder);
-        }
-        return traceBuilder.build();
+  public Traces getTraces() {
+    Traces.Builder tracesBuilder = Traces.newBuilder();
+    for (Map.Entry<TraceKey, SpanBuffer> entry : traceMap.entrySet()) {
+      Trace.Builder traceBuilder = Trace.newBuilder()
+          .setProjectId(entry.getKey().getProjectId())
+          .setTraceId(entry.getKey().getTraceId());
+      for (TraceSpan.Builder spanBuilder : entry.getValue().getSpans()) {
+        traceBuilder.addSpans(spanBuilder);
       }
-    });
+      tracesBuilder.addTraces(traceBuilder);
+    }
+    return tracesBuilder.build();
   }
 
   /**
-   * Removes all of the trace messages from this trace buffer.
+   * Returns true if the TraceBuffer is empty.
    */
-  public void clear() {
-    traceMap.clear();
+  public boolean isEmpty() {
+    return traceMap.isEmpty();
   }
 }

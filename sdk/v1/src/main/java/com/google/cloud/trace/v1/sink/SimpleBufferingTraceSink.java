@@ -16,6 +16,7 @@ package com.google.cloud.trace.v1.sink;
 
 import com.google.cloud.trace.v1.util.TraceBuffer;
 import com.google.devtools.cloudtrace.v1.Trace;
+import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
  * A trace sink that buffers trace messages until it is flushed. When flushed, this sink sends its
@@ -23,12 +24,12 @@ import com.google.devtools.cloudtrace.v1.Trace;
  * thread-safe.
  *
  * @see FlushableTraceSink
- * @see Trace
+ * @see Traces
  * @see TraceSink
  */
 public class SimpleBufferingTraceSink implements FlushableTraceSink {
   private final TraceSink traceSink;
-  private final TraceBuffer traceBuffer;
+  private TraceBuffer traceBuffer;
 
   private final Object monitor = new Object();
 
@@ -43,18 +44,24 @@ public class SimpleBufferingTraceSink implements FlushableTraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
+  public void receive(Traces traces) {
     synchronized(monitor) {
-      traceBuffer.put(trace);
+      for (Trace trace : traces.getTracesList()) {
+        traceBuffer.put(trace);
+      }
     }
   }
 
   @Override
   public void flush() {
+    TraceBuffer previous;
     synchronized(monitor) {
-      for (Trace trace : traceBuffer.getTraces()) {
-        traceSink.receive(trace);
-      }
+      previous = traceBuffer;
+      traceBuffer = new TraceBuffer();
+    }
+    if (!previous.isEmpty()) {
+      Traces traces = previous.getTraces();
+      traceSink.receive(traces);
     }
   }
 }

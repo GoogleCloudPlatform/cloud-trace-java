@@ -30,7 +30,7 @@ import io.grpc.auth.MoreCallCredentials;
  *
  * @see <a href="http://www.grpc.io">gRPC</a>
  * @see Credentials
- * @see Trace
+ * @see Traces
  * @see TraceSink
  */
 public class GrpcTraceSink implements TraceSink {
@@ -50,13 +50,15 @@ public class GrpcTraceSink implements TraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
-    Traces.Builder traceBuilder = Traces.newBuilder().addTraces(trace);
-
+  public void receive(Traces traces) {
+    if (traces.getTracesCount() == 0) {
+      return;
+    }
+    String projectId = traces.getTraces(0).getProjectId();
     PatchTracesRequest.Builder requestBuilder =
         PatchTracesRequest.newBuilder()
-            .setProjectId(trace.getProjectId())
-            .setTraces(traceBuilder.build());
+            .setProjectId(projectId)
+            .setTraces(traces);
 
     traceService.patchTraces(requestBuilder.build());
   }

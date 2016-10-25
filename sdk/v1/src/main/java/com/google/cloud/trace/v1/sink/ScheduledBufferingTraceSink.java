@@ -16,8 +16,8 @@ package com.google.cloud.trace.v1.sink;
 
 import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
-import com.google.common.collect.ImmutableList;
 import com.google.devtools.cloudtrace.v1.Trace;
+import com.google.devtools.cloudtrace.v1.Traces;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @see FlushableTraceSink
  * @see Sizer
- * @see Trace
+ * @see Traces
  * @see TraceSink
  */
 public class ScheduledBufferingTraceSink implements FlushableTraceSink {
@@ -40,7 +40,7 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
   private final int scheduledDelay;
   private final ScheduledExecutorService scheduler;
 
-  private final TraceBuffer traceBuffer = new TraceBuffer();
+  private TraceBuffer traceBuffer = new TraceBuffer();
 
   private final Object monitor = new Object();
 
@@ -67,17 +67,19 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
   }
 
   @Override
-  public void receive(Trace trace) {
+  public void receive(Traces traces) {
     synchronized(monitor) {
-      traceBuffer.put(trace);
-      size += traceSizer.size(trace);
-      if (size >= bufferSize) {
-        if (autoFlusher == null) {
-          autoFlusher = scheduler.submit(flushable());
-        }
-      } else {
-        if ((flusher == null) && (autoFlusher == null)) {
-          flusher = scheduler.schedule(flushable(), scheduledDelay, TimeUnit.SECONDS);
+      for (Trace trace : traces.getTracesList()) {
+        traceBuffer.put(trace);
+        size += traceSizer.size(trace);
+        if (size >= bufferSize) {
+          if (autoFlusher == null) {
+            autoFlusher = scheduler.submit(flushable());
+          }
+        } else {
+          if ((flusher == null) && (autoFlusher == null)) {
+            flusher = scheduler.schedule(flushable(), scheduledDelay, TimeUnit.SECONDS);
+          }
         }
       }
     }
@@ -85,10 +87,10 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
 
   @Override
   public void flush() {
-    ImmutableList<Trace> traces;
+    TraceBuffer previous;
     synchronized(monitor) {
-      traces = ImmutableList.copyOf(traceBuffer.getTraces());
-      traceBuffer.clear();
+      previous = traceBuffer;
+      traceBuffer = new TraceBuffer();
       size = 0;
       if (autoFlusher != null) {
         autoFlusher.cancel(false);
@@ -99,8 +101,9 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
         flusher = null;
       }
     }
-    for (Trace trace : traces) {
-      traceSink.receive(trace);
+    if (!previous.isEmpty()) {
+      Traces traces = previous.getTraces();
+      traceSink.receive(traces);
     }
   }
 
