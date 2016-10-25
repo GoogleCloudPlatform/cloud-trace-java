@@ -138,4 +138,21 @@ public class TraceContextFactory {
 
     return new TraceContext(traceId, spanId, traceOptions);
   }
+
+  /**
+   * Transforms this context into an HTTP request header.
+   *
+   * @return this context as a header.
+   */
+  public static String toHeader(TraceContext context) {
+    StringBuilder builder =
+        new StringBuilder()
+            .append(context.getTraceId().getApiString())
+            .append('/')
+            .append(UnsignedLongs.toString(context.getSpanId().getSpanId()))
+            .append(";o=")
+            .append(context.getTraceOptions().getOptionsMask());
+
+    return builder.toString();
+  }
 }
