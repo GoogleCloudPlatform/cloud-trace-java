@@ -28,6 +28,6 @@ public class ThreadLocalTraceContextSwapperModule extends AbstractModule {
   @Provides
   @Singleton
   TraceContextSwapper provideSwapper(TraceContextFactory traceContextFactory) {
-    return new ThreadLocalTraceContextSwapper(traceContextFactory.rootContext());
+    return new ThreadLocalTraceContextSwapper(traceContextFactory.initialContext());
   }
 }

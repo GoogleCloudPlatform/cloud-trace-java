@@ -48,7 +48,7 @@ public class BasicLogging {
     Tracer tracer = new TraceContextFactoryTracer(rawTracer, traceContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
-    TraceContext context1 = tracer.startSpan(traceContextFactory.rootContext(), "my span 1");
+    TraceContext context1 = tracer.startSpan(traceContextFactory.initialContext(), "my span 1");
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
     tracer.setStackTrace(context1, stackTraceBuilder.build());
     tracer.endSpan(context1);
