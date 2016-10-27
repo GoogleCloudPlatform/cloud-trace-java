@@ -70,7 +70,7 @@ public class TraceContextFactory {
   /**
    * Generates a new trace context based on the parent context with a new span identifier. If the
    * parent context has an invalid trace identifier, the new trace context will also have a new
-   * trace identifier.
+   * trace identifier, and a sampling decision will be made.
    *
    * @param parentContext a trace context that is the parent of the new trace context.
    * @return the new trace context.
@@ -81,7 +81,7 @@ public class TraceContextFactory {
           traceOptionsFactory.create(parentContext.getTraceOptions()));
     }
     return new TraceContext(traceIdFactory.nextId(), spanIdFactory.nextId(),
-        traceOptionsFactory.create(parentContext.getTraceOptions()));
+        traceOptionsFactory.create());
   }
 
   /**
@@ -93,17 +93,6 @@ public class TraceContextFactory {
    */
   public TraceContext initialContext() {
     return new TraceContext(traceIdFactory.invalid(), spanIdFactory.invalid(), new TraceOptions());
-  }
-
-  /**
-   * Generates a new trace context with invalid trace and span identifiers and new trace options.
-   * This method invokes the trace options factory, so a sampling decision is made.
-   *
-   * @return the new trace context.
-   */
-  public TraceContext rootContext() {
-    return new TraceContext(traceIdFactory.invalid(), spanIdFactory.invalid(),
-        traceOptionsFactory.create());
   }
 
   /**

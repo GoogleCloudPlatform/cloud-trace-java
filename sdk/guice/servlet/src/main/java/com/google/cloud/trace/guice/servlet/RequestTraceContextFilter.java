@@ -57,7 +57,7 @@ public class RequestTraceContextFilter implements Filter {
     if (contextHeader != null) {
       context = traceContextFactory.fromHeader(contextHeader);
     } else {
-      context = traceContextFactory.rootContext();
+      context = traceContextFactory.initialContext();
     }
 
     httpRequest.setAttribute(

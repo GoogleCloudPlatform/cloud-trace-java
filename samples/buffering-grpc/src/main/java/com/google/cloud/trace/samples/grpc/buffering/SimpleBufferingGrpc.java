@@ -55,7 +55,7 @@ public class SimpleBufferingGrpc {
     Tracer tracer = new TraceContextFactoryTracer(rawTracer, traceContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
-    TraceContext context1 = tracer.startSpan(traceContextFactory.rootContext(), "my span 1");
+    TraceContext context1 = tracer.startSpan(traceContextFactory.initialContext(), "my span 1");
 
     TraceContext context2 = tracer.startSpan(context1, "my span 2");
 
