@@ -16,6 +16,7 @@ package com.google.cloud.trace;
 
 import static org.junit.Assert.assertSame;
 
+import com.google.cloud.trace.TraceContextHandler.TraceContextHandlerState;
 import com.google.cloud.trace.util.SpanId;
 import com.google.cloud.trace.util.TraceContext;
 import com.google.cloud.trace.util.TraceId;
@@ -43,5 +44,66 @@ public class DefaultTraceContextHandlerTest {
     assertSame(child2, handler.current());
     handler.pop();
     assertSame(child1, handler.current());
+  }
+
+  @Test
+  public void testReplaceRestore() {
+    TraceContext defaultRoot =
+        new TraceContext(new TraceId(BigInteger.valueOf(0)), new SpanId(0), new TraceOptions());
+    TraceContext root1 = new TraceContext(new TraceId(BigInteger.valueOf(3)), new SpanId(4),
+        TraceOptions.forTraceEnabled());
+    TraceContext child1 = new TraceContext(new TraceId(BigInteger.valueOf(3)), new SpanId(5),
+        TraceOptions.forTraceEnabled());
+    TraceContext root2 = new TraceContext(new TraceId(BigInteger.valueOf(4)), new SpanId(4),
+        TraceOptions.forTraceEnabled());
+    TraceContext child2 = new TraceContext(new TraceId(BigInteger.valueOf(4)), new SpanId(6),
+        TraceOptions.forTraceEnabled());
+
+    TraceContextHandler handler = new DefaultTraceContextHandler(defaultRoot);
+    // [#defaultRoot#]
+    assertSame(defaultRoot, handler.current());
+
+    TraceContextHandlerState handlerRoot1 = handler.replace(root1);
+    // [#defaultRoot#, #root1#]
+    assertSame(root1, handler.current());
+
+    handler.pop();
+    // [#defaultRoot#, #root1#]
+    // Shouldn't be able to pop below root.
+    assertSame(root1, handler.current());
+
+    handler.push(child1);
+    // [#defaultRoot#, #root1#, child1]
+    assertSame(child1, handler.current());
+
+    TraceContextHandlerState handlerRoot2 = handler.replace(root2);
+    // [#defaultRoot#, #root1#, child1, #root2#]
+    assertSame(root2, handler.current());
+
+    handler.pop();
+    // [#defaultRoot#, #root1#, child1, #root2#]
+    // Shouldn't be able to pop below root.
+    assertSame(root2, handler.current());
+
+    handler.push(child2);
+    // [#defaultRoot#, #root1#, child1, #root2#, child2]
+    assertSame(child2, handler.current());
+
+    handler.restore(handlerRoot2);
+    // [#defaultRoot#, #root1#, child1]
+    assertSame(child1, handler.current());
+
+    handler.pop();
+    // [#defaultRoot#, #root1#]
+    assertSame(root1, handler.current());
+
+    handler.pop();
+    // [#defaultRoot#, #root1#]
+    //Shouldn't be able to pop below root
+    assertSame(root1, handler.current());
+
+    handler.restore(handlerRoot1);
+    // [#defaultRoot#]
+    assertSame(defaultRoot, handler.current());
   }
 }
