@@ -55,7 +55,7 @@ public class SpanId {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper(this)
-        .add("spanId", UnsignedLongs.toString(spanId))
+        .add("spanId", getApiString())
         .toString();
   }
 
@@ -75,5 +75,14 @@ public class SpanId {
    */
   public long getSpanId() {
     return spanId;
+  }
+
+  /**
+   * Returns this span id formatted as an unsigned long integer.
+   *
+   * @return The span identifier formatted for API consumption.
+   */
+  public String getApiString() {
+    return UnsignedLongs.toString(spanId);
   }
 }
