@@ -3,7 +3,7 @@
 
   <parent>
     <groupId>com.google.cloud.trace</groupId>
-    <artifactId>sdk</artifactId>
+    <artifactId>root</artifactId>
     <version>0.1.1-SNAPSHOT</version>
   </parent>
   <artifactId>guice</artifactId>

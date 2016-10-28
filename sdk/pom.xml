@@ -19,13 +19,9 @@
   <modules>
     <module>annotation</module>
     <module>core</module>
-    <module>grpc-sink</module>
-    <module>guice</module>
-    <module>http-sink</module>
     <module>java-timestamp</module>
     <module>joda-timestamp</module>
     <module>servlet</module>
-    <module>v1</module>
   </modules>
 
   <build>

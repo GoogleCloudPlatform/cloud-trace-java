@@ -1,18 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>com.google.cloud.trace</groupId>
-    <artifactId>sdk</artifactId>
+    <artifactId>sinks-parent</artifactId>
     <version>0.1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>http-sink</artifactId>
+  <artifactId>grpc-sink</artifactId>
   <packaging>jar</packaging>
 
-  <name>Google Cloud Trace Java SDK HTTP Sink</name>
+  <name>Google Cloud Trace Java SDK gRPC Sink</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,23 +28,18 @@
     </dependency>
     <dependency>
       <groupId>com.google.auth</groupId>
-      <artifactId>google-auth-library-oauth2-http</artifactId>
+      <artifactId>google-auth-library-credentials</artifactId>
       <version>0.4.0</version>
     </dependency>
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>19.0</version>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-auth</artifactId>
+      <version>1.0.1</version>
     </dependency>
     <dependency>
-      <groupId>com.google.protobuf</groupId>
-      <artifactId>protobuf-java</artifactId>
-      <version>3.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.protobuf</groupId>
-      <artifactId>protobuf-java-util</artifactId>
-      <version>3.1.0</version>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-core</artifactId>
+      <version>1.0.1</version>
     </dependency>
   </dependencies>
 </project>

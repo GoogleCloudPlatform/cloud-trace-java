@@ -36,6 +36,8 @@
   <modules>
     <module>sdk</module>
     <module>samples</module>
+    <module>sinks</module>
+    <module>guice</module>
   </modules>
 
   <scm>

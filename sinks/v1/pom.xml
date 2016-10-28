@@ -3,7 +3,7 @@
 
   <parent>
     <groupId>com.google.cloud.trace</groupId>
-    <artifactId>sdk</artifactId>
+    <artifactId>sinks-parent</artifactId>
     <version>0.1.1-SNAPSHOT</version>
   </parent>
   <artifactId>v1</artifactId>
