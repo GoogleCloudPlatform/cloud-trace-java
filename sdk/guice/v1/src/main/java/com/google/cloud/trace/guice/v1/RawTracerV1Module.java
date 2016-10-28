@@ -14,8 +14,8 @@
 
 package com.google.cloud.trace.guice.v1;
 
-import com.google.cloud.trace.RawTracer;
-import com.google.cloud.trace.v1.RawTracerV1;
+import com.google.cloud.trace.TraceSink;
+import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.producer.TraceProducer;
 import com.google.inject.AbstractModule;
@@ -27,11 +27,11 @@ import com.google.inject.multibindings.Multibinder;
 public class RawTracerV1Module extends AbstractModule {
   @Override
   protected void configure() {
-    Multibinder<RawTracer> setBinder = Multibinder.newSetBinder(binder(), RawTracer.class);
+    Multibinder<TraceSink> setBinder = Multibinder.newSetBinder(binder(), TraceSink.class);
     setBinder.addBinding().toProvider(RawTracerV1Provider.class).in(Singleton.class);
   }
 
-  private static class RawTracerV1Provider implements Provider<RawTracerV1> {
+  private static class RawTracerV1Provider implements Provider<TraceSinkV1> {
     private final String projectId;
     private final TraceConsumer traceConsumer;
 
@@ -42,8 +42,8 @@ public class RawTracerV1Module extends AbstractModule {
     }
 
     @Override
-    public RawTracerV1 get() {
-      return new RawTracerV1(projectId, new TraceProducer(), traceConsumer);
+    public TraceSinkV1 get() {
+      return new TraceSinkV1(projectId, new TraceProducer(), traceConsumer);
     }
   }
 }

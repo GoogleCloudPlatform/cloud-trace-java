@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 /**
  * A raw tracer that logs trace events.
  */
-public class LoggingRawTracer implements RawTracer {
+public class LoggingTraceSink implements TraceSink {
   private final Logger logger;
   private final Level level;
 
@@ -35,7 +35,7 @@ public class LoggingRawTracer implements RawTracer {
    * @param logger a logger used to log trace events.
    * @param level a level used for trace event log messages.
    */
-  public LoggingRawTracer(Logger logger, Level level) {
+  public LoggingTraceSink(Logger logger, Level level) {
     this.logger = logger;
     this.level = level;
   }
@@ -43,22 +43,22 @@ public class LoggingRawTracer implements RawTracer {
   @Override
   public void startSpan(TraceContext context, TraceContext parentContext, SpanKind spanKind,
       String name, Timestamp timestamp) {
-    logger.log(level, String.format("LoggingRawTracer.startSpan(%s, %s, %s, %s, %s)",
+    logger.log(level, String.format("LoggingTraceSink.startSpan(%s, %s, %s, %s, %s)",
         context, parentContext, spanKind, name, timestamp));
   }
 
   @Override
   public void endSpan(TraceContext context, Timestamp timestamp) {
-    logger.log(level, String.format("LoggingRawTracer.endSpan(%s, %s)", context, timestamp));
+    logger.log(level, String.format("LoggingTraceSink.endSpan(%s, %s)", context, timestamp));
   }
 
   @Override
   public void annotateSpan(TraceContext context, Labels labels) {
-    logger.log(level, String.format("LoggingRawTracer.annotateSpan(%s, %s)", context, labels));
+    logger.log(level, String.format("LoggingTraceSink.annotateSpan(%s, %s)", context, labels));
   }
 
   @Override
   public void setStackTrace(TraceContext context, StackTrace stackTrace) {
-    logger.log(level, String.format("LoggingRawTracer.setStackTrace(%s, %s)", context, stackTrace));
+    logger.log(level, String.format("LoggingTraceSink.setStackTrace(%s, %s)", context, stackTrace));
   }
 }

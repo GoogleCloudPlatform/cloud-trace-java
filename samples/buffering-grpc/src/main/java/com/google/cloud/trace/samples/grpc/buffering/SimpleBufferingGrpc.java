@@ -15,7 +15,7 @@
 package com.google.cloud.trace.samples.grpc.buffering;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.trace.RawTracer;
+import com.google.cloud.trace.TraceSink;
 import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.grpc.v1.GrpcTraceConsumer;
@@ -26,7 +26,7 @@ import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceContextFactory;
-import com.google.cloud.trace.v1.RawTracerV1;
+import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
 import com.google.cloud.trace.v1.consumer.SimpleBufferingTraceConsumer;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
@@ -46,13 +46,13 @@ public class SimpleBufferingGrpc {
         GoogleCredentials.fromStream(new FileInputStream(clientSecretsFile))
             .createScoped(Arrays.asList("https://www.googleapis.com/auth/trace.append")));
     FlushableTraceConsumer flushableSink = new SimpleBufferingTraceConsumer(traceConsumer);
-    RawTracer rawTracer = new RawTracerV1(projectId, traceProducer, flushableSink);
+    TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, flushableSink);
 
     // Create the tracer.
     TraceContextFactory traceContextFactory = new TraceContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(rawTracer, traceContextFactory, timestampFactory);
+    Tracer tracer = new TraceContextFactoryTracer(traceSink, traceContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
     TraceContext context1 = tracer.startSpan(traceContextFactory.initialContext(), "my span 1");

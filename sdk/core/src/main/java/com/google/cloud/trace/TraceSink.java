@@ -32,7 +32,7 @@ import com.google.cloud.trace.core.TraceContext;
  * @see TraceContext
  * @see Tracer
  */
-public interface RawTracer {
+public interface TraceSink {
   /**
    * Starts a new span.
    *

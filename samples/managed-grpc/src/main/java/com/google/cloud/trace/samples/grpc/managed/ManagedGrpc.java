@@ -15,9 +15,9 @@
 package com.google.cloud.trace.samples.grpc.managed;
 
 import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.trace.TraceSink;
 import com.google.cloud.trace.core.DefaultTraceContextHandler;
 import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.RawTracer;
 import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.core.TraceContextHandler;
 import com.google.cloud.trace.TraceContextHandlerTracer;
@@ -29,7 +29,7 @@ import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContextFactory;
-import com.google.cloud.trace.v1.RawTracerV1;
+import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.producer.TraceProducer;
 
@@ -43,13 +43,13 @@ public class ManagedGrpc {
     TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         GoogleCredentials.getApplicationDefault());
-    RawTracer rawTracer = new RawTracerV1(projectId, traceProducer, traceConsumer);
+    TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, traceConsumer);
 
     // Create the tracer.
     TraceContextFactory traceContextFactory = new TraceContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(rawTracer, traceContextFactory, timestampFactory);
+    Tracer tracer = new TraceContextFactoryTracer(traceSink, traceContextFactory, timestampFactory);
 
     // Create the managed tracer.
     TraceContextHandler traceContextHandler = new DefaultTraceContextHandler(

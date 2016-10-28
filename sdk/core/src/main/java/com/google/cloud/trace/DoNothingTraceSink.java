@@ -23,7 +23,7 @@ import com.google.cloud.trace.core.TraceContext;
 /**
  * A raw tracer that does nothing.
  */
-public class DoNothingRawTracer implements RawTracer {
+public class DoNothingTraceSink implements TraceSink {
   @Override
   public void startSpan(TraceContext context, TraceContext parentContext, SpanKind spanKind,
       String name, Timestamp timestamp) {

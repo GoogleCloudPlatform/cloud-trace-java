@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.v1;
 
-import com.google.cloud.trace.RawTracer;
+import com.google.cloud.trace.TraceSink;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
@@ -39,12 +39,12 @@ import com.google.devtools.cloudtrace.v1.Traces;
  * the Project Number of the project.
  *
  * @see <a href="https://cloud.google.com/trace/api">Stackdriver Trace API</a>
- * @see RawTracer
+ * @see TraceSink
  * @see Trace
  * @see TraceConsumer
  * @see TraceProducer
  */
-public class RawTracerV1 implements RawTracer {
+public class TraceSinkV1 implements TraceSink {
   private final String projectId;
   private final TraceProducer traceProducer;
   private final TraceConsumer traceConsumer;
@@ -57,7 +57,7 @@ public class RawTracerV1 implements RawTracer {
    * @param traceProducer a trace producer that converts trace events to API v1 trace messages.
    * @param traceConsumer   a trace consumer that accepts API v1 trace messages.
    */
-  public RawTracerV1(String projectId, TraceProducer traceProducer, TraceConsumer traceConsumer) {
+  public TraceSinkV1(String projectId, TraceProducer traceProducer, TraceConsumer traceConsumer) {
     this.projectId = projectId;
     this.traceProducer = traceProducer;
     this.traceConsumer = traceConsumer;

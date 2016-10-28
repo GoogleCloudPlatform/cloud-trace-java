@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.guice;
 
-import com.google.cloud.trace.RawTracer;
+import com.google.cloud.trace.TraceSink;
 import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.TimestampFactory;
@@ -38,7 +38,7 @@ public class TraceContextFactoryTracerModule extends AbstractModule {
 
   @Provides
   @Singleton
-  Tracer provideTracer(Set<RawTracer> tracers, TraceContextFactory traceContextFactory,
+  Tracer provideTracer(Set<TraceSink> tracers, TraceContextFactory traceContextFactory,
       TimestampFactory timestampFactory) {
     return new TraceContextFactoryTracer(tracers, traceContextFactory, timestampFactory);
   }

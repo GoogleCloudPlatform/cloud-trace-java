@@ -34,7 +34,7 @@ import java.util.Set;
  * generate a new trace context from a parent trace context when starting a new span, and it uses a
  * timestamp factory to generate start and end timestamps for spans.
  *
- * @see RawTracer
+ * @see TraceSink
  * @see Timestamp
  * @see TimestampFactory
  * @see TraceContext
@@ -42,7 +42,7 @@ import java.util.Set;
  * @see Tracer
  */
 public class TraceContextFactoryTracer implements Tracer {
-  private final ImmutableSet<RawTracer> tracers;
+  private final ImmutableSet<TraceSink> tracers;
   private final TraceContextFactory traceContextFactory;
   private final TimestampFactory timestampFactory;
 
@@ -53,7 +53,7 @@ public class TraceContextFactoryTracer implements Tracer {
    * @param traceContextFactory a trace context factory used to generate new trace contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(Set<RawTracer> tracers, TraceContextFactory traceContextFactory,
+  public TraceContextFactoryTracer(Set<TraceSink> tracers, TraceContextFactory traceContextFactory,
       TimestampFactory timestampFactory) {
     this.tracers = ImmutableSet.copyOf(tracers);
     this.traceContextFactory = traceContextFactory;
@@ -67,7 +67,7 @@ public class TraceContextFactoryTracer implements Tracer {
    * @param traceContextFactory a trace context factory used to generate new trace contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(RawTracer tracer, TraceContextFactory traceContextFactory,
+  public TraceContextFactoryTracer(TraceSink tracer, TraceContextFactory traceContextFactory,
       TimestampFactory timestampFactory) {
     this(ImmutableSet.of(tracer), traceContextFactory, timestampFactory);
   }
@@ -95,14 +95,14 @@ public class TraceContextFactoryTracer implements Tracer {
 
   @Override
   public void annotateSpan(TraceContext context, Labels labels) {
-    for (RawTracer tracer : tracers) {
+    for (TraceSink tracer : tracers) {
       tracer.annotateSpan(context, labels);
     }
   }
 
   @Override
   public void setStackTrace(TraceContext context, StackTrace stackTrace) {
-    for (RawTracer tracer : tracers) {
+    for (TraceSink tracer : tracers) {
       tracer.setStackTrace(context, stackTrace);
     }
   }
@@ -119,7 +119,7 @@ public class TraceContextFactoryTracer implements Tracer {
       parentContext = parentContext.overrideOptions(traceOptions);
     }
     TraceContext context = traceContextFactory.childContext(parentContext);
-    for (RawTracer tracer : tracers) {
+    for (TraceSink tracer : tracers) {
       tracer.startSpan(context, parentContext, spanKind, name, timestamp);
     }
     return context;
@@ -129,7 +129,7 @@ public class TraceContextFactoryTracer implements Tracer {
     if (timestamp == null) {
       timestamp = timestampFactory.now();
     }
-    for (RawTracer tracer : tracers) {
+    for (TraceSink tracer : tracers) {
       tracer.endSpan(context, timestamp);
     }
   }
