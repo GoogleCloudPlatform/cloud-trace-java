@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.TraceContext;
 
 public class ThreadLocalTraceContextHandler implements TraceContextHandler {
   private static final ThreadLocal<DefaultTraceContextHandler> handlers =

@@ -14,9 +14,8 @@
 
 package com.google.cloud.trace.guice;
 
-import com.google.cloud.trace.guice.StackTraceEnabled;
-import com.google.cloud.trace.util.RateLimitingTraceOptionsFactory;
-import com.google.cloud.trace.util.TraceOptionsFactory;
+import com.google.cloud.trace.core.RateLimitingTraceOptionsFactory;
+import com.google.cloud.trace.core.TraceOptionsFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Provides;

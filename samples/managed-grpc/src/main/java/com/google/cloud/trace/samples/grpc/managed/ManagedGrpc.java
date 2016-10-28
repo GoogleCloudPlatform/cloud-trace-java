@@ -23,20 +23,17 @@ import com.google.cloud.trace.TraceContextHandler;
 import com.google.cloud.trace.TraceContextHandlerTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.grpc.v1.GrpcTraceSink;
-import com.google.cloud.trace.util.ConstantTraceOptionsFactory;
-import com.google.cloud.trace.util.JavaTimestampFactory;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.ThrowableStackTraceHelper;
-import com.google.cloud.trace.util.TimestampFactory;
-import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceContextFactory;
+import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
+import com.google.cloud.trace.core.JavaTimestampFactory;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.ThrowableStackTraceHelper;
+import com.google.cloud.trace.core.TimestampFactory;
+import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.cloud.trace.v1.RawTracerV1;
 import com.google.cloud.trace.v1.sink.TraceSink;
 import com.google.cloud.trace.v1.source.TraceSource;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class ManagedGrpc {
   public static void main(String[] args) throws IOException {

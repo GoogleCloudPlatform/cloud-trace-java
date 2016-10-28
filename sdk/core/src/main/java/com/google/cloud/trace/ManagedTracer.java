@@ -14,11 +14,11 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.EndSpanOptions;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.StartSpanOptions;
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.EndSpanOptions;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.TraceContext;
 
 /**
  * An interface used for the ingestion and transmission of trace information. This is a tracer that

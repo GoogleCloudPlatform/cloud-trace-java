@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.guice.annotation;
 
-import com.google.cloud.trace.util.Labels;
+import com.google.cloud.trace.core.Labels;
 
 public interface Labeler {
   String overrideName();

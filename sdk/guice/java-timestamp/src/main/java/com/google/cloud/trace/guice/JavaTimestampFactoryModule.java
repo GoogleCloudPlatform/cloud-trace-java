@@ -17,8 +17,8 @@ package com.google.cloud.trace.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
-import com.google.cloud.trace.util.JavaTimestampFactory;
-import com.google.cloud.trace.util.TimestampFactory;
+import com.google.cloud.trace.core.JavaTimestampFactory;
+import com.google.cloud.trace.core.TimestampFactory;
 
 public class JavaTimestampFactoryModule extends AbstractModule {
   @Override

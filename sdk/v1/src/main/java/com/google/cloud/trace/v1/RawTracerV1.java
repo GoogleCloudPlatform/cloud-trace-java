@@ -15,11 +15,11 @@
 package com.google.cloud.trace.v1;
 
 import com.google.cloud.trace.RawTracer;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.SpanKind;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.Timestamp;
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanKind;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.Timestamp;
+import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.v1.sink.TraceSink;
 import com.google.cloud.trace.v1.source.TraceSource;
 import com.google.devtools.cloudtrace.v1.Trace;

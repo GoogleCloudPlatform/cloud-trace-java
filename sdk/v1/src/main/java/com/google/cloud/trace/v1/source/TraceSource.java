@@ -14,14 +14,14 @@
 
 package com.google.cloud.trace.v1.source;
 
-import com.google.cloud.trace.util.Label;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.SpanKind;
-import com.google.cloud.trace.util.StackFrame;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.Timestamp;
-import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceId;
+import com.google.cloud.trace.core.Label;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanKind;
+import com.google.cloud.trace.core.StackFrame;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.Timestamp;
+import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceId;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.TraceSpan;
 

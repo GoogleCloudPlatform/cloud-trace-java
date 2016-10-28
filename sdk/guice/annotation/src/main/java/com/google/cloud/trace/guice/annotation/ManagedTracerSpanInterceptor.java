@@ -19,11 +19,11 @@ import com.google.cloud.trace.annotation.Label;
 import com.google.cloud.trace.annotation.Name;
 import com.google.cloud.trace.annotation.Option;
 import com.google.cloud.trace.annotation.Span;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.StartSpanOptions;
-import com.google.cloud.trace.util.ThrowableStackTraceHelper;
-import com.google.cloud.trace.util.TraceOptions;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.ThrowableStackTraceHelper;
+import com.google.cloud.trace.core.TraceOptions;
 import com.google.common.base.CaseFormat;
 import com.google.inject.Provider;
 

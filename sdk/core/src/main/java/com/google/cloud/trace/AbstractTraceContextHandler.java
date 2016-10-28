@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.TraceContext;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.logging.Logger;

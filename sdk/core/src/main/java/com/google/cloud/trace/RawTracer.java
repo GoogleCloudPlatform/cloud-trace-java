@@ -14,11 +14,11 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.SpanKind;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.Timestamp;
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanKind;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.Timestamp;
+import com.google.cloud.trace.core.TraceContext;
 
 /**
  * A tracer that is used to receive trace data. This tracer is not designed to be used to implement

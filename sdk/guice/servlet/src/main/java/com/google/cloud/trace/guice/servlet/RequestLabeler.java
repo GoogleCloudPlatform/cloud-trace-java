@@ -16,7 +16,7 @@ package com.google.cloud.trace.guice.servlet;
 
 import com.google.cloud.trace.guice.annotation.Labeler;
 import com.google.cloud.trace.servlet.RequestLabelsHelper;
-import com.google.cloud.trace.util.Labels;
+import com.google.cloud.trace.core.Labels;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

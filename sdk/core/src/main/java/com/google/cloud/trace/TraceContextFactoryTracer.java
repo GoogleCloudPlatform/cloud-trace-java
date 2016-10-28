@@ -14,16 +14,16 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.EndSpanOptions;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.SpanKind;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.StartSpanOptions;
-import com.google.cloud.trace.util.Timestamp;
-import com.google.cloud.trace.util.TimestampFactory;
-import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceContextFactory;
-import com.google.cloud.trace.util.TraceOptions;
+import com.google.cloud.trace.core.EndSpanOptions;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanKind;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.Timestamp;
+import com.google.cloud.trace.core.TimestampFactory;
+import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.TraceOptions;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 

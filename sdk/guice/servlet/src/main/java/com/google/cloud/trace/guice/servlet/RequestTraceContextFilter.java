@@ -14,9 +14,8 @@
 
 package com.google.cloud.trace.guice.servlet;
 
-import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceContextFactory;
-import com.google.cloud.trace.util.TraceOptions;
+import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Singleton;

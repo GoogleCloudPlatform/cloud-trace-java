@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.TraceContext;
 
 /**
  * An interface that represents a stack of {@link TraceContext}s.

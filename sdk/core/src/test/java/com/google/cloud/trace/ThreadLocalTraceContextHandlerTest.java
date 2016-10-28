@@ -16,10 +16,10 @@ package com.google.cloud.trace;
 
 import static org.junit.Assert.assertSame;
 
-import com.google.cloud.trace.util.SpanId;
-import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceId;
-import com.google.cloud.trace.util.TraceOptions;
+import com.google.cloud.trace.core.SpanId;
+import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceId;
+import com.google.cloud.trace.core.TraceOptions;
 import java.math.BigInteger;
 import org.junit.Test;
 
