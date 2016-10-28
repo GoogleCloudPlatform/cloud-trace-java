@@ -22,7 +22,7 @@ import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.Timestamp;
 import com.google.cloud.trace.core.TimestampFactory;
-import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.core.TraceOptions;
 import com.google.cloud.trace.core.TraceSink;
 import com.google.common.collect.ImmutableSet;
@@ -39,25 +39,25 @@ import java.util.Set;
  * @see Timestamp
  * @see TimestampFactory
  * @see SpanContext
- * @see TraceContextFactory
+ * @see SpanContextFactory
  * @see Tracer
  */
 public class TraceContextFactoryTracer implements Tracer {
   private final ImmutableSet<TraceSink> tracers;
-  private final TraceContextFactory traceContextFactory;
+  private final SpanContextFactory spanContextFactory;
   private final TimestampFactory timestampFactory;
 
   /**
    * Creates a new tracer.
    *
    * @param tracers             a set of raw tracers that this tracer will send trace data to.
-   * @param traceContextFactory a span context factory used to generate new span contexts.
+   * @param spanContextFactory a span context factory used to generate new span contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(Set<TraceSink> tracers, TraceContextFactory traceContextFactory,
+  public TraceContextFactoryTracer(Set<TraceSink> tracers, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
     this.tracers = ImmutableSet.copyOf(tracers);
-    this.traceContextFactory = traceContextFactory;
+    this.spanContextFactory = spanContextFactory;
     this.timestampFactory = timestampFactory;
   }
 
@@ -65,12 +65,12 @@ public class TraceContextFactoryTracer implements Tracer {
    * Creates a new tracer.
    *
    * @param tracer              a raw tracer that this tracer will send trace data to.
-   * @param traceContextFactory a span context factory used to generate new span contexts.
+   * @param spanContextFactory a span context factory used to generate new span contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(TraceSink tracer, TraceContextFactory traceContextFactory,
+  public TraceContextFactoryTracer(TraceSink tracer, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
-    this(ImmutableSet.of(tracer), traceContextFactory, timestampFactory);
+    this(ImmutableSet.of(tracer), spanContextFactory, timestampFactory);
   }
 
   @Override
@@ -119,7 +119,7 @@ public class TraceContextFactoryTracer implements Tracer {
     if (traceOptions != null) {
       parentContext = parentContext.overrideOptions(traceOptions);
     }
-    SpanContext context = traceContextFactory.childContext(parentContext);
+    SpanContext context = spanContextFactory.childContext(parentContext);
     for (TraceSink tracer : tracers) {
       tracer.startSpan(context, parentContext, spanKind, name, timestamp);
     }

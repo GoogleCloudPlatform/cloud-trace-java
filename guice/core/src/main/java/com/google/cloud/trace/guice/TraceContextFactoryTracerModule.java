@@ -18,7 +18,7 @@ import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.TimestampFactory;
-import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.core.TraceOptionsFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -32,14 +32,14 @@ public class TraceContextFactoryTracerModule extends AbstractModule {
 
   @Provides
   @Singleton
-  TraceContextFactory provideTraceContextFactory(TraceOptionsFactory traceOptionsFactory) {
-    return new TraceContextFactory(traceOptionsFactory);
+  SpanContextFactory provideTraceContextFactory(TraceOptionsFactory traceOptionsFactory) {
+    return new SpanContextFactory(traceOptionsFactory);
   }
 
   @Provides
   @Singleton
-  Tracer provideTracer(Set<TraceSink> tracers, TraceContextFactory traceContextFactory,
+  Tracer provideTracer(Set<TraceSink> tracers, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
-    return new TraceContextFactoryTracer(tracers, traceContextFactory, timestampFactory);
+    return new TraceContextFactoryTracer(tracers, spanContextFactory, timestampFactory);
   }
 }

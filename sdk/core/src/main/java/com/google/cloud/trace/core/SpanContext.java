@@ -22,7 +22,7 @@ import java.util.Objects;
  * span and a set of options that determine how a span is traced.
  *
  * @see SpanId
- * @see TraceContextFactory
+ * @see SpanContextFactory
  * @see TraceOptions
  * @see TraceId
  */

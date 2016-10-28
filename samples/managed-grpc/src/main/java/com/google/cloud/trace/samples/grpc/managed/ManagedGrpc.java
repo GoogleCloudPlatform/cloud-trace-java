@@ -28,7 +28,7 @@ import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TimestampFactory;
-import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.producer.TraceProducer;
@@ -46,14 +46,14 @@ public class ManagedGrpc {
     TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, traceConsumer);
 
     // Create the tracer.
-    TraceContextFactory traceContextFactory = new TraceContextFactory(
+    SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(traceSink, traceContextFactory, timestampFactory);
+    Tracer tracer = new TraceContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create the managed tracer.
     TraceContextHandler traceContextHandler = new DefaultTraceContextHandler(
-        traceContextFactory.initialContext());
+        spanContextFactory.initialContext());
     ManagedTracer managedTracer = new TraceContextHandlerTracer(tracer, traceContextHandler);
 
     // Create some trace data.

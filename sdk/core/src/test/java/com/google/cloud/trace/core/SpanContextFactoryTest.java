@@ -5,16 +5,16 @@ import static com.google.common.truth.Truth.assertThat;
 import java.math.BigInteger;
 import org.junit.Test;
 
-public class TraceContextFactoryTest {
+public class SpanContextFactoryTest {
   @Test
   public void testHeaderKey() {
-    assertThat(TraceContextFactory.headerKey()).isEqualTo("X-Cloud-Trace-Context");
+    assertThat(SpanContextFactory.headerKey()).isEqualTo("X-Cloud-Trace-Context");
   }
 
   @Test
   public void testChildContextWithInvalidParent() {
     TestTraceOptionsFactory optionsFactory = new TestTraceOptionsFactory();
-    TraceContextFactory contextFactory = new TraceContextFactory(optionsFactory,
+    SpanContextFactory contextFactory = new SpanContextFactory(optionsFactory,
         new SequentialTraceIdFactory(), new SequentialSpanIdFactory());
     SpanContext initialContext = contextFactory.initialContext();
 
@@ -42,7 +42,7 @@ public class TraceContextFactoryTest {
   @Test
   public void testChildContextWithValidParent() {
     TestTraceOptionsFactory optionsFactory = new TestTraceOptionsFactory();
-    TraceContextFactory contextFactory = new TraceContextFactory(optionsFactory,
+    SpanContextFactory contextFactory = new SpanContextFactory(optionsFactory,
         new SequentialTraceIdFactory(), new SequentialSpanIdFactory());
     SpanContext initialContext = contextFactory.initialContext();
 
@@ -60,7 +60,7 @@ public class TraceContextFactoryTest {
 
   @Test
   public void testInitialContext() {
-    TraceContextFactory factory = new TraceContextFactory(new TestTraceOptionsFactory(),
+    SpanContextFactory factory = new SpanContextFactory(new TestTraceOptionsFactory(),
         new SequentialTraceIdFactory(), new SequentialSpanIdFactory());
     SpanContext initial = factory.initialContext();
 
@@ -72,7 +72,7 @@ public class TraceContextFactoryTest {
   @Test
   public void testFromHeader() {
     TestTraceOptionsFactory optionsFactory = new TestTraceOptionsFactory();
-    TraceContextFactory factory = new TraceContextFactory(optionsFactory,
+    SpanContextFactory factory = new SpanContextFactory(optionsFactory,
         new SequentialTraceIdFactory(), new SequentialSpanIdFactory());
 
     optionsFactory.toReturn = TraceOptions.forTraceEnabled();
@@ -133,7 +133,7 @@ public class TraceContextFactoryTest {
   public void testToHeader() {
     SpanContext context = new SpanContext(
         new TraceId(BigInteger.valueOf(10)), new SpanId(20), new TraceOptions(3));
-    assertThat(TraceContextFactory.toHeader(context))
+    assertThat(SpanContextFactory.toHeader(context))
         .isEqualTo("0000000000000000000000000000000a/20;o=3");
   }
 

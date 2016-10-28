@@ -28,7 +28,7 @@ import java.math.BigInteger;
  * @see TraceId
  * @see TraceOptionsFactory
  */
-public class TraceContextFactory {
+public class SpanContextFactory {
   private final TraceOptionsFactory traceOptionsFactory;
   private final IdFactory<TraceId> traceIdFactory;
   private final IdFactory<SpanId> spanIdFactory;
@@ -48,7 +48,7 @@ public class TraceContextFactory {
    *
    * @param traceOptionsFactory a trace options factory used to generate trace options.
    */
-  public TraceContextFactory(TraceOptionsFactory traceOptionsFactory) {
+  public SpanContextFactory(TraceOptionsFactory traceOptionsFactory) {
     this(traceOptionsFactory, new RandomTraceIdFactory(), new RandomSpanIdFactory());
   }
 
@@ -60,7 +60,7 @@ public class TraceContextFactory {
    * @param traceIdFactory      a trace identifier factory used to generate trace identifiers.
    * @param spanIdFactory       a span identifier factory used to generate span identifiers.
    */
-  public TraceContextFactory(TraceOptionsFactory traceOptionsFactory,
+  public SpanContextFactory(TraceOptionsFactory traceOptionsFactory,
       IdFactory<TraceId> traceIdFactory, IdFactory<SpanId> spanIdFactory) {
     this.traceOptionsFactory = traceOptionsFactory;
     this.traceIdFactory = traceIdFactory;

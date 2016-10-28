@@ -25,7 +25,7 @@ import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.SpanContext;
-import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
 import com.google.cloud.trace.v1.consumer.SimpleBufferingTraceConsumer;
@@ -49,13 +49,13 @@ public class SimpleBufferingGrpc {
     TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, flushableSink);
 
     // Create the tracer.
-    TraceContextFactory traceContextFactory = new TraceContextFactory(
+    SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(traceSink, traceContextFactory, timestampFactory);
+    Tracer tracer = new TraceContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
-    SpanContext context1 = tracer.startSpan(traceContextFactory.initialContext(), "my span 1");
+    SpanContext context1 = tracer.startSpan(spanContextFactory.initialContext(), "my span 1");
 
     SpanContext context2 = tracer.startSpan(context1, "my span 2");
 

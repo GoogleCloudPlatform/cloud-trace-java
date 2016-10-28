@@ -23,7 +23,7 @@ import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TimestampFactory;
-import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.LoggingTraceConsumer;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
@@ -42,13 +42,13 @@ public class BasicLogging {
     TraceSink traceSink = new TraceSinkV1("1", traceProducer, traceConsumer);
 
     // Create the tracer.
-    TraceContextFactory traceContextFactory = new TraceContextFactory(
+    SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(traceSink, traceContextFactory, timestampFactory);
+    Tracer tracer = new TraceContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
-    SpanContext context1 = tracer.startSpan(traceContextFactory.initialContext(), "my span 1");
+    SpanContext context1 = tracer.startSpan(spanContextFactory.initialContext(), "my span 1");
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
     tracer.setStackTrace(context1, stackTraceBuilder.build());
     tracer.endSpan(context1);

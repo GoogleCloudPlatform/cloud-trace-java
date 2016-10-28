@@ -15,7 +15,7 @@
 package com.google.cloud.trace.guice.servlet;
 
 import com.google.cloud.trace.core.SpanContext;
-import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
@@ -32,11 +32,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @Singleton
 public class RequestTraceContextFilter implements Filter {
-  private final TraceContextFactory traceContextFactory;
+  private final SpanContextFactory spanContextFactory;
 
   @Inject
-  RequestTraceContextFilter(TraceContextFactory traceContextFactory) {
-    this.traceContextFactory = traceContextFactory;
+  RequestTraceContextFilter(SpanContextFactory spanContextFactory) {
+    this.spanContextFactory = spanContextFactory;
   }
 
   @Override
@@ -51,12 +51,12 @@ public class RequestTraceContextFilter implements Filter {
       throws IOException, ServletException {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-    String contextHeader = httpRequest.getHeader(TraceContextFactory.headerKey());
+    String contextHeader = httpRequest.getHeader(SpanContextFactory.headerKey());
     SpanContext context;
     if (contextHeader != null) {
-      context = traceContextFactory.fromHeader(contextHeader);
+      context = spanContextFactory.fromHeader(contextHeader);
     } else {
-      context = traceContextFactory.initialContext();
+      context = spanContextFactory.initialContext();
     }
 
     httpRequest.setAttribute(

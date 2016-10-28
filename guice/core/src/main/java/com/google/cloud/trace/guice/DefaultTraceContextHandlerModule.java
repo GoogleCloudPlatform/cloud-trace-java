@@ -16,7 +16,7 @@ package com.google.cloud.trace.guice;
 
 import com.google.cloud.trace.core.DefaultTraceContextHandler;
 import com.google.cloud.trace.core.TraceContextHandler;
-import com.google.cloud.trace.core.TraceContextFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -28,7 +28,7 @@ public class DefaultTraceContextHandlerModule extends AbstractModule {
 
   @Provides
   @Singleton
-  TraceContextHandler provideTraceContextHandler(TraceContextFactory traceContextFactory) {
-    return new DefaultTraceContextHandler(traceContextFactory.initialContext());
+  TraceContextHandler provideTraceContextHandler(SpanContextFactory spanContextFactory) {
+    return new DefaultTraceContextHandler(spanContextFactory.initialContext());
   }
 }
