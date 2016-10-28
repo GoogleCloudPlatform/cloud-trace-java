@@ -31,9 +31,9 @@ import java.util.Set;
 /**
  * A tracer used to trace application code.
  *
- * <p>This tracer sends trace data out to a set of raw tracers. It uses a span context factory to
+ * <p>This tracer sends trace data out to a set of trace sinks. It uses a span context factory to
  * generate a new span context from a parent span context when starting a new span, and it uses a
- * timestamp factory to generate start and end timestamps for spans.
+ * timestamp factory to generate start and end timestamps for spans.</p>
  *
  * @see TraceSink
  * @see Timestamp
@@ -43,20 +43,20 @@ import java.util.Set;
  * @see Tracer
  */
 public class TraceContextFactoryTracer implements Tracer {
-  private final ImmutableSet<TraceSink> tracers;
+  private final ImmutableSet<TraceSink> sinks;
   private final SpanContextFactory spanContextFactory;
   private final TimestampFactory timestampFactory;
 
   /**
    * Creates a new tracer.
    *
-   * @param tracers             a set of raw tracers that this tracer will send trace data to.
-   * @param spanContextFactory a span context factory used to generate new span contexts.
+   * @param sinks               a set of trace sinks that this tracer will send trace data to.
+   * @param spanContextFactory  a span context factory used to generate new span contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(Set<TraceSink> tracers, SpanContextFactory spanContextFactory,
+  public TraceContextFactoryTracer(Set<TraceSink> sinks, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
-    this.tracers = ImmutableSet.copyOf(tracers);
+    this.sinks = ImmutableSet.copyOf(sinks);
     this.spanContextFactory = spanContextFactory;
     this.timestampFactory = timestampFactory;
   }
@@ -64,13 +64,13 @@ public class TraceContextFactoryTracer implements Tracer {
   /**
    * Creates a new tracer.
    *
-   * @param tracer              a raw tracer that this tracer will send trace data to.
-   * @param spanContextFactory a span context factory used to generate new span contexts.
+   * @param sink               a trace sink that this tracer will send trace data to.
+   * @param spanContextFactory  a span context factory used to generate new span contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(TraceSink tracer, SpanContextFactory spanContextFactory,
+  public TraceContextFactoryTracer(TraceSink sink, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
-    this(ImmutableSet.of(tracer), spanContextFactory, timestampFactory);
+    this(ImmutableSet.of(sink), spanContextFactory, timestampFactory);
   }
 
   @Override
@@ -96,14 +96,14 @@ public class TraceContextFactoryTracer implements Tracer {
 
   @Override
   public void annotateSpan(SpanContext context, Labels labels) {
-    for (TraceSink tracer : tracers) {
+    for (TraceSink tracer : sinks) {
       tracer.annotateSpan(context, labels);
     }
   }
 
   @Override
   public void setStackTrace(SpanContext context, StackTrace stackTrace) {
-    for (TraceSink tracer : tracers) {
+    for (TraceSink tracer : sinks) {
       tracer.setStackTrace(context, stackTrace);
     }
   }
@@ -120,7 +120,7 @@ public class TraceContextFactoryTracer implements Tracer {
       parentContext = parentContext.overrideOptions(traceOptions);
     }
     SpanContext context = spanContextFactory.childContext(parentContext);
-    for (TraceSink tracer : tracers) {
+    for (TraceSink tracer : sinks) {
       tracer.startSpan(context, parentContext, spanKind, name, timestamp);
     }
     return context;
@@ -130,7 +130,7 @@ public class TraceContextFactoryTracer implements Tracer {
     if (timestamp == null) {
       timestamp = timestampFactory.now();
     }
-    for (TraceSink tracer : tracers) {
+    for (TraceSink tracer : sinks) {
       tracer.endSpan(context, timestamp);
     }
   }
