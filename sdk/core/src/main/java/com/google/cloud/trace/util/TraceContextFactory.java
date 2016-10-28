@@ -104,28 +104,55 @@ public class TraceContextFactory {
   public TraceContext fromHeader(String header) {
     int index = header.indexOf('/');
     if (index == -1) {
-      TraceId traceId = new TraceId(new BigInteger(header, 16));
+      TraceId traceId = parseTraceId(header);
       return new TraceContext(traceId, spanIdFactory.invalid(), traceOptionsFactory.create());
     }
 
-    TraceId traceId = new TraceId(new BigInteger(header.substring(0, index), 16));
+    TraceId traceId = parseTraceId(header.substring(0, index));
+    if (!traceId.isValid()) {
+      return new TraceContext(traceId, spanIdFactory.invalid(), traceOptionsFactory.create());
+    }
 
     String[] afterTraceId = header.substring(index + 1).split(";");
-    SpanId spanId = new SpanId(UnsignedLongs.parseUnsignedLong(afterTraceId[0]));
+    SpanId spanId = parseSpanId(afterTraceId[0]);
     TraceOptions traceOptions = null;
     for (int i = 1; i < afterTraceId.length; i++) {
       if (afterTraceId[i].startsWith("o=")) {
-        String optionsString = afterTraceId[i].substring(2);
-        int options = Integer.parseInt(optionsString);
-        traceOptions = traceOptionsFactory.create(new TraceOptions(options));
+        traceOptions = parseTraceOptions(afterTraceId[i].substring(2));
       }
     }
 
+    // Invoke the factory here only after we have determined that there is no options argument in
+    // the header, in order to avoid making an extra sampling decision.
     if (traceOptions == null) {
       traceOptions = traceOptionsFactory.create();
     }
 
     return new TraceContext(traceId, spanId, traceOptions);
+  }
+
+  private TraceId parseTraceId(String input) {
+    try {
+      return new TraceId(new BigInteger(input, 16));
+    } catch (NumberFormatException ex) {
+      return traceIdFactory.invalid();
+    }
+  }
+
+  private SpanId parseSpanId(String input) {
+    try {
+      return new SpanId(UnsignedLongs.parseUnsignedLong(input));
+    } catch (NumberFormatException ex) {
+      return spanIdFactory.invalid();
+    }
+  }
+
+  private TraceOptions parseTraceOptions(String input) {
+    try {
+      return traceOptionsFactory.create(new TraceOptions(Integer.parseInt(input)));
+    } catch (NumberFormatException ex) {
+      return traceOptionsFactory.create();
+    }
   }
 
   /**
@@ -138,7 +165,7 @@ public class TraceContextFactory {
         new StringBuilder()
             .append(context.getTraceId().getApiString())
             .append('/')
-            .append(UnsignedLongs.toString(context.getSpanId().getSpanId()))
+            .append(context.getSpanId().getApiString())
             .append(";o=")
             .append(context.getTraceOptions().getOptionsMask());
 
