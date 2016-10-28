@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace;
-
-import com.google.cloud.trace.core.TraceContext;
+package com.google.cloud.trace.core;
 
 public class ThreadLocalTraceContextHandler implements TraceContextHandler {
   private static final ThreadLocal<DefaultTraceContextHandler> handlers =

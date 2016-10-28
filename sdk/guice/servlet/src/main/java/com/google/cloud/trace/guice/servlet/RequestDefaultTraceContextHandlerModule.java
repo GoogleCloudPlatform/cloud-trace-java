@@ -14,8 +14,8 @@
 
 package com.google.cloud.trace.guice.servlet;
 
-import com.google.cloud.trace.DefaultTraceContextHandler;
-import com.google.cloud.trace.TraceContextHandler;
+import com.google.cloud.trace.core.DefaultTraceContextHandler;
+import com.google.cloud.trace.core.TraceContextHandler;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

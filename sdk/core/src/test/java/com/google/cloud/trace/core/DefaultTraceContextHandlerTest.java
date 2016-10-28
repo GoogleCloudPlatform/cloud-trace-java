@@ -12,12 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace;
+package com.google.cloud.trace.core;
 
 import static org.junit.Assert.assertSame;
 
+import com.google.cloud.trace.core.DefaultTraceContextHandler;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceContextHandler;
 import com.google.cloud.trace.core.TraceId;
 import com.google.cloud.trace.core.TraceOptions;
 import java.math.BigInteger;

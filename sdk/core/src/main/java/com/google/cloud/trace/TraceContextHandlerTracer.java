@@ -19,6 +19,7 @@ import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceContextHandler;
 import java.util.logging.Logger;
 
 /**

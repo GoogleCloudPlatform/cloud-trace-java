@@ -15,11 +15,11 @@
 package com.google.cloud.trace.samples.grpc.managed;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.trace.DefaultTraceContextHandler;
+import com.google.cloud.trace.core.DefaultTraceContextHandler;
 import com.google.cloud.trace.ManagedTracer;
 import com.google.cloud.trace.RawTracer;
 import com.google.cloud.trace.TraceContextFactoryTracer;
-import com.google.cloud.trace.TraceContextHandler;
+import com.google.cloud.trace.core.TraceContextHandler;
 import com.google.cloud.trace.TraceContextHandlerTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.grpc.v1.GrpcTraceSink;

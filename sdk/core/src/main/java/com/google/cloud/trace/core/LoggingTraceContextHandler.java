@@ -12,36 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace;
+package com.google.cloud.trace.core;
 
-import com.google.cloud.trace.core.TraceContext;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * A concrete implementation of a trace context handler.
+ * A trace context handler that logs trace contexts as they are pushed on and popped off the stack.
  */
-public class DefaultTraceContextHandler extends AbstractTraceContextHandler {
+public class LoggingTraceContextHandler extends AbstractTraceContextHandler {
+  private final Logger logger;
+  private final Level level;
+
   /**
    * Creates a new trace context handler.
    *
    * @param context a trace context that serves as the root trace context.
+   * @param logger a logger used to log trace contexts.
+   * @param level a level used for trace context log messages.
    */
-  public DefaultTraceContextHandler(TraceContext context) {
+  public LoggingTraceContextHandler(TraceContext context, Logger logger, Level level) {
     super(context);
+    this.logger = logger;
+    this.level = level;
+    logger.log(level, "Initialized. Current:\n{0}", context);
   }
 
   /**
-   * Does nothing when a new trace context is pushed onto the stack.
+   * Logs the new trace context pushed onto the stack.
    */
   @Override
   public void doPush(TraceContext context) {
-    // Do nothing else.
+    logger.log(level, "Pushed context. Current:\n{0}", context);
   }
 
   /**
-   * Does nothing when a trace context is popped off the stack.
+   * Logs the trace context popped off the stack.
    */
   @Override
   public void doPop(TraceContext context) {
-    // Do nothing else.
+    logger.log(level, "Popped context. Current:\n{0}", context);
   }
 }
