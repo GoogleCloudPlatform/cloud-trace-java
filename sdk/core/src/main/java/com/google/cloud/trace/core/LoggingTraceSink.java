@@ -12,13 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace;
+package com.google.cloud.trace.core;
 
-import com.google.cloud.trace.core.Labels;
-import com.google.cloud.trace.core.SpanKind;
-import com.google.cloud.trace.core.StackTrace;
-import com.google.cloud.trace.core.Timestamp;
-import com.google.cloud.trace.core.TraceContext;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

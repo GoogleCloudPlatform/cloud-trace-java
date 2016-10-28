@@ -24,6 +24,7 @@ import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.cloud.trace.core.TraceOptions;
+import com.google.cloud.trace.core.TraceSink;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 

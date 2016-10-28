@@ -15,7 +15,7 @@
 package com.google.cloud.trace.samples.grpc.buffering;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.trace.TraceSink;
+import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.grpc.v1.GrpcTraceConsumer;

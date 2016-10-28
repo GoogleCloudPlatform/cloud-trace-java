@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.samples.logging.basic;
 
-import com.google.cloud.trace.TraceSink;
+import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;

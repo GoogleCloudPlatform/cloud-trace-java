@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.v1;
 
-import com.google.cloud.trace.TraceSink;
+import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;

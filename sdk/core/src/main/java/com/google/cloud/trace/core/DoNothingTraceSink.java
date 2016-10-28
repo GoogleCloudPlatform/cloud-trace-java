@@ -12,13 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace;
-
-import com.google.cloud.trace.core.Labels;
-import com.google.cloud.trace.core.SpanKind;
-import com.google.cloud.trace.core.StackTrace;
-import com.google.cloud.trace.core.Timestamp;
-import com.google.cloud.trace.core.TraceContext;
+package com.google.cloud.trace.core;
 
 /**
  * A raw tracer that does nothing.

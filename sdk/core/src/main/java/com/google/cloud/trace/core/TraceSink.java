@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace;
+package com.google.cloud.trace.core;
 
+import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
