@@ -15,31 +15,31 @@
 package com.google.cloud.trace.core;
 
 /**
- * A concrete implementation of a trace context handler.
+ * A concrete implementation of a span context handler.
  */
 public class DefaultTraceContextHandler extends AbstractTraceContextHandler {
   /**
-   * Creates a new trace context handler.
+   * Creates a new span context handler.
    *
-   * @param context a trace context that serves as the root trace context.
+   * @param context a span context that serves as the root span context.
    */
-  public DefaultTraceContextHandler(TraceContext context) {
+  public DefaultTraceContextHandler(SpanContext context) {
     super(context);
   }
 
   /**
-   * Does nothing when a new trace context is pushed onto the stack.
+   * Does nothing when a new span context is pushed onto the stack.
    */
   @Override
-  public void doPush(TraceContext context) {
+  public void doPush(SpanContext context) {
     // Do nothing else.
   }
 
   /**
-   * Does nothing when a trace context is popped off the stack.
+   * Does nothing when a span context is popped off the stack.
    */
   @Override
-  public void doPop(TraceContext context) {
+  public void doPop(SpanContext context) {
     // Do nothing else.
   }
 }

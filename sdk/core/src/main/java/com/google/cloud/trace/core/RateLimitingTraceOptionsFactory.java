@@ -21,10 +21,10 @@ import com.google.common.util.concurrent.RateLimiter;
 import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * A factory for generating new trace options. In case of a new root {@link TraceContext}, the trace
+ * A factory for generating new trace options. In case of a new root {@link SpanContext}, the trace
  * option values are set based on a rate limiter which limits the number of enabled traces per
  * second. The new trace options' stack trace option is set to the provided value. No sampling
- * decision is made in case of trace options for a child {@link TraceContext}.
+ * decision is made in case of trace options for a child {@link SpanContext}.
  *
  * <p>This class is unconditionally thread-safe.
  */

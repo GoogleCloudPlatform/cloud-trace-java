@@ -16,10 +16,10 @@ public class TraceContextFactoryTest {
     TestTraceOptionsFactory optionsFactory = new TestTraceOptionsFactory();
     TraceContextFactory contextFactory = new TraceContextFactory(optionsFactory,
         new SequentialTraceIdFactory(), new SequentialSpanIdFactory());
-    TraceContext initialContext = contextFactory.initialContext();
+    SpanContext initialContext = contextFactory.initialContext();
 
     optionsFactory.toReturn = TraceOptions.forTraceEnabled();
-    TraceContext child1 = contextFactory.childContext(initialContext);
+    SpanContext child1 = contextFactory.childContext(initialContext);
     // The child context should have a valid Trace and Span Id.
     assertThat(child1.getTraceId().isValid()).isTrue();
     assertThat(child1.getSpanId().isValid()).isTrue();
@@ -27,7 +27,7 @@ public class TraceContextFactoryTest {
     assertThat(child1.getTraceOptions().getTraceEnabled()).isTrue();
 
     optionsFactory.toReturn = TraceOptions.forTraceDisabled();
-    TraceContext child2 = contextFactory.childContext(initialContext);
+    SpanContext child2 = contextFactory.childContext(initialContext);
     // The child context should have a valid Trace and Span Id.
     assertThat(child2.getTraceId().isValid()).isTrue();
     assertThat(child2.getSpanId().isValid()).isTrue();
@@ -44,14 +44,14 @@ public class TraceContextFactoryTest {
     TestTraceOptionsFactory optionsFactory = new TestTraceOptionsFactory();
     TraceContextFactory contextFactory = new TraceContextFactory(optionsFactory,
         new SequentialTraceIdFactory(), new SequentialSpanIdFactory());
-    TraceContext initialContext = contextFactory.initialContext();
+    SpanContext initialContext = contextFactory.initialContext();
 
     optionsFactory.toReturn = TraceOptions.forTraceEnabled();
-    TraceContext child1 = contextFactory.childContext(initialContext);
+    SpanContext child1 = contextFactory.childContext(initialContext);
     assertThat(child1.getTraceOptions().getTraceEnabled()).isTrue();
 
     optionsFactory.toReturn = TraceOptions.forTraceDisabled();
-    TraceContext child2 = contextFactory.childContext(child1);
+    SpanContext child2 = contextFactory.childContext(child1);
 
     assertThat(child1.getTraceId()).isEqualTo(child2.getTraceId());
     assertThat(child1.getSpanId()).isNotEqualTo(child2.getSpanId());
@@ -62,7 +62,7 @@ public class TraceContextFactoryTest {
   public void testInitialContext() {
     TraceContextFactory factory = new TraceContextFactory(new TestTraceOptionsFactory(),
         new SequentialTraceIdFactory(), new SequentialSpanIdFactory());
-    TraceContext initial = factory.initialContext();
+    SpanContext initial = factory.initialContext();
 
     assertThat(initial.getTraceId().isValid()).isFalse();
     assertThat(initial.getSpanId().isValid()).isFalse();
@@ -77,52 +77,52 @@ public class TraceContextFactoryTest {
 
     optionsFactory.toReturn = TraceOptions.forTraceEnabled();
 
-    TraceContext empty = factory.fromHeader("");
+    SpanContext empty = factory.fromHeader("");
     assertThat(empty.getTraceId().isValid()).isFalse();
     assertThat(empty.getSpanId().isValid()).isFalse();
     assertThat(empty.getTraceOptions().getOptionsMask()).isEqualTo(1);
 
-    TraceContext badTraceId = factory.fromHeader("xyz");
+    SpanContext badTraceId = factory.fromHeader("xyz");
     assertThat(badTraceId.getTraceId().isValid()).isFalse();
     assertThat(badTraceId.getSpanId().isValid()).isFalse();
     assertThat(badTraceId.getTraceOptions().getOptionsMask()).isEqualTo(1);
 
-    TraceContext invalidTraceId = factory.fromHeader("fffffffffffffffffffffffffffffffff");
+    SpanContext invalidTraceId = factory.fromHeader("fffffffffffffffffffffffffffffffff");
     assertThat(invalidTraceId.getTraceId().isValid()).isFalse();
     assertThat(invalidTraceId.getSpanId().isValid()).isFalse();
     assertThat(invalidTraceId.getTraceOptions().getOptionsMask()).isEqualTo(1);
 
-    TraceContext badSpanId = factory.fromHeader("123456789abcdef0123456789abcdef0/m");
+    SpanContext badSpanId = factory.fromHeader("123456789abcdef0123456789abcdef0/m");
     assertThat(badSpanId.getTraceId())
         .isEqualTo(new TraceId(new BigInteger("123456789abcdef0123456789abcdef0", 16)));
     assertThat(badSpanId.getSpanId().isValid()).isFalse();
     assertThat(badSpanId.getTraceOptions().getOptionsMask()).isEqualTo(1);
 
-    TraceContext invalidSpanId = factory.fromHeader("123456789abcdef0123456789abcdef0/0");
+    SpanContext invalidSpanId = factory.fromHeader("123456789abcdef0123456789abcdef0/0");
     assertThat(invalidSpanId.getTraceId())
         .isEqualTo(new TraceId(new BigInteger("123456789abcdef0123456789abcdef0", 16)));
     assertThat(invalidSpanId.getSpanId().isValid()).isFalse();
     assertThat(invalidSpanId.getTraceOptions().getOptionsMask()).isEqualTo(1);
 
-    TraceContext badOptions = factory.fromHeader("123456789abcdef0123456789abcdef0/13;o=q");
+    SpanContext badOptions = factory.fromHeader("123456789abcdef0123456789abcdef0/13;o=q");
     assertThat(badOptions.getTraceId())
         .isEqualTo(new TraceId(new BigInteger("123456789abcdef0123456789abcdef0", 16)));
     assertThat(badOptions.getSpanId()).isEqualTo(new SpanId(13));
     assertThat(badOptions.getTraceOptions().getOptionsMask()).isEqualTo(1);
 
-    TraceContext context = factory.fromHeader("123456789abcdef0123456789abcdef0/13;o=3");
+    SpanContext context = factory.fromHeader("123456789abcdef0123456789abcdef0/13;o=3");
     assertThat(context.getTraceId())
         .isEqualTo(new TraceId(new BigInteger("123456789abcdef0123456789abcdef0", 16)));
     assertThat(context.getSpanId()).isEqualTo(new SpanId(13));
     assertThat(context.getTraceOptions().getOptionsMask()).isEqualTo(3);
 
-    TraceContext contextPre = factory.fromHeader("123456789abcdef0123456789abcdef0/13;x=u;o=3");
+    SpanContext contextPre = factory.fromHeader("123456789abcdef0123456789abcdef0/13;x=u;o=3");
     assertThat(contextPre.getTraceId())
         .isEqualTo(new TraceId(new BigInteger("123456789abcdef0123456789abcdef0", 16)));
     assertThat(contextPre.getSpanId()).isEqualTo(new SpanId(13));
     assertThat(contextPre.getTraceOptions().getOptionsMask()).isEqualTo(3);
 
-    TraceContext contextPost = factory.fromHeader("123456789abcdef0123456789abcdef0/13;o=3;x=u");
+    SpanContext contextPost = factory.fromHeader("123456789abcdef0123456789abcdef0/13;o=3;x=u");
     assertThat(contextPost.getTraceId())
         .isEqualTo(new TraceId(new BigInteger("123456789abcdef0123456789abcdef0", 16)));
     assertThat(contextPost.getSpanId()).isEqualTo(new SpanId(13));
@@ -131,7 +131,7 @@ public class TraceContextFactoryTest {
 
   @Test
   public void testToHeader() {
-    TraceContext context = new TraceContext(
+    SpanContext context = new SpanContext(
         new TraceId(BigInteger.valueOf(10)), new SpanId(20), new TraceOptions(3));
     assertThat(TraceContextFactory.toHeader(context))
         .isEqualTo("0000000000000000000000000000000a/20;o=3");

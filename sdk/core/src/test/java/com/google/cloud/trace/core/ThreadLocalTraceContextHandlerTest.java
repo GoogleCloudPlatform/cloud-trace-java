@@ -16,12 +16,6 @@ package com.google.cloud.trace.core;
 
 import static org.junit.Assert.assertSame;
 
-import com.google.cloud.trace.core.SpanId;
-import com.google.cloud.trace.core.ThreadLocalTraceContextHandler;
-import com.google.cloud.trace.core.TraceContext;
-import com.google.cloud.trace.core.TraceContextHandler;
-import com.google.cloud.trace.core.TraceId;
-import com.google.cloud.trace.core.TraceOptions;
 import java.math.BigInteger;
 import org.junit.Test;
 
@@ -29,12 +23,12 @@ public class ThreadLocalTraceContextHandlerTest {
 
   @Test
   public void testTwoThreads() {
-    final TraceContext defaultRoot = new TraceContext(new TraceId(BigInteger.valueOf(2)), new SpanId(3), TraceOptions
+    final SpanContext defaultRoot = new SpanContext(new TraceId(BigInteger.valueOf(2)), new SpanId(3), TraceOptions
         .forTraceEnabled());
-    final TraceContext root1 = new TraceContext(new TraceId(BigInteger.valueOf(3)), new SpanId(4), TraceOptions.forTraceEnabled());
-    final TraceContext child1 = new TraceContext(new TraceId(BigInteger.valueOf(3)), new SpanId(5), TraceOptions.forTraceEnabled());
-    final TraceContext root2 = new TraceContext(new TraceId(BigInteger.valueOf(4)), new SpanId(5), TraceOptions.forTraceDisabled());
-    final TraceContext child2 = new TraceContext(new TraceId(BigInteger.valueOf(4)), new SpanId(6), TraceOptions.forTraceEnabled());
+    final SpanContext root1 = new SpanContext(new TraceId(BigInteger.valueOf(3)), new SpanId(4), TraceOptions.forTraceEnabled());
+    final SpanContext child1 = new SpanContext(new TraceId(BigInteger.valueOf(3)), new SpanId(5), TraceOptions.forTraceEnabled());
+    final SpanContext root2 = new SpanContext(new TraceId(BigInteger.valueOf(4)), new SpanId(5), TraceOptions.forTraceDisabled());
+    final SpanContext child2 = new SpanContext(new TraceId(BigInteger.valueOf(4)), new SpanId(6), TraceOptions.forTraceEnabled());
 
     final TraceContextHandler handler = new ThreadLocalTraceContextHandler(defaultRoot);
 
@@ -69,14 +63,14 @@ public class ThreadLocalTraceContextHandlerTest {
   private static class ThreadRunnable implements Runnable {
 
     private final TraceContextHandler handler;
-    private final TraceContext push1, push2;
-    TraceContext initialContext;
-    TraceContext contextAfterPush1;
-    TraceContext contextAfterPush2;
-    TraceContext contextAfterPop1;
-    TraceContext contextAfterPop2;
+    private final SpanContext push1, push2;
+    SpanContext initialContext;
+    SpanContext contextAfterPush1;
+    SpanContext contextAfterPush2;
+    SpanContext contextAfterPop1;
+    SpanContext contextAfterPop2;
 
-    ThreadRunnable(TraceContextHandler handler, TraceContext push1, TraceContext push2) {
+    ThreadRunnable(TraceContextHandler handler, SpanContext push1, SpanContext push2) {
       this.handler = handler;
       this.push1 = push1;
       this.push2 = push2;

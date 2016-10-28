@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.guice.servlet;
 
-import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.SpanContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.servlet.RequestScoped;
@@ -26,7 +26,7 @@ public class UninitializedRequestTraceContextModule extends AbstractModule {
   @Provides
   @RequestContext
   @RequestScoped
-  TraceContext provideUninitializedTraceContext() {
+  SpanContext provideUninitializedTraceContext() {
     throw new IllegalStateException("RequestContext must be initialized in the request scope.");
   }
 }

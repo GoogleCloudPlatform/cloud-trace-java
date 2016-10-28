@@ -16,11 +16,11 @@ package com.google.cloud.trace.v1.producer;
 
 import com.google.cloud.trace.core.Label;
 import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackFrame;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.Timestamp;
-import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceId;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.TraceSpan;
@@ -35,22 +35,22 @@ import com.google.devtools.cloudtrace.v1.TraceSpan;
  * @see StackTrace
  * @see Timestamp
  * @see Trace
- * @see TraceContext
+ * @see SpanContext
  */
 public class TraceProducer {
   /**
    * Converts a start span event into an API v1 trace message.
    *
    * @param projectId     a string that contains the Google Cloud Platform project identifier.
-   * @param context       a trace context that represents the event span.
-   * @param parentContext a trace context that represents the parent span of the event span.
+   * @param context       a span context that represents the event span.
+   * @param parentContext a span context that represents the parent span of the event span.
    * @param spanKind      the span kind of the event span.
    * @param name          a string containing the name of the event span.
    * @param timestamp     a timestamp that represents the start time of the event span.
    * @return a trace message that represents the start span event.
    */
-  public Trace generateStartSpan(String projectId, TraceContext context,
-      TraceContext parentContext, SpanKind spanKind, String name, Timestamp timestamp) {
+  public Trace generateStartSpan(String projectId, SpanContext context,
+      SpanContext parentContext, SpanKind spanKind, String name, Timestamp timestamp) {
     TraceSpan.Builder spanBuilder =
         TraceSpan.newBuilder()
             .setSpanId(context.getSpanId().getSpanId())
@@ -76,11 +76,11 @@ public class TraceProducer {
    * Converts an end span event into an API v1 trace message.
    *
    * @param projectId a string that contains the Google Cloud Platform project identifier.
-   * @param context   a trace context that represents the event span.
+   * @param context   a span context that represents the event span.
    * @param timestamp a timestamp that represents the end time of the event span.
    * @return a trace message that represents the end span event.
    */
-  public Trace generateEndSpan(String projectId, TraceContext context, Timestamp timestamp) {
+  public Trace generateEndSpan(String projectId, SpanContext context, Timestamp timestamp) {
     TraceSpan.Builder spanBuilder =
         TraceSpan.newBuilder()
             .setSpanId(context.getSpanId().getSpanId())
@@ -99,11 +99,11 @@ public class TraceProducer {
    * Converts a span label annotation event into an API v1 trace message.
    *
    * @param projectId a string that contains the Google Cloud Platform project identifier.
-   * @param context   a trace context that represents the event span.
+   * @param context   a span context that represents the event span.
    * @param labels    a labels containing the label annotations for the event span.
    * @return a trace message that represents the span label annotation event.
    */
-  public Trace generateAnnotateSpan(String projectId, TraceContext context, Labels labels) {
+  public Trace generateAnnotateSpan(String projectId, SpanContext context, Labels labels) {
     TraceSpan.Builder spanBuilder =
         TraceSpan.newBuilder().setSpanId(context.getSpanId().getSpanId());
 
@@ -124,12 +124,12 @@ public class TraceProducer {
    * Converts a stack trace annotation event into an API v1 trace message.
    *
    * @param projectId  a string that contains the Google Cloud Platform project identifier.
-   * @param context    a trace context that represents the event span.
+   * @param context    a span context that represents the event span.
    * @param stackTrace a stack trace containing the stack trace annotations for the event span.
    * @return a trace message that represents the stack trace annotation event.
    */
   public Trace generateSetStackTrace(
-      String projectId, TraceContext context, StackTrace stackTrace) {
+      String projectId, SpanContext context, StackTrace stackTrace) {
 
     TraceSpan.Builder spanBuilder =
         TraceSpan.newBuilder().setSpanId(context.getSpanId().getSpanId());

@@ -14,12 +14,12 @@
 
 package com.google.cloud.trace.v1;
 
+import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.Timestamp;
-import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.producer.TraceProducer;
 import com.google.devtools.cloudtrace.v1.Trace;
@@ -29,7 +29,7 @@ import com.google.devtools.cloudtrace.v1.Traces;
  * A raw tracer that converts trace events to Stackdriver Trace API v1 trace messages and dispatches
  * them to a trace consumer.
  *
- * <p>Each method examines the trace options on the given trace context. If the trace enabled option
+ * <p>Each method examines the trace options on the given span context. If the trace enabled option
  * is set, the corresponding method on the trace producer is called, and the resulting trace message
  * is sent to the trace consumer. If the trace enabled option is not set, the trace event is ignored.
  *
@@ -64,7 +64,7 @@ public class TraceSinkV1 implements TraceSink {
   }
 
   @Override
-  public void startSpan(TraceContext context, TraceContext parentContext,
+  public void startSpan(SpanContext context, SpanContext parentContext,
       SpanKind spanKind, String name, Timestamp timestamp) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceProducer.generateStartSpan(
@@ -74,7 +74,7 @@ public class TraceSinkV1 implements TraceSink {
   }
 
   @Override
-  public void endSpan(TraceContext context, Timestamp timestamp) {
+  public void endSpan(SpanContext context, Timestamp timestamp) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceProducer.generateEndSpan(projectId, context, timestamp);
       traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
@@ -82,7 +82,7 @@ public class TraceSinkV1 implements TraceSink {
   }
 
   @Override
-  public void annotateSpan(TraceContext context, Labels labels) {
+  public void annotateSpan(SpanContext context, Labels labels) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceProducer.generateAnnotateSpan(projectId, context, labels);
       traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
@@ -90,7 +90,7 @@ public class TraceSinkV1 implements TraceSink {
   }
 
   @Override
-  public void setStackTrace(TraceContext context, StackTrace stackTrace) {
+  public void setStackTrace(SpanContext context, StackTrace stackTrace) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceProducer.generateSetStackTrace(projectId, context, stackTrace);
       traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());

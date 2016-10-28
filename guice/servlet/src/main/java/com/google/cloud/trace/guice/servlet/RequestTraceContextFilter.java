@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.guice.servlet;
 
-import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.inject.Inject;
 import com.google.inject.Key;
@@ -52,7 +52,7 @@ public class RequestTraceContextFilter implements Filter {
     HttpServletRequest httpRequest = (HttpServletRequest) request;
 
     String contextHeader = httpRequest.getHeader(TraceContextFactory.headerKey());
-    TraceContext context;
+    SpanContext context;
     if (contextHeader != null) {
       context = traceContextFactory.fromHeader(contextHeader);
     } else {
@@ -60,7 +60,7 @@ public class RequestTraceContextFilter implements Filter {
     }
 
     httpRequest.setAttribute(
-        Key.get(TraceContext.class, RequestContext.class).toString(), context);
+        Key.get(SpanContext.class, RequestContext.class).toString(), context);
 
     chain.doFilter(request, response);
   }

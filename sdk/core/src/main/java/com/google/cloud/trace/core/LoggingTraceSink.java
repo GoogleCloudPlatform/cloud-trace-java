@@ -36,24 +36,24 @@ public class LoggingTraceSink implements TraceSink {
   }
 
   @Override
-  public void startSpan(TraceContext context, TraceContext parentContext, SpanKind spanKind,
+  public void startSpan(SpanContext context, SpanContext parentContext, SpanKind spanKind,
       String name, Timestamp timestamp) {
     logger.log(level, String.format("LoggingTraceSink.startSpan(%s, %s, %s, %s, %s)",
         context, parentContext, spanKind, name, timestamp));
   }
 
   @Override
-  public void endSpan(TraceContext context, Timestamp timestamp) {
+  public void endSpan(SpanContext context, Timestamp timestamp) {
     logger.log(level, String.format("LoggingTraceSink.endSpan(%s, %s)", context, timestamp));
   }
 
   @Override
-  public void annotateSpan(TraceContext context, Labels labels) {
+  public void annotateSpan(SpanContext context, Labels labels) {
     logger.log(level, String.format("LoggingTraceSink.annotateSpan(%s, %s)", context, labels));
   }
 
   @Override
-  public void setStackTrace(TraceContext context, StackTrace stackTrace) {
+  public void setStackTrace(SpanContext context, StackTrace stackTrace) {
     logger.log(level, String.format("LoggingTraceSink.setStackTrace(%s, %s)", context, stackTrace));
   }
 }

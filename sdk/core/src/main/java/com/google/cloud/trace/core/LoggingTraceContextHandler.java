@@ -18,20 +18,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A trace context handler that logs trace contexts as they are pushed on and popped off the stack.
+ * A span context handler that logs span contexts as they are pushed on and popped off the stack.
  */
 public class LoggingTraceContextHandler extends AbstractTraceContextHandler {
   private final Logger logger;
   private final Level level;
 
   /**
-   * Creates a new trace context handler.
+   * Creates a new span context handler.
    *
-   * @param context a trace context that serves as the root trace context.
-   * @param logger a logger used to log trace contexts.
-   * @param level a level used for trace context log messages.
+   * @param context a span context that serves as the root span context.
+   * @param logger a logger used to log span contexts.
+   * @param level a level used for span context log messages.
    */
-  public LoggingTraceContextHandler(TraceContext context, Logger logger, Level level) {
+  public LoggingTraceContextHandler(SpanContext context, Logger logger, Level level) {
     super(context);
     this.logger = logger;
     this.level = level;
@@ -39,18 +39,18 @@ public class LoggingTraceContextHandler extends AbstractTraceContextHandler {
   }
 
   /**
-   * Logs the new trace context pushed onto the stack.
+   * Logs the new span context pushed onto the stack.
    */
   @Override
-  public void doPush(TraceContext context) {
+  public void doPush(SpanContext context) {
     logger.log(level, "Pushed context. Current:\n{0}", context);
   }
 
   /**
-   * Logs the trace context popped off the stack.
+   * Logs the span context popped off the stack.
    */
   @Override
-  public void doPop(TraceContext context) {
+  public void doPop(SpanContext context) {
     logger.log(level, "Popped context. Current:\n{0}", context);
   }
 }

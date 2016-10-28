@@ -17,24 +17,24 @@ package com.google.cloud.trace.core;
 public class ThreadLocalTraceContextHandler implements TraceContextHandler {
   private static final ThreadLocal<DefaultTraceContextHandler> handlers =
       new ThreadLocal<DefaultTraceContextHandler>();
-  private final TraceContext root;
+  private final SpanContext root;
 
-  public ThreadLocalTraceContextHandler(TraceContext root) {
+  public ThreadLocalTraceContextHandler(SpanContext root) {
     this.root = root;
   }
 
   @Override
-  public TraceContext current() {
+  public SpanContext current() {
     return getHandler().current();
   }
 
   @Override
-  public void push(TraceContext context) {
+  public void push(SpanContext context) {
     getHandler().push(context);
   }
 
   @Override
-  public TraceContext pop() {
+  public SpanContext pop() {
     return getHandler().pop();
   }
 

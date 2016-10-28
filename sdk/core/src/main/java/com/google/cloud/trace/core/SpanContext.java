@@ -18,7 +18,7 @@ import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
 /**
- * A class that represents a trace context. A trace context is the identifiers associated with a
+ * A class that represents a span context. A span context is the identifiers associated with a
  * span and a set of options that determine how a span is traced.
  *
  * @see SpanId
@@ -26,19 +26,19 @@ import java.util.Objects;
  * @see TraceOptions
  * @see TraceId
  */
-public class TraceContext {
+public class SpanContext {
   private final TraceId traceId;
   private final SpanId spanId;
   private final TraceOptions traceOptions;
 
   /**
-   * Creates a trace context.
+   * Creates a span context.
    *
-   * @param traceId      the trace identifier of the trace context.
-   * @param spanId       the span identifier of the trace context.
-   * @param traceOptions the trace options for the trace context.
+   * @param traceId      the trace identifier of the span context.
+   * @param spanId       the span identifier of the span context.
+   * @param traceOptions the trace options for the span context.
    */
-  public TraceContext(TraceId traceId, SpanId spanId, TraceOptions traceOptions) {
+  public SpanContext(TraceId traceId, SpanId spanId, TraceOptions traceOptions) {
     this.traceId = traceId;
     this.spanId = spanId;
     this.traceOptions = traceOptions;
@@ -50,11 +50,11 @@ public class TraceContext {
       return true;
     }
 
-    if (!(obj instanceof TraceContext)) {
+    if (!(obj instanceof SpanContext)) {
       return false;
     }
 
-    TraceContext that = (TraceContext)obj;
+    SpanContext that = (SpanContext)obj;
     return Objects.equals(traceId, that.traceId)
         && Objects.equals(spanId, that.spanId)
         && Objects.equals(traceOptions, that.traceOptions);
@@ -102,12 +102,12 @@ public class TraceContext {
   }
 
   /**
-   * Generates a new trace context based on this trace context and the given trace options.
+   * Generates a new span context based on this span context and the given trace options.
    *
-   * @param overrideOptions a trace options set on the new trace context.
-   * @return the new trace context.
+   * @param overrideOptions a trace options set on the new span context.
+   * @return the new span context.
    */
-  public TraceContext overrideOptions(TraceOptions overrideOptions) {
-    return new TraceContext(traceId, spanId, overrideOptions);
+  public SpanContext overrideOptions(TraceOptions overrideOptions) {
+    return new SpanContext(traceId, spanId, overrideOptions);
   }
 }

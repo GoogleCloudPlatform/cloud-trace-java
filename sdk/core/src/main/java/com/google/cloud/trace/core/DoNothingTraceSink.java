@@ -19,16 +19,16 @@ package com.google.cloud.trace.core;
  */
 public class DoNothingTraceSink implements TraceSink {
   @Override
-  public void startSpan(TraceContext context, TraceContext parentContext, SpanKind spanKind,
+  public void startSpan(SpanContext context, SpanContext parentContext, SpanKind spanKind,
       String name, Timestamp timestamp) {
   }
 
   @Override
-  public void endSpan(TraceContext context, Timestamp timestamp) {}
+  public void endSpan(SpanContext context, Timestamp timestamp) {}
 
   @Override
-  public void annotateSpan(TraceContext context, Labels labels) {}
+  public void annotateSpan(SpanContext context, Labels labels) {}
 
   @Override
-  public void setStackTrace(TraceContext context, StackTrace stackTrace) {}
+  public void setStackTrace(SpanContext context, StackTrace stackTrace) {}
 }

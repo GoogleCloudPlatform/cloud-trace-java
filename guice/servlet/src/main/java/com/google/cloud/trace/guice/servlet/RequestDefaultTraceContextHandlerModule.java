@@ -16,7 +16,7 @@ package com.google.cloud.trace.guice.servlet;
 
 import com.google.cloud.trace.core.DefaultTraceContextHandler;
 import com.google.cloud.trace.core.TraceContextHandler;
-import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.SpanContext;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.servlet.RequestScoped;
@@ -28,7 +28,7 @@ public class RequestDefaultTraceContextHandlerModule extends AbstractModule {
   @Provides
   @RequestScoped
   TraceContextHandler provideTraceContextHandler(
-      @RequestContext TraceContext traceContext) {
-    return new DefaultTraceContextHandler(traceContext);
+      @RequestContext SpanContext spanContext) {
+    return new DefaultTraceContextHandler(spanContext);
   }
 }

@@ -19,39 +19,39 @@ import java.util.Collections;
 import java.util.logging.Logger;
 
 /**
- * An abstract trace context handler that implements a stack of trace contexts.
+ * An abstract span context handler that implements a stack of span contexts.
  */
 public abstract class AbstractTraceContextHandler implements TraceContextHandler {
   private static final Logger logger = Logger.getLogger(
       AbstractTraceContextHandler.class.getName());
 
-  private final ArrayDeque<TraceContext> contextStack;
+  private final ArrayDeque<SpanContext> contextStack;
 
   /**
-   * Creates a new trace context handler.
+   * Creates a new span context handler.
    *
-   * @param rootContext a trace context that serves as the root trace context. This is the bottom of
+   * @param rootContext a span context that serves as the root span context. This is the bottom of
    * the stack and cannot be removed.
    */
-  public AbstractTraceContextHandler(TraceContext rootContext) {
-    this.contextStack = new ArrayDeque<TraceContext>(Collections.singleton(rootContext));
+  public AbstractTraceContextHandler(SpanContext rootContext) {
+    this.contextStack = new ArrayDeque<SpanContext>(Collections.singleton(rootContext));
   }
 
   @Override
-  public TraceContext current() {
+  public SpanContext current() {
     return contextStack.peekFirst();
   }
 
   @Override
-  public void push(TraceContext context) {
+  public void push(SpanContext context) {
     contextStack.addFirst(context);
     doPush(context);
   }
 
   @Override
-  public TraceContext pop() {
+  public SpanContext pop() {
     if (contextStack.size() > 1) {
-      TraceContext context = contextStack.removeFirst();
+      SpanContext context = contextStack.removeFirst();
       doPop(current());
       return context;
     }
@@ -60,16 +60,16 @@ public abstract class AbstractTraceContextHandler implements TraceContextHandler
   }
 
   /**
-   * Performs additional actions after a new trace context has been pushed onto the stack.
+   * Performs additional actions after a new span context has been pushed onto the stack.
    *
-   * @param context the trace context pushed onto the stack.
+   * @param context the span context pushed onto the stack.
    */
-  protected abstract void doPush(TraceContext context);
+  protected abstract void doPush(SpanContext context);
 
   /**
-   * Performs additional actions after a trace context has been popped off the stack.
+   * Performs additional actions after a span context has been popped off the stack.
    *
-   * @param context the trace context popped off the stack.
+   * @param context the span context popped off the stack.
    */
-  protected abstract void doPop(TraceContext context);
+  protected abstract void doPop(SpanContext context);
 }

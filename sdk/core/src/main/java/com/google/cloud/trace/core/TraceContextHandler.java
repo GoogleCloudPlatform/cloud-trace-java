@@ -14,30 +14,28 @@
 
 package com.google.cloud.trace.core;
 
-import com.google.cloud.trace.core.TraceContext;
-
 /**
- * An interface that represents a stack of {@link TraceContext}s.
+ * An interface that represents a stack of {@link SpanContext}s.
  */
 public interface TraceContextHandler {
   /**
-   * Returns the current trace context.
+   * Returns the current span context.
    *
-   * @return the current trace context.
+   * @return the current span context.
    */
-  TraceContext current();
+  SpanContext current();
 
   /**
-   * Pushes a new trace context onto the top of the stack.
+   * Pushes a new span context onto the top of the stack.
    *
-   * @param context a trace context to push onto the stack.
+   * @param context a span context to push onto the stack.
    */
-  void push(TraceContext context);
+  void push(SpanContext context);
 
   /**
    * Pops the context off the top of the stack and returns it.
    *
    * @return the context on the top of the stack or null if the stack if empty.
    */
-  TraceContext pop();
+  SpanContext pop();
 }

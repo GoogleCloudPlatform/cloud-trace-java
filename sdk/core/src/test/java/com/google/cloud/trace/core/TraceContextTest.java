@@ -6,10 +6,10 @@ import java.math.BigInteger;
 import org.junit.Test;
 
 public class TraceContextTest {
-  private static final TraceContext first =
-      new TraceContext(new TraceId(BigInteger.valueOf(10)), new SpanId(30), new TraceOptions(0));
-  private static final TraceContext second =
-      new TraceContext(new TraceId(BigInteger.valueOf(20)), new SpanId(40), new TraceOptions(1));
+  private static final SpanContext first =
+      new SpanContext(new TraceId(BigInteger.valueOf(10)), new SpanId(30), new TraceOptions(0));
+  private static final SpanContext second =
+      new SpanContext(new TraceId(BigInteger.valueOf(20)), new SpanId(40), new TraceOptions(1));
 
   @Test
   public void testGetTraceId() {
@@ -32,7 +32,7 @@ public class TraceContextTest {
   @Test
   public void testOverrideOptions() {
     assertThat(first.overrideOptions(new TraceOptions(3))).isEqualTo(
-        new TraceContext(new TraceId(BigInteger.valueOf(10)), new SpanId(30), new TraceOptions(3)));
+        new SpanContext(new TraceId(BigInteger.valueOf(10)), new SpanId(30), new TraceOptions(3)));
   }
 
   @Test
@@ -50,7 +50,7 @@ public class TraceContextTest {
   @Test
   public void testToString() {
     assertThat(first.toString()).isEqualTo(
-        "TraceContext{traceId=TraceId{traceId=0000000000000000000000000000000a},"
+        "SpanContext{traceId=TraceId{traceId=0000000000000000000000000000000a},"
         + " spanId=SpanId{spanId=30}, traceOptions=TraceOptions{optionsMask=0}}");
   }
 }

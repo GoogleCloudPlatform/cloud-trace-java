@@ -16,12 +16,6 @@ package com.google.cloud.trace.core;
 
 import static org.junit.Assert.assertSame;
 
-import com.google.cloud.trace.core.DefaultTraceContextHandler;
-import com.google.cloud.trace.core.SpanId;
-import com.google.cloud.trace.core.TraceContext;
-import com.google.cloud.trace.core.TraceContextHandler;
-import com.google.cloud.trace.core.TraceId;
-import com.google.cloud.trace.core.TraceOptions;
 import java.math.BigInteger;
 import org.junit.Test;
 
@@ -29,11 +23,11 @@ public class DefaultTraceContextHandlerTest {
 
   @Test
   public void testPushPop() {
-    TraceContext root = new TraceContext(new TraceId(BigInteger.valueOf(3)), new SpanId(4),
+    SpanContext root = new SpanContext(new TraceId(BigInteger.valueOf(3)), new SpanId(4),
         TraceOptions.forTraceEnabled());
-    TraceContext child1 = new TraceContext(new TraceId(BigInteger.valueOf(3)), new SpanId(5),
+    SpanContext child1 = new SpanContext(new TraceId(BigInteger.valueOf(3)), new SpanId(5),
         TraceOptions.forTraceEnabled());
-    TraceContext child2 = new TraceContext(new TraceId(BigInteger.valueOf(3)), new SpanId(6),
+    SpanContext child2 = new SpanContext(new TraceId(BigInteger.valueOf(3)), new SpanId(6),
         TraceOptions.forTraceEnabled());
 
     TraceContextHandler handler = new DefaultTraceContextHandler(root);
