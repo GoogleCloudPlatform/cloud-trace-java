@@ -30,7 +30,7 @@ import com.google.cloud.trace.v1.RawTracerV1;
 import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
 import com.google.cloud.trace.v1.consumer.SimpleBufferingTraceConsumer;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
-import com.google.cloud.trace.v1.source.TraceSource;
+import com.google.cloud.trace.v1.producer.TraceProducer;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -41,12 +41,12 @@ public class SimpleBufferingGrpc {
     String clientSecretsFile = System.getProperty("clientSecretsFile");
 
     // Create the raw tracer.
-    TraceSource traceSource = new TraceSource();
+    TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         GoogleCredentials.fromStream(new FileInputStream(clientSecretsFile))
             .createScoped(Arrays.asList("https://www.googleapis.com/auth/trace.append")));
     FlushableTraceConsumer flushableSink = new SimpleBufferingTraceConsumer(traceConsumer);
-    RawTracer rawTracer = new RawTracerV1(projectId, traceSource, flushableSink);
+    RawTracer rawTracer = new RawTracerV1(projectId, traceProducer, flushableSink);
 
     // Create the tracer.
     TraceContextFactory traceContextFactory = new TraceContextFactory(

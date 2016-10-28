@@ -31,7 +31,7 @@ import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.cloud.trace.v1.RawTracerV1;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
-import com.google.cloud.trace.v1.source.TraceSource;
+import com.google.cloud.trace.v1.producer.TraceProducer;
 
 import java.io.IOException;
 
@@ -40,10 +40,10 @@ public class ManagedGrpc {
     String projectId = System.getProperty("projectId");
 
     // Create the raw tracer.
-    TraceSource traceSource = new TraceSource();
+    TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         GoogleCredentials.getApplicationDefault());
-    RawTracer rawTracer = new RawTracerV1(projectId, traceSource, traceConsumer);
+    RawTracer rawTracer = new RawTracerV1(projectId, traceProducer, traceConsumer);
 
     // Create the tracer.
     TraceContextFactory traceContextFactory = new TraceContextFactory(

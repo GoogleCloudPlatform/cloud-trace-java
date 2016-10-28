@@ -21,7 +21,7 @@ import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.Timestamp;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
-import com.google.cloud.trace.v1.source.TraceSource;
+import com.google.cloud.trace.v1.producer.TraceProducer;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 
@@ -30,7 +30,7 @@ import com.google.devtools.cloudtrace.v1.Traces;
  * them to a trace consumer.
  *
  * <p>Each method examines the trace options on the given trace context. If the trace enabled option
- * is set, the corresponding method on the trace source is called, and the resulting trace message
+ * is set, the corresponding method on the trace producer is called, and the resulting trace message
  * is sent to the trace consumer. If the trace enabled option is not set, the trace event is ignored.
  *
  * <p>Stackdriver Trace API v1 trace messages contain the project identifier of the Google Cloud
@@ -42,11 +42,11 @@ import com.google.devtools.cloudtrace.v1.Traces;
  * @see RawTracer
  * @see Trace
  * @see TraceConsumer
- * @see TraceSource
+ * @see TraceProducer
  */
 public class RawTracerV1 implements RawTracer {
   private final String projectId;
-  private final TraceSource traceSource;
+  private final TraceProducer traceProducer;
   private final TraceConsumer traceConsumer;
 
   /**
@@ -54,12 +54,12 @@ public class RawTracerV1 implements RawTracer {
    *
    * @param projectId   a string containing the project identifier of the Google Cloud Platform
    *                    project that owns the trace information.
-   * @param traceSource a trace source that converts trace events to API v1 trace messages.
+   * @param traceProducer a trace producer that converts trace events to API v1 trace messages.
    * @param traceConsumer   a trace consumer that accepts API v1 trace messages.
    */
-  public RawTracerV1(String projectId, TraceSource traceSource, TraceConsumer traceConsumer) {
+  public RawTracerV1(String projectId, TraceProducer traceProducer, TraceConsumer traceConsumer) {
     this.projectId = projectId;
-    this.traceSource = traceSource;
+    this.traceProducer = traceProducer;
     this.traceConsumer = traceConsumer;
   }
 
@@ -67,7 +67,7 @@ public class RawTracerV1 implements RawTracer {
   public void startSpan(TraceContext context, TraceContext parentContext,
       SpanKind spanKind, String name, Timestamp timestamp) {
     if (context.getTraceOptions().getTraceEnabled()) {
-      Trace trace = traceSource.generateStartSpan(
+      Trace trace = traceProducer.generateStartSpan(
           projectId, context, parentContext, spanKind, name, timestamp);
       traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
@@ -76,7 +76,7 @@ public class RawTracerV1 implements RawTracer {
   @Override
   public void endSpan(TraceContext context, Timestamp timestamp) {
     if (context.getTraceOptions().getTraceEnabled()) {
-      Trace trace = traceSource.generateEndSpan(projectId, context, timestamp);
+      Trace trace = traceProducer.generateEndSpan(projectId, context, timestamp);
       traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
@@ -84,7 +84,7 @@ public class RawTracerV1 implements RawTracer {
   @Override
   public void annotateSpan(TraceContext context, Labels labels) {
     if (context.getTraceOptions().getTraceEnabled()) {
-      Trace trace = traceSource.generateAnnotateSpan(projectId, context, labels);
+      Trace trace = traceProducer.generateAnnotateSpan(projectId, context, labels);
       traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
@@ -92,7 +92,7 @@ public class RawTracerV1 implements RawTracer {
   @Override
   public void setStackTrace(TraceContext context, StackTrace stackTrace) {
     if (context.getTraceOptions().getTraceEnabled()) {
-      Trace trace = traceSource.generateSetStackTrace(projectId, context, stackTrace);
+      Trace trace = traceProducer.generateSetStackTrace(projectId, context, stackTrace);
       traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }

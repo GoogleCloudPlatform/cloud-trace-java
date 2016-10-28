@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.v1.source;
+package com.google.cloud.trace.v1.producer;
 
 import com.google.cloud.trace.core.Label;
 import com.google.cloud.trace.core.Labels;
@@ -37,7 +37,7 @@ import com.google.devtools.cloudtrace.v1.TraceSpan;
  * @see Trace
  * @see TraceContext
  */
-public class TraceSource {
+public class TraceProducer {
   /**
    * Converts a start span event into an API v1 trace message.
    *
