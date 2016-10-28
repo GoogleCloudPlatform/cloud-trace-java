@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.v1.sink;
+package com.google.cloud.trace.v1.consumer;
 
 import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
@@ -20,17 +20,17 @@ import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
- * A flushable trace sink that auto-flushes when its buffered trace messages exceed its buffer size.
- * This sink uses a trace sizer to estimate the size of its buffered trace messages. The operations
- * on this trace sink are thread-safe.
+ * A flushable trace consumer that auto-flushes when its buffered trace messages exceed its buffer size.
+ * This consumer uses a trace sizer to estimate the size of its buffered trace messages. The operations
+ * on this trace consumer are thread-safe.
  *
- * @see FlushableTraceSink
+ * @see FlushableTraceConsumer
  * @see Sizer
  * @see Traces
- * @see TraceSink
+ * @see TraceConsumer
  */
-public class SizedBufferingTraceSink implements FlushableTraceSink {
-  private final TraceSink traceSink;
+public class SizedBufferingTraceConsumer implements FlushableTraceConsumer {
+  private final TraceConsumer traceConsumer;
   private final Sizer<Trace> traceSizer;
   private final int bufferSize;
   private TraceBuffer traceBuffer;
@@ -40,14 +40,14 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
   private final Object monitor = new Object();
 
   /**
-   * Creates a buffering trace sink.
+   * Creates a buffering trace consumer.
    *
-   * @param traceSink  a trace sink that serves as this trace sink's delegate.
+   * @param traceConsumer  a trace consumer that serves as this trace consumer's delegate.
    * @param traceSizer a sizer used to estimate the size of trace messages.
-   * @param bufferSize the size of this trace sink's trace message buffer.
+   * @param bufferSize the size of this trace consumer's trace message buffer.
    */
-  public SizedBufferingTraceSink(TraceSink traceSink, Sizer<Trace> traceSizer, int bufferSize) {
-    this.traceSink = traceSink;
+  public SizedBufferingTraceConsumer(TraceConsumer traceConsumer, Sizer<Trace> traceSizer, int bufferSize) {
+    this.traceConsumer = traceConsumer;
     this.traceSizer = traceSizer;
     this.bufferSize = bufferSize;
     this.traceBuffer = new TraceBuffer();
@@ -77,7 +77,7 @@ public class SizedBufferingTraceSink implements FlushableTraceSink {
     }
     if (!previous.isEmpty()) {
       Traces traces = previous.getTraces();
-      traceSink.receive(traces);
+      traceConsumer.receive(traces);
     }
   }
 }

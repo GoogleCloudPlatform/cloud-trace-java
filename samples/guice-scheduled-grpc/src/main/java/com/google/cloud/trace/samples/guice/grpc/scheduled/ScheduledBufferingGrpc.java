@@ -38,7 +38,7 @@ import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TraceOptions;
-import com.google.cloud.trace.v1.sink.FlushableTraceSink;
+import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -77,7 +77,7 @@ public class ScheduledBufferingGrpc {
 
     tracer.endSpan();
 
-    FlushableTraceSink flushableSink = injector.getInstance(FlushableTraceSink.class);
+    FlushableTraceConsumer flushableSink = injector.getInstance(FlushableTraceConsumer.class);
 
     flushableSink.flush();
   }

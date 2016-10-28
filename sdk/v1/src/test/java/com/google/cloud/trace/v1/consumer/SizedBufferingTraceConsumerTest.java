@@ -1,4 +1,4 @@
-package com.google.cloud.trace.v1.sink;
+package com.google.cloud.trace.v1.consumer;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.mock;
@@ -12,12 +12,12 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-public class SizedBufferingTraceSinkTest {
+public class SizedBufferingTraceConsumerTest {
 
   @Test
   public void testBuffering() {
     ArgumentCaptor<Traces> tracesCaptor = ArgumentCaptor.forClass(Traces.class);
-    TraceSink mockSink = mock(TraceSink.class);
+    TraceConsumer mockSink = mock(TraceConsumer.class);
     final Trace trace1 = Trace.newBuilder().setProjectId("1").setTraceId("1").build();
     final Trace trace2 = Trace.newBuilder().setProjectId("1").setTraceId("2").build();
     final Trace trace3 = Trace.newBuilder().setProjectId("1").setTraceId("3").build();
@@ -37,7 +37,7 @@ public class SizedBufferingTraceSinkTest {
       }
     };
 
-    FlushableTraceSink bufferedSink = new SizedBufferingTraceSink(mockSink, testSizer, 25);
+    FlushableTraceConsumer bufferedSink = new SizedBufferingTraceConsumer(mockSink, testSizer, 25);
     bufferedSink.receive(Traces.newBuilder().addTraces(trace1).build()); // buffer size: 10
     bufferedSink.receive(Traces.newBuilder().addTraces(trace2).build()); // buffer size: 30
     // should flush

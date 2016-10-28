@@ -12,34 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.v1.sink;
+package com.google.cloud.trace.v1.consumer;
 
 import com.google.cloud.trace.v1.util.TraceBuffer;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
- * A trace sink that buffers trace messages until it is flushed. When flushed, this sink sends its
- * buffered trace messages to a delegate trace sink. The operations on this trace sink are
+ * A trace consumer that buffers trace messages until it is flushed. When flushed, this consumer sends its
+ * buffered trace messages to a delegate trace consumer. The operations on this trace consumer are
  * thread-safe.
  *
- * @see FlushableTraceSink
+ * @see FlushableTraceConsumer
  * @see Traces
- * @see TraceSink
+ * @see TraceConsumer
  */
-public class SimpleBufferingTraceSink implements FlushableTraceSink {
-  private final TraceSink traceSink;
+public class SimpleBufferingTraceConsumer implements FlushableTraceConsumer {
+  private final TraceConsumer traceConsumer;
   private TraceBuffer traceBuffer;
 
   private final Object monitor = new Object();
 
   /**
-   * Creates a trace sink that buffers trace messages until it is flushed.
+   * Creates a trace consumer that buffers trace messages until it is flushed.
    *
-   * @param traceSink a trace sink that serves as the delegate of this trace sink.
+   * @param traceConsumer a trace consumer that serves as the delegate of this trace consumer.
    */
-  public SimpleBufferingTraceSink(TraceSink traceSink) {
-    this.traceSink = traceSink;
+  public SimpleBufferingTraceConsumer(TraceConsumer traceConsumer) {
+    this.traceConsumer = traceConsumer;
     this.traceBuffer = new TraceBuffer();
   }
 
@@ -61,7 +61,7 @@ public class SimpleBufferingTraceSink implements FlushableTraceSink {
     }
     if (!previous.isEmpty()) {
       Traces traces = previous.getTraces();
-      traceSink.receive(traces);
+      traceConsumer.receive(traces);
     }
   }
 }

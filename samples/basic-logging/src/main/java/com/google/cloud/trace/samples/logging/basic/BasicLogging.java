@@ -25,8 +25,8 @@ import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.cloud.trace.v1.RawTracerV1;
-import com.google.cloud.trace.v1.sink.LoggingTraceSink;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.LoggingTraceConsumer;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.source.TraceSource;
 
 import java.util.logging.Level;
@@ -38,8 +38,8 @@ public class BasicLogging {
   public static void main(String[] args) {
     // Create the raw tracer.
     TraceSource traceSource = new TraceSource();
-    TraceSink traceSink = new LoggingTraceSink(logger, Level.WARNING);
-    RawTracer rawTracer = new RawTracerV1("1", traceSource, traceSink);
+    TraceConsumer traceConsumer = new LoggingTraceConsumer(logger, Level.WARNING);
+    RawTracer rawTracer = new RawTracerV1("1", traceSource, traceConsumer);
 
     // Create the tracer.
     TraceContextFactory traceContextFactory = new TraceContextFactory(

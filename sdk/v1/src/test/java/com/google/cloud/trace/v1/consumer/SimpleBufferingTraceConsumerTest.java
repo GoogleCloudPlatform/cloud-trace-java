@@ -1,4 +1,4 @@
-package com.google.cloud.trace.v1.sink;
+package com.google.cloud.trace.v1.consumer;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Mockito.mock;
@@ -11,13 +11,13 @@ import java.util.List;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-public class SimpleBufferingTraceSinkTest {
+public class SimpleBufferingTraceConsumerTest {
 
   @Test
   public void testBuffering() {
     ArgumentCaptor<Traces> tracesCaptor = ArgumentCaptor.forClass(Traces.class);
-    TraceSink mockSink = mock(TraceSink.class);
-    FlushableTraceSink bufferedSink = new SimpleBufferingTraceSink(mockSink);
+    TraceConsumer mockSink = mock(TraceConsumer.class);
+    FlushableTraceConsumer bufferedSink = new SimpleBufferingTraceConsumer(mockSink);
     Trace trace1 = Trace.newBuilder().setProjectId("1").setTraceId("1").build();
     Trace trace2 = Trace.newBuilder().setProjectId("1").setTraceId("2").build();
     Trace trace3 = Trace.newBuilder().setProjectId("1").setTraceId("3").build();

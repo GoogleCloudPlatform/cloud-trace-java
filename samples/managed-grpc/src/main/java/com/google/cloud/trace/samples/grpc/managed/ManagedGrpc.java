@@ -22,7 +22,7 @@ import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.core.TraceContextHandler;
 import com.google.cloud.trace.TraceContextHandlerTracer;
 import com.google.cloud.trace.Tracer;
-import com.google.cloud.trace.grpc.v1.GrpcTraceSink;
+import com.google.cloud.trace.grpc.v1.GrpcTraceConsumer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.StackTrace;
@@ -30,7 +30,7 @@ import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.cloud.trace.v1.RawTracerV1;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.source.TraceSource;
 
 import java.io.IOException;
@@ -41,9 +41,9 @@ public class ManagedGrpc {
 
     // Create the raw tracer.
     TraceSource traceSource = new TraceSource();
-    TraceSink traceSink = new GrpcTraceSink("cloudtrace.googleapis.com",
+    TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         GoogleCredentials.getApplicationDefault());
-    RawTracer rawTracer = new RawTracerV1(projectId, traceSource, traceSink);
+    RawTracer rawTracer = new RawTracerV1(projectId, traceSource, traceConsumer);
 
     // Create the tracer.
     TraceContextFactory traceContextFactory = new TraceContextFactory(

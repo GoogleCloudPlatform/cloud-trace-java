@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.v1.sink;
+package com.google.cloud.trace.v1.consumer;
 
 import com.google.cloud.trace.v1.util.Sizer;
 import com.google.cloud.trace.v1.util.TraceBuffer;
@@ -24,17 +24,17 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A flushable trace sink that auto-flushes when its buffered trace messages exceed its buffer size
- * or have been buffered for longer than its scheduled delay. The operations on this trace sink are
+ * A flushable trace consumer that auto-flushes when its buffered trace messages exceed its buffer size
+ * or have been buffered for longer than its scheduled delay. The operations on this trace consumer are
  * thread-safe.
  *
- * @see FlushableTraceSink
+ * @see FlushableTraceConsumer
  * @see Sizer
  * @see Traces
- * @see TraceSink
+ * @see TraceConsumer
  */
-public class ScheduledBufferingTraceSink implements FlushableTraceSink {
-  private final TraceSink traceSink;
+public class ScheduledBufferingTraceConsumer implements FlushableTraceConsumer {
+  private final TraceConsumer traceConsumer;
   private final Sizer<Trace> traceSizer;
   private final int bufferSize;
   private final int scheduledDelay;
@@ -49,17 +49,17 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
   private ScheduledFuture<?> flusher = null;
 
   /**
-   * Creates a buffering trace sink.
+   * Creates a buffering trace consumer.
    *
-   * @param traceSink      a trace sink that serves as this trace sink's delegate.
+   * @param traceConsumer      a trace consumer that serves as this trace consumer's delegate.
    * @param traceSizer     a sizer used to estimate the size of trace messages.
-   * @param bufferSize     the size of this trace sink's trace message buffer.
-   * @param scheduledDelay the scheduled delay of this trace sink in seconds.
-   * @param scheduler      a scheduled executor service used to automatically flush this trace sink.
+   * @param bufferSize     the size of this trace consumer's trace message buffer.
+   * @param scheduledDelay the scheduled delay of this trace consumer in seconds.
+   * @param scheduler      a scheduled executor service used to automatically flush this trace consumer.
    */
-  public ScheduledBufferingTraceSink(TraceSink traceSink, Sizer<Trace> traceSizer, int bufferSize,
+  public ScheduledBufferingTraceConsumer(TraceConsumer traceConsumer, Sizer<Trace> traceSizer, int bufferSize,
       int scheduledDelay, ScheduledExecutorService scheduler) {
-    this.traceSink = traceSink;
+    this.traceConsumer = traceConsumer;
     this.traceSizer = traceSizer;
     this.bufferSize = bufferSize;
     this.scheduledDelay = scheduledDelay;
@@ -103,7 +103,7 @@ public class ScheduledBufferingTraceSink implements FlushableTraceSink {
     }
     if (!previous.isEmpty()) {
       Traces traces = previous.getTraces();
-      traceSink.receive(traces);
+      traceConsumer.receive(traces);
     }
   }
 

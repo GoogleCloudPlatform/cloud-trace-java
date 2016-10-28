@@ -20,18 +20,18 @@ import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.Timestamp;
 import com.google.cloud.trace.core.TraceContext;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.source.TraceSource;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
  * A raw tracer that converts trace events to Stackdriver Trace API v1 trace messages and dispatches
- * them to a trace sink.
+ * them to a trace consumer.
  *
  * <p>Each method examines the trace options on the given trace context. If the trace enabled option
  * is set, the corresponding method on the trace source is called, and the resulting trace message
- * is sent to the trace sink. If the trace enabled option is not set, the trace event is ignored.
+ * is sent to the trace consumer. If the trace enabled option is not set, the trace event is ignored.
  *
  * <p>Stackdriver Trace API v1 trace messages contain the project identifier of the Google Cloud
  * Platform project that owns the trace information. The project identifier is either the Project ID
@@ -41,13 +41,13 @@ import com.google.devtools.cloudtrace.v1.Traces;
  * @see <a href="https://cloud.google.com/trace/api">Stackdriver Trace API</a>
  * @see RawTracer
  * @see Trace
- * @see TraceSink
+ * @see TraceConsumer
  * @see TraceSource
  */
 public class RawTracerV1 implements RawTracer {
   private final String projectId;
   private final TraceSource traceSource;
-  private final TraceSink traceSink;
+  private final TraceConsumer traceConsumer;
 
   /**
    * Creates a raw tracer.
@@ -55,12 +55,12 @@ public class RawTracerV1 implements RawTracer {
    * @param projectId   a string containing the project identifier of the Google Cloud Platform
    *                    project that owns the trace information.
    * @param traceSource a trace source that converts trace events to API v1 trace messages.
-   * @param traceSink   a trace sink that accepts API v1 trace messages.
+   * @param traceConsumer   a trace consumer that accepts API v1 trace messages.
    */
-  public RawTracerV1(String projectId, TraceSource traceSource, TraceSink traceSink) {
+  public RawTracerV1(String projectId, TraceSource traceSource, TraceConsumer traceConsumer) {
     this.projectId = projectId;
     this.traceSource = traceSource;
-    this.traceSink = traceSink;
+    this.traceConsumer = traceConsumer;
   }
 
   @Override
@@ -69,7 +69,7 @@ public class RawTracerV1 implements RawTracer {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateStartSpan(
           projectId, context, parentContext, spanKind, name, timestamp);
-      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
+      traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 
@@ -77,7 +77,7 @@ public class RawTracerV1 implements RawTracer {
   public void endSpan(TraceContext context, Timestamp timestamp) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateEndSpan(projectId, context, timestamp);
-      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
+      traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 
@@ -85,7 +85,7 @@ public class RawTracerV1 implements RawTracer {
   public void annotateSpan(TraceContext context, Labels labels) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateAnnotateSpan(projectId, context, labels);
-      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
+      traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 
@@ -93,7 +93,7 @@ public class RawTracerV1 implements RawTracer {
   public void setStackTrace(TraceContext context, StackTrace stackTrace) {
     if (context.getTraceOptions().getTraceEnabled()) {
       Trace trace = traceSource.generateSetStackTrace(projectId, context, stackTrace);
-      traceSink.receive(Traces.newBuilder().addTraces(trace).build());
+      traceConsumer.receive(Traces.newBuilder().addTraces(trace).build());
     }
   }
 }

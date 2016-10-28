@@ -12,21 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.v1.sink;
-
-import com.google.devtools.cloudtrace.v1.Trace;
-import com.google.devtools.cloudtrace.v1.Traces;
+package com.google.cloud.trace.v1.consumer;
 
 /**
- * An interface for a trace sink that accepts Stackdriver Trace API v1 trace messages.
+ * An interface for a trace consumer that can be flushed.
  *
- * @see Trace
+ * @see TraceConsumer
  */
-public interface TraceSink {
+public interface FlushableTraceConsumer extends TraceConsumer {
   /**
-   * Accepts a Stackdriver Trace API v1 trace message.
-   *
-   * @param trace a trace that is accepted by this sink.
+   * Flushes this trace consumer.
    */
-  void receive(Traces trace);
+  void flush();
 }

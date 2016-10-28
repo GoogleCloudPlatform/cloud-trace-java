@@ -14,9 +14,9 @@
 
 package com.google.cloud.trace.guice.v1;
 
-import com.google.cloud.trace.v1.sink.FlushableTraceSink;
-import com.google.cloud.trace.v1.sink.ScheduledBufferingTraceSink;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
+import com.google.cloud.trace.v1.consumer.ScheduledBufferingTraceConsumer;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.util.Sizer;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.inject.AbstractModule;
@@ -32,16 +32,16 @@ public class ScheduledBufferingTraceSinkModule extends AbstractModule {
 
   @Provides
   @Singleton
-  TraceSink provideTraceSink(FlushableTraceSink flushableTraceSink) {
+  TraceConsumer provideTraceSink(FlushableTraceConsumer flushableTraceSink) {
     return flushableTraceSink;
   }
 
   @Provides
   @Singleton
-  FlushableTraceSink provideFlushableTraceSink(
-      @ApiTraceSink TraceSink traceSink, Sizer<Trace> traceSizer, @SinkBufferSize int bufferSize,
+  FlushableTraceConsumer provideFlushableTraceSink(
+      @ApiTraceSink TraceConsumer traceConsumer, Sizer<Trace> traceSizer, @SinkBufferSize int bufferSize,
       @SinkScheduledDelay int scheduledDelay, ScheduledExecutorService scheduler) {
-    return new ScheduledBufferingTraceSink(
-        traceSink, traceSizer, bufferSize, scheduledDelay, scheduler);
+    return new ScheduledBufferingTraceConsumer(
+        traceConsumer, traceSizer, bufferSize, scheduledDelay, scheduler);
   }
 }

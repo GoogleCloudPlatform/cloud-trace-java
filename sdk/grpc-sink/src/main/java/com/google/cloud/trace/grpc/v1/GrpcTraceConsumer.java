@@ -15,7 +15,7 @@
 package com.google.cloud.trace.grpc.v1;
 
 import com.google.auth.Credentials;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.devtools.cloudtrace.v1.PatchTracesRequest;
 import com.google.devtools.cloudtrace.v1.TraceServiceGrpc;
 import com.google.devtools.cloudtrace.v1.Traces;
@@ -25,24 +25,24 @@ import io.grpc.auth.MoreCallCredentials;
 
 
 /**
- * A trace sink that sends trace messages to the Stackdriver Trace API trace via gRPC.
+ * A trace consumer that sends trace messages to the Stackdriver Trace API trace via gRPC.
  *
  * @see <a href="http://www.grpc.io">gRPC</a>
  * @see Credentials
  * @see Traces
- * @see TraceSink
+ * @see TraceConsumer
  */
-public class GrpcTraceSink implements TraceSink {
+public class GrpcTraceConsumer implements TraceConsumer {
   private final ManagedChannel managedChannel;
   private final TraceServiceGrpc.TraceServiceBlockingStub traceService;
 
   /**
-   * Creates a trace sink that sends trace messages to the Stackdriver Trace API via gRPC.
+   * Creates a trace consumer that sends trace messages to the Stackdriver Trace API via gRPC.
    *
    * @param apiHost     a string containing the API host name.
    * @param credentials a credentials used to authenticate API calls.
    */
-  public GrpcTraceSink(String apiHost, Credentials credentials) {
+  public GrpcTraceConsumer(String apiHost, Credentials credentials) {
     this.managedChannel = ManagedChannelBuilder.forTarget(apiHost).build();
     this.traceService = TraceServiceGrpc.newBlockingStub(managedChannel)
         .withCallCredentials(MoreCallCredentials.from(credentials));
@@ -63,7 +63,7 @@ public class GrpcTraceSink implements TraceSink {
   }
 
   /**
-   * Closes the resources held by this trace sink.
+   * Closes the resources held by this trace consumer.
    */
   public void close() {
     managedChannel.shutdown();

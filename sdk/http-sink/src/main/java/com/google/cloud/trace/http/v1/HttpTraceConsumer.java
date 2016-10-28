@@ -1,9 +1,8 @@
 package com.google.cloud.trace.http.v1;
 
 import com.google.auth.oauth2.OAuth2Credentials;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.common.io.ByteStreams;
-import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -14,18 +13,18 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
-public class HttpTraceSink implements TraceSink {
-  private final static Logger logger = Logger.getLogger(HttpTraceSink.class.getName());
+public class HttpTraceConsumer implements TraceConsumer {
+  private final static Logger logger = Logger.getLogger(HttpTraceConsumer.class.getName());
 
   private final OAuth2Credentials oAuth2Credentials;
   private final String hostUrl;
 
-  public HttpTraceSink(OAuth2Credentials oAuth2Credentials, String hostUrl) {
+  public HttpTraceConsumer(OAuth2Credentials oAuth2Credentials, String hostUrl) {
     this.oAuth2Credentials = oAuth2Credentials;
     this.hostUrl = hostUrl;
   }
 
-  public HttpTraceSink(OAuth2Credentials oAuth2Credentials) {
+  public HttpTraceConsumer(OAuth2Credentials oAuth2Credentials) {
     this(oAuth2Credentials, "https://cloudtrace.googleapis.com");
   }
 

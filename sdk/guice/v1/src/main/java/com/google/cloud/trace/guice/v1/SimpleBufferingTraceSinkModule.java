@@ -14,9 +14,9 @@
 
 package com.google.cloud.trace.guice.v1;
 
-import com.google.cloud.trace.v1.sink.FlushableTraceSink;
-import com.google.cloud.trace.v1.sink.SimpleBufferingTraceSink;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
+import com.google.cloud.trace.v1.consumer.SimpleBufferingTraceConsumer;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -28,13 +28,13 @@ public class SimpleBufferingTraceSinkModule extends AbstractModule {
 
   @Provides
   @Singleton
-  TraceSink provideTraceSink(FlushableTraceSink flushableTraceSink) {
+  TraceConsumer provideTraceSink(FlushableTraceConsumer flushableTraceSink) {
     return flushableTraceSink;
   }
 
   @Provides
   @Singleton
-  FlushableTraceSink provideFlushableTraceSink(@ApiTraceSink TraceSink traceSink) {
-    return new SimpleBufferingTraceSink(traceSink);
+  FlushableTraceConsumer provideFlushableTraceSink(@ApiTraceSink TraceConsumer traceConsumer) {
+    return new SimpleBufferingTraceConsumer(traceConsumer);
   }
 }

@@ -16,7 +16,7 @@ package com.google.cloud.trace.guice.v1;
 
 import com.google.cloud.trace.RawTracer;
 import com.google.cloud.trace.v1.RawTracerV1;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.source.TraceSource;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -33,17 +33,17 @@ public class RawTracerV1Module extends AbstractModule {
 
   private static class RawTracerV1Provider implements Provider<RawTracerV1> {
     private final String projectId;
-    private final TraceSink traceSink;
+    private final TraceConsumer traceConsumer;
 
     @Inject
-    RawTracerV1Provider(@ProjectId String projectId, TraceSink traceSink) {
+    RawTracerV1Provider(@ProjectId String projectId, TraceConsumer traceConsumer) {
       this.projectId = projectId;
-      this.traceSink = traceSink;
+      this.traceConsumer = traceConsumer;
     }
 
     @Override
     public RawTracerV1 get() {
-      return new RawTracerV1(projectId, new TraceSource(), traceSink);
+      return new RawTracerV1(projectId, new TraceSource(), traceConsumer);
     }
   }
 }

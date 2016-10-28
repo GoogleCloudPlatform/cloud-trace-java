@@ -14,9 +14,9 @@
 
 package com.google.cloud.trace.guice.v1;
 
-import com.google.cloud.trace.v1.sink.FlushableTraceSink;
-import com.google.cloud.trace.v1.sink.SizedBufferingTraceSink;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
+import com.google.cloud.trace.v1.consumer.SizedBufferingTraceConsumer;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.util.Sizer;
 import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.inject.AbstractModule;
@@ -30,14 +30,14 @@ public class SizedBufferingTraceSinkModule extends AbstractModule {
 
   @Provides
   @Singleton
-  TraceSink provideTraceSink(FlushableTraceSink flushableTraceSink) {
+  TraceConsumer provideTraceSink(FlushableTraceConsumer flushableTraceSink) {
     return flushableTraceSink;
   }
 
   @Provides
   @Singleton
-  FlushableTraceSink provideFlushableTraceSink(
-      @ApiTraceSink TraceSink traceSink, Sizer<Trace> traceSizer, @SinkBufferSize int bufferSize) {
-    return new SizedBufferingTraceSink(traceSink, traceSizer, bufferSize);
+  FlushableTraceConsumer provideFlushableTraceSink(
+      @ApiTraceSink TraceConsumer traceConsumer, Sizer<Trace> traceSizer, @SinkBufferSize int bufferSize) {
+    return new SizedBufferingTraceConsumer(traceConsumer, traceSizer, bufferSize);
   }
 }

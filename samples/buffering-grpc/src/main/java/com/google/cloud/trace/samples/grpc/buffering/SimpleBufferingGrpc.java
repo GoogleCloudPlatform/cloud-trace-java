@@ -18,7 +18,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.trace.RawTracer;
 import com.google.cloud.trace.TraceContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
-import com.google.cloud.trace.grpc.v1.GrpcTraceSink;
+import com.google.cloud.trace.grpc.v1.GrpcTraceConsumer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.StackTrace;
@@ -27,9 +27,9 @@ import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceContextFactory;
 import com.google.cloud.trace.v1.RawTracerV1;
-import com.google.cloud.trace.v1.sink.FlushableTraceSink;
-import com.google.cloud.trace.v1.sink.SimpleBufferingTraceSink;
-import com.google.cloud.trace.v1.sink.TraceSink;
+import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
+import com.google.cloud.trace.v1.consumer.SimpleBufferingTraceConsumer;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.source.TraceSource;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -42,10 +42,10 @@ public class SimpleBufferingGrpc {
 
     // Create the raw tracer.
     TraceSource traceSource = new TraceSource();
-    TraceSink traceSink = new GrpcTraceSink("cloudtrace.googleapis.com",
+    TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         GoogleCredentials.fromStream(new FileInputStream(clientSecretsFile))
             .createScoped(Arrays.asList("https://www.googleapis.com/auth/trace.append")));
-    FlushableTraceSink flushableSink = new SimpleBufferingTraceSink(traceSink);
+    FlushableTraceConsumer flushableSink = new SimpleBufferingTraceConsumer(traceConsumer);
     RawTracer rawTracer = new RawTracerV1(projectId, traceSource, flushableSink);
 
     // Create the tracer.

@@ -12,31 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.v1.sink;
+package com.google.cloud.trace.v1.consumer;
 
 import com.google.devtools.cloudtrace.v1.Traces;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A trace sink that logs the trace messages that it receives.
+ * A trace consumer that logs the trace messages that it receives.
  *
  * @see Level
  * @see Logger
  * @see Traces
- * @see TraceSink
+ * @see TraceConsumer
  */
-public class LoggingTraceSink implements TraceSink {
+public class LoggingTraceConsumer implements TraceConsumer {
   private final Logger logger;
   private final Level level;
 
   /**
-   * Creates a logging trace sink.
+   * Creates a logging trace consumer.
    *
    * @param logger a logger that logs trace messages.
    * @param level  the level to log trace messages.
    */
-  public LoggingTraceSink(Logger logger, Level level) {
+  public LoggingTraceConsumer(Logger logger, Level level) {
     this.logger = logger;
     this.level = level;
   }
