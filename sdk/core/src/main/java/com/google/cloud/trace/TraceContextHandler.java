@@ -40,4 +40,48 @@ public interface TraceContextHandler {
    * @return the context on the top of the stack or null if the stack if empty.
    */
   TraceContext pop();
+
+  /**
+   * Makes the trace context on top of the stack the new root context.
+   * The stack cannot be popped below this context until restore(TraceContextHandlerState) is called.
+   * @return The {@link TraceContextHandlerState} for the stack prior to adding the top element.
+   */
+  TraceContextHandlerState replace();
+
+  /**
+   * Add a new root context to the top of the stack.
+   * The stack cannot be popped below this context until restore(TraceContextHandlerState) is called.
+   * @param newRoot The new root trace context to attach.
+   * @return The {@link TraceContextHandlerState} for the stack prior to adding the new root.
+   */
+  TraceContextHandlerState replace(TraceContext newRoot);
+
+  /**
+   * Restore the stack to the provided state.
+   * This will remove trace contexts that have been pushed (but not popped) since the call to replace()
+   * that returned the provided {@link TraceContextHandlerState}
+   * @param toRestore The {@link TraceContextHandlerState} returned by replace()
+   */
+  void restore(TraceContextHandlerState toRestore);
+
+  /**
+   * Represents the state of the stack in the TraceContextHandler
+   */
+  class TraceContextHandlerState {
+    private final int rootIndex;
+    private final int size;
+
+    public TraceContextHandlerState(int rootIndex, int size) {
+      this.rootIndex = rootIndex;
+      this.size = size;
+    }
+
+    public int getRootIndex() {
+      return rootIndex;
+    }
+
+    public int getSize() {
+      return size;
+    }
+  }
 }

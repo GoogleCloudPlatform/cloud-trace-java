@@ -15,8 +15,8 @@
 package com.google.cloud.trace;
 
 import com.google.cloud.trace.util.TraceContext;
-import java.util.ArrayDeque;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -26,7 +26,8 @@ public abstract class AbstractTraceContextHandler implements TraceContextHandler
   private static final Logger logger = Logger.getLogger(
       AbstractTraceContextHandler.class.getName());
 
-  private final ArrayDeque<TraceContext> contextStack;
+  private final List<TraceContext> contextStack;
+  private int rootIndex;
 
   /**
    * Creates a new trace context handler.
@@ -35,29 +36,60 @@ public abstract class AbstractTraceContextHandler implements TraceContextHandler
    * the stack and cannot be removed.
    */
   public AbstractTraceContextHandler(TraceContext rootContext) {
-    this.contextStack = new ArrayDeque<TraceContext>(Collections.singleton(rootContext));
+    this.contextStack = new ArrayList<TraceContext>();
+    replace(rootContext);
   }
 
   @Override
   public TraceContext current() {
-    return contextStack.peekFirst();
+    return contextStack.get(contextStack.size() - 1);
   }
 
   @Override
   public void push(TraceContext context) {
-    contextStack.addFirst(context);
+    contextStack.add(context);
     doPush(context);
   }
 
   @Override
   public TraceContext pop() {
-    if (contextStack.size() > 1) {
-      TraceContext context = contextStack.removeFirst();
+    int indexToRemove = contextStack.size() - 1;
+    if (indexToRemove > rootIndex) {
+      TraceContext context = contextStack.remove(indexToRemove);
       doPop(current());
       return context;
     }
     logger.warning("Too many calls to AbstractTraceContextHandler.pop().");
     return null;
+  }
+
+  @Override
+  public TraceContextHandlerState replace() {
+    int previousRoot = rootIndex;
+    // The last item is the new root.
+    this.rootIndex = contextStack.size() - 1;
+    // Everything from the previous root (inclusive) to the new root (exclusive)
+    // is part of the previous state.
+    int previousSize = rootIndex - previousRoot;
+    return new TraceContextHandlerState(previousRoot, previousSize);
+  }
+
+  @Override
+  public TraceContextHandlerState replace(TraceContext toAttach) {
+    contextStack.add(toAttach);
+    return replace();
+  }
+
+  @Override
+  public void restore(TraceContextHandlerState toRestore) {
+    int rootToRestore = toRestore.getRootIndex();
+    int firstToClear = rootToRestore + toRestore.getSize();
+    int lastToClear = contextStack.size();
+    contextStack.subList(firstToClear, lastToClear).clear();
+    if (lastToClear - firstToClear > 1) {
+      logger.warning("AbstractTraceContextHandler.restore() removed more than one TraceContext.");
+    }
+    this.rootIndex = rootToRestore;
   }
 
   /**

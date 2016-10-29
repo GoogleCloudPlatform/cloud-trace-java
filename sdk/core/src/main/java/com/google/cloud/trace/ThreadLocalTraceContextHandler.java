@@ -40,6 +40,21 @@ public class ThreadLocalTraceContextHandler implements TraceContextHandler {
     return getHandler().pop();
   }
 
+  @Override
+  public TraceContextHandlerState replace() {
+    return getHandler().replace();
+  }
+
+  @Override
+  public TraceContextHandlerState replace(TraceContext newRoot) {
+    return getHandler().replace(newRoot);
+  }
+
+  @Override
+  public void restore(TraceContextHandlerState toRestore) {
+    getHandler().restore(toRestore);
+  }
+
   private DefaultTraceContextHandler getHandler() {
     DefaultTraceContextHandler handler = handlers.get();
     if (handler == null) {

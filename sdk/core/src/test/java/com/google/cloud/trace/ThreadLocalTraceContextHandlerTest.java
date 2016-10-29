@@ -16,6 +16,7 @@ package com.google.cloud.trace;
 
 import static org.junit.Assert.assertSame;
 
+import com.google.cloud.trace.TraceContextHandler.TraceContextHandlerState;
 import com.google.cloud.trace.util.SpanId;
 import com.google.cloud.trace.util.TraceContext;
 import com.google.cloud.trace.util.TraceId;
@@ -58,10 +59,10 @@ public class ThreadLocalTraceContextHandlerTest {
 
     // Check the results from the other thread.
     assertSame(defaultRoot, runnable.initialContext);
-    assertSame(root2, runnable.contextAfterPush1);
-    assertSame(child2, runnable.contextAfterPush2);
-    assertSame(root2, runnable.contextAfterPop1);
-    assertSame(defaultRoot, runnable.contextAfterPop2);
+    assertSame(root2, runnable.contextAfterReplace);
+    assertSame(child2, runnable.contextAfterPush);
+    assertSame(root2, runnable.contextAfterPop);
+    assertSame(defaultRoot, runnable.contextAfterRestore);
   }
 
   private static class ThreadRunnable implements Runnable {
@@ -69,10 +70,10 @@ public class ThreadLocalTraceContextHandlerTest {
     private final TraceContextHandler handler;
     private final TraceContext push1, push2;
     TraceContext initialContext;
-    TraceContext contextAfterPush1;
-    TraceContext contextAfterPush2;
-    TraceContext contextAfterPop1;
-    TraceContext contextAfterPop2;
+    TraceContext contextAfterReplace;
+    TraceContext contextAfterPush;
+    TraceContext contextAfterPop;
+    TraceContext contextAfterRestore;
 
     ThreadRunnable(TraceContextHandler handler, TraceContext push1, TraceContext push2) {
       this.handler = handler;
@@ -83,17 +84,18 @@ public class ThreadLocalTraceContextHandlerTest {
     @Override
     public void run() {
       initialContext = handler.current();
-      handler.push(push1);
-      contextAfterPush1 = handler.current();
+      TraceContextHandlerState state = handler.replace(push1);
+      contextAfterReplace = handler.current();
       handler.push(push2);
-      contextAfterPush2 = handler.current();
+      contextAfterPush = handler.current();
       handler.pop();
-      contextAfterPop1 = handler.current();
-      handler.pop();
-      contextAfterPop2 = handler.current();
+      contextAfterPop = handler.current();
+      handler.restore(state);
+      contextAfterRestore = handler.current();
       // Explicitly pushing something else onto the stack and leaving it
       // to test that the other thread is not affected.
       handler.push(push1);
+      handler.replace();
     }
   }
 }
