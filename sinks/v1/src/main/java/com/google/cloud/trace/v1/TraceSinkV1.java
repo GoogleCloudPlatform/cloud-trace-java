@@ -52,9 +52,9 @@ public class TraceSinkV1 implements TraceSink {
   /**
    * Creates a TraceSink.
    *
-   * @param projectId   a string containing the project identifier of the Google Cloud Platform
-   *                    project that owns the trace information.
-   * @param traceProducer a trace producer that converts trace events to API v1 trace messages.
+   * @param projectId       a string containing the project identifier of the Google Cloud Platform
+   *                        project that owns the trace information.
+   * @param traceProducer   a trace producer that converts trace events to API v1 trace messages.
    * @param traceConsumer   a trace consumer that accepts API v1 trace messages.
    */
   public TraceSinkV1(String projectId, TraceProducer traceProducer, TraceConsumer traceConsumer) {
