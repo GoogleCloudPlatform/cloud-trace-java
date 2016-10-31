@@ -96,15 +96,15 @@ public class SpanContextFactoryTracer implements Tracer {
 
   @Override
   public void annotateSpan(SpanContext context, Labels labels) {
-    for (TraceSink tracer : sinks) {
-      tracer.annotateSpan(context, labels);
+    for (TraceSink sink : sinks) {
+      sink.annotateSpan(context, labels);
     }
   }
 
   @Override
   public void setStackTrace(SpanContext context, StackTrace stackTrace) {
-    for (TraceSink tracer : sinks) {
-      tracer.setStackTrace(context, stackTrace);
+    for (TraceSink sink : sinks) {
+      sink.setStackTrace(context, stackTrace);
     }
   }
 
@@ -120,8 +120,8 @@ public class SpanContextFactoryTracer implements Tracer {
       parentContext = parentContext.overrideOptions(traceOptions);
     }
     SpanContext context = spanContextFactory.childContext(parentContext);
-    for (TraceSink tracer : sinks) {
-      tracer.startSpan(context, parentContext, spanKind, name, timestamp);
+    for (TraceSink sink : sinks) {
+      sink.startSpan(context, parentContext, spanKind, name, timestamp);
     }
     return context;
   }
@@ -130,8 +130,8 @@ public class SpanContextFactoryTracer implements Tracer {
     if (timestamp == null) {
       timestamp = timestampFactory.now();
     }
-    for (TraceSink tracer : sinks) {
-      tracer.endSpan(context, timestamp);
+    for (TraceSink sink : sinks) {
+      sink.endSpan(context, timestamp);
     }
   }
 }
