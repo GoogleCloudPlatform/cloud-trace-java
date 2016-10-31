@@ -42,7 +42,7 @@ import java.util.Set;
  * @see SpanContextFactory
  * @see Tracer
  */
-public class TraceContextFactoryTracer implements Tracer {
+public class SpanContextFactoryTracer implements Tracer {
   private final ImmutableSet<TraceSink> sinks;
   private final SpanContextFactory spanContextFactory;
   private final TimestampFactory timestampFactory;
@@ -54,7 +54,7 @@ public class TraceContextFactoryTracer implements Tracer {
    * @param spanContextFactory  a span context factory used to generate new span contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(Set<TraceSink> sinks, SpanContextFactory spanContextFactory,
+  public SpanContextFactoryTracer(Set<TraceSink> sinks, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
     this.sinks = ImmutableSet.copyOf(sinks);
     this.spanContextFactory = spanContextFactory;
@@ -68,7 +68,7 @@ public class TraceContextFactoryTracer implements Tracer {
    * @param spanContextFactory  a span context factory used to generate new span contexts.
    * @param timestampFactory    a timestamp factory used to generate new timestamps.
    */
-  public TraceContextFactoryTracer(TraceSink sink, SpanContextFactory spanContextFactory,
+  public SpanContextFactoryTracer(TraceSink sink, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
     this(ImmutableSet.of(sink), spanContextFactory, timestampFactory);
   }

@@ -15,7 +15,7 @@
 package com.google.cloud.trace.guice;
 
 import com.google.cloud.trace.core.TraceSink;
-import com.google.cloud.trace.TraceContextFactoryTracer;
+import com.google.cloud.trace.SpanContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.SpanContextFactory;
@@ -26,7 +26,7 @@ import com.google.inject.Singleton;
 
 import java.util.Set;
 
-public class TraceContextFactoryTracerModule extends AbstractModule {
+public class SpanContextFactoryTracerModule extends AbstractModule {
   @Override
   protected void configure() {}
 
@@ -40,6 +40,6 @@ public class TraceContextFactoryTracerModule extends AbstractModule {
   @Singleton
   Tracer provideTracer(Set<TraceSink> tracers, SpanContextFactory spanContextFactory,
       TimestampFactory timestampFactory) {
-    return new TraceContextFactoryTracer(tracers, spanContextFactory, timestampFactory);
+    return new SpanContextFactoryTracer(tracers, spanContextFactory, timestampFactory);
   }
 }

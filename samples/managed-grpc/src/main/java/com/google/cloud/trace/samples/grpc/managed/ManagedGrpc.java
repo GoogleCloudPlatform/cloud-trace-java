@@ -18,7 +18,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.core.DefaultTraceContextHandler;
 import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.TraceContextFactoryTracer;
+import com.google.cloud.trace.SpanContextFactoryTracer;
 import com.google.cloud.trace.core.TraceContextHandler;
 import com.google.cloud.trace.TraceContextHandlerTracer;
 import com.google.cloud.trace.Tracer;
@@ -49,7 +49,7 @@ public class ManagedGrpc {
     SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
+    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create the managed tracer.
     TraceContextHandler traceContextHandler = new DefaultTraceContextHandler(

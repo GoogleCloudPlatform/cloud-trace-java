@@ -16,7 +16,7 @@ package com.google.cloud.trace.samples.logging.basic;
 
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.TraceSink;
-import com.google.cloud.trace.TraceContextFactoryTracer;
+import com.google.cloud.trace.SpanContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.JavaTimestampFactory;
@@ -45,7 +45,7 @@ public class BasicLogging {
     SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
+    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
     SpanContext context1 = tracer.startSpan(spanContextFactory.initialContext(), "my span 1");
