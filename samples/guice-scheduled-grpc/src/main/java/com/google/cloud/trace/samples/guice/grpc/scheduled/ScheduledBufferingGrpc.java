@@ -33,7 +33,7 @@ import com.google.cloud.trace.guice.v1.RoughTraceSizerModule;
 import com.google.cloud.trace.guice.v1.ScheduledBufferingTraceSinkModule;
 import com.google.cloud.trace.guice.v1.SinkBufferSizePropertiesModule;
 import com.google.cloud.trace.guice.v1.SinkScheduledDelayPropertiesModule;
-import com.google.cloud.trace.guice.v1.RawTracerV1Module;
+import com.google.cloud.trace.guice.v1.TraceSinkV1Module;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
@@ -49,7 +49,7 @@ public class ScheduledBufferingGrpc {
         new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
         new DefaultTraceContextHandlerModule(),
-        new RawTracerV1Module(),
+        new TraceSinkV1Module(),
         new ConstantTraceOptionsFactoryModule(),
         new ProjectIdPropertiesModule(),
         new ScheduledBufferingTraceSinkModule(),

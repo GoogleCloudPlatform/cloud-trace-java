@@ -35,7 +35,7 @@ import com.google.cloud.trace.guice.v1.RoughTraceSizerModule;
 import com.google.cloud.trace.guice.v1.ScheduledBufferingTraceSinkModule;
 import com.google.cloud.trace.guice.v1.SinkBufferSizeJndiModule;
 import com.google.cloud.trace.guice.v1.SinkScheduledDelayJndiModule;
-import com.google.cloud.trace.guice.v1.RawTracerV1Module;
+import com.google.cloud.trace.guice.v1.TraceSinkV1Module;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
@@ -48,7 +48,7 @@ public class GuiceTraceServletContextListener extends GuiceServletContextListene
         new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
         new RequestDefaultTraceContextHandlerModule(),
-        new RawTracerV1Module(),
+        new TraceSinkV1Module(),
         new NaiveSamplingTraceOptionsFactoryModule(),
         new ProjectIdJndiModule(),
         new ScheduledBufferingTraceSinkModule(),

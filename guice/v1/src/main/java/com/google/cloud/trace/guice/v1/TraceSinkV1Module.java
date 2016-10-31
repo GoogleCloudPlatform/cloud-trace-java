@@ -24,19 +24,19 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 
-public class RawTracerV1Module extends AbstractModule {
+public class TraceSinkV1Module extends AbstractModule {
   @Override
   protected void configure() {
     Multibinder<TraceSink> setBinder = Multibinder.newSetBinder(binder(), TraceSink.class);
-    setBinder.addBinding().toProvider(RawTracerV1Provider.class).in(Singleton.class);
+    setBinder.addBinding().toProvider(TraceSinkV1Provider.class).in(Singleton.class);
   }
 
-  private static class RawTracerV1Provider implements Provider<TraceSinkV1> {
+  private static class TraceSinkV1Provider implements Provider<TraceSinkV1> {
     private final String projectId;
     private final TraceConsumer traceConsumer;
 
     @Inject
-    RawTracerV1Provider(@ProjectId String projectId, TraceConsumer traceConsumer) {
+    TraceSinkV1Provider(@ProjectId String projectId, TraceConsumer traceConsumer) {
       this.projectId = projectId;
       this.traceConsumer = traceConsumer;
     }
