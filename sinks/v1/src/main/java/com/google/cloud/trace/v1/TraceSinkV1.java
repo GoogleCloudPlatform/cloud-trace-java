@@ -26,7 +26,7 @@ import com.google.devtools.cloudtrace.v1.Trace;
 import com.google.devtools.cloudtrace.v1.Traces;
 
 /**
- * A raw tracer that converts trace events to Stackdriver Trace API v1 trace messages and dispatches
+ * A {@link TraceSink} that converts trace events to Stackdriver Trace API v1 trace messages and dispatches
  * them to a trace consumer.
  *
  * <p>Each method examines the trace options on the given span context. If the trace enabled option
@@ -50,7 +50,7 @@ public class TraceSinkV1 implements TraceSink {
   private final TraceConsumer traceConsumer;
 
   /**
-   * Creates a raw tracer.
+   * Creates a TraceSink.
    *
    * @param projectId   a string containing the project identifier of the Google Cloud Platform
    *                    project that owns the trace information.

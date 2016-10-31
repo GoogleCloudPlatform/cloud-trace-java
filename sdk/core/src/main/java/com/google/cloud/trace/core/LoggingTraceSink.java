@@ -18,14 +18,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A raw tracer that logs trace events.
+ * A trace sink that logs trace events.
  */
 public class LoggingTraceSink implements TraceSink {
   private final Logger logger;
   private final Level level;
 
   /**
-   * Creates a new raw tracer.
+   * Creates a new trace sink.
    *
    * @param logger a logger used to log trace events.
    * @param level a level used for trace event log messages.

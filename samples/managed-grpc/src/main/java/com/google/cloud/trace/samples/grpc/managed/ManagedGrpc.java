@@ -39,7 +39,7 @@ public class ManagedGrpc {
   public static void main(String[] args) throws IOException {
     String projectId = System.getProperty("projectId");
 
-    // Create the raw tracer.
+    // Create the trace sink.
     TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         GoogleCredentials.getApplicationDefault());

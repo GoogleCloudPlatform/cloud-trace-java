@@ -40,7 +40,7 @@ public class SimpleBufferingGrpc {
     String projectId = System.getProperty("projectId");
     String clientSecretsFile = System.getProperty("clientSecretsFile");
 
-    // Create the raw tracer.
+    // Create the trace sink.
     TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         GoogleCredentials.fromStream(new FileInputStream(clientSecretsFile))

@@ -15,7 +15,7 @@
 package com.google.cloud.trace.core;
 
 /**
- * A raw tracer that does nothing.
+ * A trace sink that does nothing.
  */
 public class DoNothingTraceSink implements TraceSink {
   @Override

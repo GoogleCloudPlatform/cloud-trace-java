@@ -36,7 +36,7 @@ public class BasicLogging {
   private final static Logger logger = Logger.getLogger(BasicLogging.class.getName());
 
   public static void main(String[] args) {
-    // Create the raw tracer.
+    // Create the trace sink.
     TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new LoggingTraceConsumer(logger, Level.WARNING);
     TraceSink traceSink = new TraceSinkV1("1", traceProducer, traceConsumer);
