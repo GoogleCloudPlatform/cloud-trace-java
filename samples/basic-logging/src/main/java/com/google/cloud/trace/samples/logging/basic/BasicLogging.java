@@ -14,20 +14,20 @@
 
 package com.google.cloud.trace.samples.logging.basic;
 
-import com.google.cloud.trace.RawTracer;
-import com.google.cloud.trace.TraceContextFactoryTracer;
+import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.TraceSink;
+import com.google.cloud.trace.SpanContextFactoryTracer;
 import com.google.cloud.trace.Tracer;
-import com.google.cloud.trace.util.ConstantTraceOptionsFactory;
-import com.google.cloud.trace.util.JavaTimestampFactory;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.ThrowableStackTraceHelper;
-import com.google.cloud.trace.util.TimestampFactory;
-import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceContextFactory;
-import com.google.cloud.trace.v1.RawTracerV1;
-import com.google.cloud.trace.v1.sink.LoggingTraceSink;
-import com.google.cloud.trace.v1.sink.TraceSink;
-import com.google.cloud.trace.v1.source.TraceSource;
+import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
+import com.google.cloud.trace.core.JavaTimestampFactory;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.ThrowableStackTraceHelper;
+import com.google.cloud.trace.core.TimestampFactory;
+import com.google.cloud.trace.core.SpanContextFactory;
+import com.google.cloud.trace.v1.TraceSinkV1;
+import com.google.cloud.trace.v1.consumer.LoggingTraceConsumer;
+import com.google.cloud.trace.v1.consumer.TraceConsumer;
+import com.google.cloud.trace.v1.producer.TraceProducer;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,19 +36,19 @@ public class BasicLogging {
   private final static Logger logger = Logger.getLogger(BasicLogging.class.getName());
 
   public static void main(String[] args) {
-    // Create the raw tracer.
-    TraceSource traceSource = new TraceSource();
-    TraceSink traceSink = new LoggingTraceSink(logger, Level.WARNING);
-    RawTracer rawTracer = new RawTracerV1("1", traceSource, traceSink);
+    // Create the trace sink.
+    TraceProducer traceProducer = new TraceProducer();
+    TraceConsumer traceConsumer = new LoggingTraceConsumer(logger, Level.WARNING);
+    TraceSink traceSink = new TraceSinkV1("1", traceProducer, traceConsumer);
 
     // Create the tracer.
-    TraceContextFactory traceContextFactory = new TraceContextFactory(
+    SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new TraceContextFactoryTracer(rawTracer, traceContextFactory, timestampFactory);
+    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
-    TraceContext context1 = tracer.startSpan(traceContextFactory.initialContext(), "my span 1");
+    SpanContext context1 = tracer.startSpan(spanContextFactory.initialContext(), "my span 1");
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
     tracer.setStackTrace(context1, stackTraceBuilder.build());
     tracer.endSpan(context1);

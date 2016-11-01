@@ -20,7 +20,7 @@ import com.google.cloud.trace.guice.DefaultTraceContextHandlerModule;
 import com.google.cloud.trace.guice.JavaTimestampFactoryModule;
 import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
-import com.google.cloud.trace.guice.TraceContextFactoryTracerModule;
+import com.google.cloud.trace.guice.SpanContextFactoryTracerModule;
 import com.google.cloud.trace.guice.TraceContextHandlerTracerModule;
 import com.google.cloud.trace.guice.TraceEnabledModule;
 import com.google.cloud.trace.guice.api.ApiHostModule;
@@ -33,12 +33,12 @@ import com.google.cloud.trace.guice.v1.RoughTraceSizerModule;
 import com.google.cloud.trace.guice.v1.ScheduledBufferingTraceSinkModule;
 import com.google.cloud.trace.guice.v1.SinkBufferSizePropertiesModule;
 import com.google.cloud.trace.guice.v1.SinkScheduledDelayPropertiesModule;
-import com.google.cloud.trace.guice.v1.RawTracerV1Module;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.StartSpanOptions;
-import com.google.cloud.trace.util.ThrowableStackTraceHelper;
-import com.google.cloud.trace.util.TraceOptions;
-import com.google.cloud.trace.v1.sink.FlushableTraceSink;
+import com.google.cloud.trace.guice.v1.TraceSinkV1Module;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.ThrowableStackTraceHelper;
+import com.google.cloud.trace.core.TraceOptions;
+import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -46,10 +46,10 @@ public class ScheduledBufferingGrpc {
   public static void main(String[] args) {
     Injector injector = Guice.createInjector(
         new TraceContextHandlerTracerModule(),
-        new TraceContextFactoryTracerModule(),
+        new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
         new DefaultTraceContextHandlerModule(),
-        new RawTracerV1Module(),
+        new TraceSinkV1Module(),
         new ConstantTraceOptionsFactoryModule(),
         new ProjectIdPropertiesModule(),
         new ScheduledBufferingTraceSinkModule(),
@@ -77,7 +77,7 @@ public class ScheduledBufferingGrpc {
 
     tracer.endSpan();
 
-    FlushableTraceSink flushableSink = injector.getInstance(FlushableTraceSink.class);
+    FlushableTraceConsumer flushableSink = injector.getInstance(FlushableTraceConsumer.class);
 
     flushableSink.flush();
   }

@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.servlet;
 
-import com.google.cloud.trace.util.Labels;
+import com.google.cloud.trace.core.Labels;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

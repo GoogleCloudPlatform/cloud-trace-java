@@ -14,11 +14,11 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.EndSpanOptions;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.StartSpanOptions;
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.EndSpanOptions;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
 
 /**
  * An interface used for the ingestion and transmission of trace information. This is a basic tracer
@@ -45,58 +45,58 @@ import com.google.cloud.trace.util.TraceContext;
  * @see ManagedTracer
  * @see StackTrace
  * @see StartSpanOptions
- * @see TraceContext
+ * @see SpanContext
  */
 public interface Tracer {
   /**
    * Starts a new span. The new span's parent will be the span identified by {@code parentContext},
    * if valid.
    *
-   * @param parentContext the trace context of the parent span, if valid.
+   * @param parentContext the span context of the parent span, if valid.
    * @param name          a string that represents the name of the new span.
-   * @return the trace context of the new span.
+   * @return the span context of the new span.
    */
-  TraceContext startSpan(TraceContext parentContext, String name);
+  SpanContext startSpan(SpanContext parentContext, String name);
 
   /**
    * Starts a new span. The new span's parent will be the span identified by {@code parentContext},
    * if valid.
    *
-   * @param parentContext the trace context of the parent span, if valid.
+   * @param parentContext the span context of the parent span, if valid.
    * @param name          a string that represents the name of the new span.
    * @param options       a start span options that contains overrides for default span values.
-   * @return the trace context of the new span.
+   * @return the span context of the new span.
    */
-  TraceContext startSpan(TraceContext parentContext, String name, StartSpanOptions options);
+  SpanContext startSpan(SpanContext parentContext, String name, StartSpanOptions options);
 
   /**
    * Ends a span.
    *
-   * @param context the trace context of the span to end.
+   * @param context the span context of the span to end.
    */
-  void endSpan(TraceContext context);
+  void endSpan(SpanContext context);
 
   /**
    * Ends a span.
    *
-   * @param context the trace context of the span to end.
+   * @param context the span context of the span to end.
    * @param options an end span options that contains overrides for default span values.
    */
-  void endSpan(TraceContext context, EndSpanOptions options);
+  void endSpan(SpanContext context, EndSpanOptions options);
 
   /**
    * Adds label annotations to a span.
    *
-   * @param context the trace context of the span to annotate.
+   * @param context the span context of the span to annotate.
    * @param labels  a labels containing label annotations to add to the span.
    */
-  void annotateSpan(TraceContext context, Labels labels);
+  void annotateSpan(SpanContext context, Labels labels);
 
   /**
    * Adds a stack trace label annotation to a span.
    *
-   * @param context    the trace context of the span to annotate.
+   * @param context    the span context of the span to annotate.
    * @param stackTrace a stack trace to add to the span as a label annotation.
    */
-  void setStackTrace(TraceContext context, StackTrace stackTrace);
+  void setStackTrace(SpanContext context, StackTrace stackTrace);
 }

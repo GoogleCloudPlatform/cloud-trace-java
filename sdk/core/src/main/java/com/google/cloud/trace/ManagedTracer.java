@@ -14,31 +14,31 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.EndSpanOptions;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.StartSpanOptions;
-import com.google.cloud.trace.util.TraceContext;
+import com.google.cloud.trace.core.EndSpanOptions;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.SpanContext;
 
 /**
  * An interface used for the ingestion and transmission of trace information. This is a tracer that
  * is meant to be used to instrument application code. It contains methods for starting and stopping
  * spans and adding label and stack trace annotations to spans. It operates on a stack of trace
- * contexts, where new spans are created as children of the span represented by the trace context on
- * the top of the stack, and the span represented by the trace context on the top of the stack can
- * be ended. The new trace context and the ending trace context are pushed on and popped off the
+ * contexts, where new spans are created as children of the span represented by the span context on
+ * the top of the stack, and the span represented by the span context on the top of the stack can
+ * be ended. The new span context and the ending span context are pushed on and popped off the
  * stack, respectively.
  *
  * @see EndSpanOptions
  * @see Labels
  * @see StackTrace
  * @see StartSpanOptions
- * @see TraceContext
+ * @see SpanContext
  * @see Tracer
  */
 public interface ManagedTracer {
   /**
-   * Starts a new span. The new span's parent will be the span identified by the trace context on
+   * Starts a new span. The new span's parent will be the span identified by the span context on
    * the top of the stack.
    *
    * @param name a string that represents the name of the new span.
@@ -46,7 +46,7 @@ public interface ManagedTracer {
   void startSpan(String name);
 
   /**
-   * Starts a new span. The new span's parent will be the span identified by the trace context on
+   * Starts a new span. The new span's parent will be the span identified by the span context on
    * the top of the stack
    *
    * @param name    a string that represents the name of the new span.
@@ -55,26 +55,26 @@ public interface ManagedTracer {
   void startSpan(String name, StartSpanOptions options);
 
   /**
-   * Ends the span represented by the trace context on top of the stack.
+   * Ends the span represented by the span context on top of the stack.
    */
   void endSpan();
 
   /**
-   * Ends the span represented by the trace context on top of the stack.
+   * Ends the span represented by the span context on top of the stack.
    *
    * @param options an end span options that contains overrides for default span values.
    */
   void endSpan(EndSpanOptions options);
 
   /**
-   * Adds label annotations to the span represented by the trace context on top of the stack.
+   * Adds label annotations to the span represented by the span context on top of the stack.
    *
    * @param labels  a labels containing label annotations to add to the span.
    */
   void annotateSpan(Labels labels);
 
   /**
-   * Adds a stack trace label annotation to the span represented by the trace context on top of the
+   * Adds a stack trace label annotation to the span represented by the span context on top of the
    * stack.
    *
    * @param stackTrace a stack trace to add to the span as a label annotation.
@@ -82,9 +82,9 @@ public interface ManagedTracer {
   void setStackTrace(StackTrace stackTrace);
 
   /**
-   * Returns the trace context on top of the stack.
+   * Returns the span context on top of the stack.
    *
-   * @return the trace context on top of the stack.
+   * @return the span context on top of the stack.
    */
-  TraceContext getCurrentTraceContext();
+  SpanContext getCurrentTraceContext();
 }

@@ -14,20 +14,18 @@
 
 package com.google.cloud.trace;
 
-import com.google.cloud.trace.util.EndSpanOptions;
-import com.google.cloud.trace.util.Labels;
-import com.google.cloud.trace.util.SpanKind;
-import com.google.cloud.trace.util.StackTrace;
-import com.google.cloud.trace.util.StartSpanOptions;
-import com.google.cloud.trace.util.Timestamp;
-import com.google.cloud.trace.util.TraceContext;
-import com.google.cloud.trace.util.TraceOptions;
+import com.google.cloud.trace.core.EndSpanOptions;
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.TraceContextHandler;
 import java.util.logging.Logger;
 
 /**
  * A managed tracer user to trace application code.
  *
- * <p>This tracer maintains a stack of trace contexts in a trace context handler and delegates calls
+ * <p>This tracer maintains a stack of span contexts in a span context handler and delegates calls
  * to another tracer.
  */
 public class TraceContextHandlerTracer implements Tracer, ManagedTracer  {
@@ -40,7 +38,7 @@ public class TraceContextHandlerTracer implements Tracer, ManagedTracer  {
    * Creates a new managed tracer.
    *
    * @param tracer         a tracer that serves as a delegate for all tracer functionality.
-   * @param contextHandler a trace context handler that manages a stack of trace contexts.
+   * @param contextHandler a span context handler that manages a stack of span contexts.
    */
   public TraceContextHandlerTracer(Tracer tracer, TraceContextHandler contextHandler) {
     this.tracer = tracer;
@@ -48,50 +46,50 @@ public class TraceContextHandlerTracer implements Tracer, ManagedTracer  {
   }
 
   @Override
-  public TraceContext startSpan(TraceContext parentContext, String name) {
+  public SpanContext startSpan(SpanContext parentContext, String name) {
     return tracer.startSpan(parentContext, name);
   }
 
   @Override
-  public TraceContext startSpan(TraceContext parentContext, String name, StartSpanOptions options) {
+  public SpanContext startSpan(SpanContext parentContext, String name, StartSpanOptions options) {
     return tracer.startSpan(parentContext, name, options);
   }
 
   @Override
-  public void endSpan(TraceContext context) {
+  public void endSpan(SpanContext context) {
     tracer.endSpan(context);
   }
 
   @Override
-  public void endSpan(TraceContext context, EndSpanOptions options) {
+  public void endSpan(SpanContext context, EndSpanOptions options) {
     tracer.endSpan(context, options);
   }
 
   @Override
-  public void annotateSpan(TraceContext context, Labels labels) {
+  public void annotateSpan(SpanContext context, Labels labels) {
     tracer.annotateSpan(context, labels);
   }
 
   @Override
-  public void setStackTrace(TraceContext context, StackTrace stackTrace) {
+  public void setStackTrace(SpanContext context, StackTrace stackTrace) {
     tracer.setStackTrace(context, stackTrace);
   }
 
   @Override
   public void startSpan(String name) {
-    TraceContext context = tracer.startSpan(contextHandler.current(), name);
+    SpanContext context = tracer.startSpan(contextHandler.current(), name);
     contextHandler.push(context);
   }
 
   @Override
   public void startSpan(String name, StartSpanOptions options) {
-    TraceContext context = tracer.startSpan(contextHandler.current(), name, options);
+    SpanContext context = tracer.startSpan(contextHandler.current(), name, options);
     contextHandler.push(context);
   }
 
   @Override
   public void endSpan() {
-    TraceContext context = contextHandler.pop();
+    SpanContext context = contextHandler.pop();
     if (context != null) {
       tracer.endSpan(context);
     } else {
@@ -101,7 +99,7 @@ public class TraceContextHandlerTracer implements Tracer, ManagedTracer  {
 
   @Override
   public void endSpan(EndSpanOptions options) {
-    TraceContext context = contextHandler.pop();
+    SpanContext context = contextHandler.pop();
     if (context != null) {
       tracer.endSpan(context, options);
     } else {
@@ -120,7 +118,7 @@ public class TraceContextHandlerTracer implements Tracer, ManagedTracer  {
   }
 
   @Override
-  public TraceContext getCurrentTraceContext() {
+  public SpanContext getCurrentTraceContext() {
     return contextHandler.current();
   }
 }
