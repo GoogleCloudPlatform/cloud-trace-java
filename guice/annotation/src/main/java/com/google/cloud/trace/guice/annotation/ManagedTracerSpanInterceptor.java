@@ -20,9 +20,12 @@ import com.google.cloud.trace.annotation.Name;
 import com.google.cloud.trace.annotation.Option;
 import com.google.cloud.trace.annotation.Span;
 import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
+import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceOptions;
 import com.google.common.base.CaseFormat;
 import com.google.inject.Provider;
@@ -93,19 +96,20 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
     Boolean overrideTraceEnabled = span.trace().getBooleanValue();
     Boolean overrideStackTraceEnabled = span.stackTrace().getBooleanValue();
     ManagedTracer tracer = tracerProvider.get();
+    TraceContext traceContext;
     if (overrideTraceEnabled != null || overrideStackTraceEnabled != null) {
-      TraceOptions traceOptions = tracer.getCurrentTraceContext().getTraceOptions();
+      TraceOptions traceOptions = tracer.getCurrentSpanContext().getTraceOptions();
       if (overrideTraceEnabled != null) {
         traceOptions = traceOptions.overrideTraceEnabled(overrideTraceEnabled);
       }
       if (overrideStackTraceEnabled != null) {
         traceOptions = traceOptions.overrideStackTraceEnabled(overrideStackTraceEnabled);
       }
-      tracer.startSpan(methodName, new StartSpanOptions().setTraceOptions(traceOptions));
+      traceContext = tracer.startSpan(methodName, new StartSpanOptions().setTraceOptions(traceOptions));
       stackTraceEnabled = traceOptions.getStackTraceEnabled();
     } else {
-      tracer.startSpan(methodName);
-      stackTraceEnabled = tracer.getCurrentTraceContext().getTraceOptions()
+      traceContext = tracer.startSpan(methodName);
+      stackTraceEnabled = tracer.getCurrentSpanContext().getTraceOptions()
           .getStackTraceEnabled();
     }
 
@@ -121,7 +125,7 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
 
     Labels labelsBeforeCall = labelsBeforeCallBuilder.build();
     if (labelsBeforeCall.getLabels().size() > 0) {
-      tracer.annotateSpan(labelsBeforeCall);
+      tracer.annotateSpan(traceContext, labelsBeforeCall);
     }
 
     Labels.Builder labelsAfterCallBuilder = Labels.builder();
@@ -145,7 +149,7 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
         builder.add(invocation.getMethod().getDeclaringClass().getName(),
             invocation.getMethod().getName(), null, null, null);
         ThrowableStackTraceHelper.addFrames(builder, throwable);
-        tracer.setStackTrace(builder.build());
+        tracer.setStackTrace(traceContext, builder.build());
       }
 
       for (int i = span.labels().length; i > 0; i--) {
@@ -156,9 +160,9 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
       }
       Labels labelsAfterCall = labelsAfterCallBuilder.build();
       if (labelsAfterCall.getLabels().size() > 0) {
-        tracer.annotateSpan(labelsAfterCall);
+        tracer.annotateSpan(traceContext, labelsAfterCall);
       }
-      tracer.endSpan();
+      tracer.endSpan(traceContext);
     }
     return result;
   }

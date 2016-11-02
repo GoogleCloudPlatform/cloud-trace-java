@@ -40,5 +40,10 @@
       <version>2.2.6</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-context</artifactId>
+      <version>1.0.1</version>
+    </dependency>
   </dependencies>
 </project>

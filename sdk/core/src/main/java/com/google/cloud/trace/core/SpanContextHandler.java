@@ -12,21 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.guice.servlet;
+package com.google.cloud.trace.core;
 
-import com.google.cloud.trace.core.SpanContext;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.servlet.RequestScoped;
+public interface SpanContextHandler {
+  /**
+   * Returns the current span context.
+   *
+   * @return the current span context.
+   */
+  SpanContext current();
 
-public class UninitializedRequestTraceContextModule extends AbstractModule {
-  @Override
-  protected void configure() {}
+  /**
+   * Replace the current SpanContext with a new SpanContext.
+   * @param context the {@link SpanContext} to attach
+   * @return The previous SpanContext
+   */
+  SpanContext attach(SpanContext context);
 
-  @Provides
-  @RequestContext
-  @RequestScoped
-  SpanContext provideUninitializedTraceContext() {
-    throw new IllegalStateException("RequestContext must be initialized in the request scope.");
-  }
+  /**
+   * Replace the current SpanContext with a previous SpanContext.
+   * @param toAttach the previous SpanContext that should be re-attached.
+   */
+  void detach(SpanContext toAttach);
 }

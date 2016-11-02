@@ -19,106 +19,69 @@ import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
-import com.google.cloud.trace.core.TraceContextHandler;
-import java.util.logging.Logger;
+import com.google.cloud.trace.core.SpanContextHandler;
+import com.google.cloud.trace.core.TraceContext;
 
 /**
- * A managed tracer user to trace application code.
+ * A managed tracer that maintains trace context.
  *
- * <p>This tracer maintains a stack of span contexts in a span context handler and delegates calls
- * to another tracer.
+ * <p>This tracer maintains the current trace context and delegates calls to another tracer.</p>
  */
-public class TraceContextHandlerTracer implements Tracer, ManagedTracer  {
-  private static final Logger logger = Logger.getLogger(TraceContextHandlerTracer.class.getName());
-
+public class TraceContextHandlerTracer implements ManagedTracer  {
   private final Tracer tracer;
-  private final TraceContextHandler contextHandler;
+  private final SpanContextHandler contextHandler;
 
   /**
    * Creates a new managed tracer.
    *
    * @param tracer         a tracer that serves as a delegate for all tracer functionality.
-   * @param contextHandler a span context handler that manages a stack of span contexts.
+   * @param contextHandler a span context handler that manages the current span context.
    */
-  public TraceContextHandlerTracer(Tracer tracer, TraceContextHandler contextHandler) {
+  public TraceContextHandlerTracer(Tracer tracer, SpanContextHandler contextHandler) {
     this.tracer = tracer;
     this.contextHandler = contextHandler;
   }
 
   @Override
-  public SpanContext startSpan(SpanContext parentContext, String name) {
-    return tracer.startSpan(parentContext, name);
+  public TraceContext startSpan(String name) {
+    SpanContext parent = contextHandler.current();
+    SpanContext child = tracer.startSpan(parent, name);
+    contextHandler.attach(child);
+    return new TraceContext(child, parent);
   }
 
   @Override
-  public SpanContext startSpan(SpanContext parentContext, String name, StartSpanOptions options) {
-    return tracer.startSpan(parentContext, name, options);
+  public TraceContext startSpan(String name, StartSpanOptions options) {
+    SpanContext parent = contextHandler.current();
+    SpanContext child = tracer.startSpan(parent, name, options);
+    contextHandler.attach(child);
+    return new TraceContext(child, parent);
   }
 
   @Override
-  public void endSpan(SpanContext context) {
-    tracer.endSpan(context);
+  public void endSpan(TraceContext traceContext) {
+    tracer.endSpan(traceContext.getCurrent());
+    contextHandler.detach(traceContext.getParent());
   }
 
   @Override
-  public void endSpan(SpanContext context, EndSpanOptions options) {
-    tracer.endSpan(context, options);
+  public void endSpan(TraceContext traceContext, EndSpanOptions options) {
+    tracer.endSpan(traceContext.getCurrent(), options);
+    contextHandler.detach(traceContext.getParent());
   }
 
   @Override
-  public void annotateSpan(SpanContext context, Labels labels) {
-    tracer.annotateSpan(context, labels);
+  public void annotateSpan(TraceContext traceContext, Labels labels) {
+    tracer.annotateSpan(traceContext.getCurrent(), labels);
   }
 
   @Override
-  public void setStackTrace(SpanContext context, StackTrace stackTrace) {
-    tracer.setStackTrace(context, stackTrace);
+  public void setStackTrace(TraceContext traceContext, StackTrace stackTrace) {
+    tracer.setStackTrace(traceContext.getCurrent(), stackTrace);
   }
 
   @Override
-  public void startSpan(String name) {
-    SpanContext context = tracer.startSpan(contextHandler.current(), name);
-    contextHandler.push(context);
-  }
-
-  @Override
-  public void startSpan(String name, StartSpanOptions options) {
-    SpanContext context = tracer.startSpan(contextHandler.current(), name, options);
-    contextHandler.push(context);
-  }
-
-  @Override
-  public void endSpan() {
-    SpanContext context = contextHandler.pop();
-    if (context != null) {
-      tracer.endSpan(context);
-    } else {
-      logger.warning("Too many calls to ContextHandlerTraceClient.endCurrentSpan().");
-    }
-  }
-
-  @Override
-  public void endSpan(EndSpanOptions options) {
-    SpanContext context = contextHandler.pop();
-    if (context != null) {
-      tracer.endSpan(context, options);
-    } else {
-      logger.warning("Too many calls to ContextHandlerTraceClient.endCurrentSpan().");
-    }
-  }
-
-  @Override
-  public void annotateSpan(Labels labels) {
-    tracer.annotateSpan(contextHandler.current(), labels);
-  }
-
-  @Override
-  public void setStackTrace(StackTrace stackTrace) {
-    tracer.setStackTrace(contextHandler.current(), stackTrace);
-  }
-
-  @Override
-  public SpanContext getCurrentTraceContext() {
+  public SpanContext getCurrentSpanContext() {
     return contextHandler.current();
   }
 }

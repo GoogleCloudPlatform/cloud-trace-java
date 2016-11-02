@@ -12,23 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.guice.servlet;
+package com.google.cloud.trace.guice;
 
-import com.google.cloud.trace.core.DefaultTraceContextHandler;
-import com.google.cloud.trace.core.TraceContextHandler;
-import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.GrpcSpanContextHandler;
+import com.google.cloud.trace.core.SpanContextHandler;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.servlet.RequestScoped;
+import com.google.inject.Singleton;
 
-public class RequestDefaultTraceContextHandlerModule extends AbstractModule {
+public class GrpcSpanContextHandlerModule extends AbstractModule {
   @Override
-  protected void configure() {}
+  protected void configure() {
+  }
 
   @Provides
-  @RequestScoped
-  TraceContextHandler provideTraceContextHandler(
-      @RequestContext SpanContext spanContext) {
-    return new DefaultTraceContextHandler(spanContext);
+  @Singleton
+  SpanContextHandler provideTraceContextHandler(SpanContextFactory spanContextFactory) {
+    return new GrpcSpanContextHandler(spanContextFactory.initialContext());
   }
 }
