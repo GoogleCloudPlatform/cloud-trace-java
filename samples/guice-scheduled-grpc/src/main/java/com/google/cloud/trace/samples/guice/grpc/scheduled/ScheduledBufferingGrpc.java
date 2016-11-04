@@ -15,13 +15,14 @@
 package com.google.cloud.trace.samples.guice.grpc.scheduled;
 
 import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.guice.ConstantTraceOptionsFactoryModule;
-import com.google.cloud.trace.guice.DefaultTraceContextHandlerModule;
+import com.google.cloud.trace.guice.GrpcSpanContextHandlerModule;
 import com.google.cloud.trace.guice.JavaTimestampFactoryModule;
 import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
 import com.google.cloud.trace.guice.SpanContextFactoryTracerModule;
-import com.google.cloud.trace.guice.TraceContextHandlerTracerModule;
+import com.google.cloud.trace.guice.SpanContextHandlerTracerModule;
 import com.google.cloud.trace.guice.TraceEnabledModule;
 import com.google.cloud.trace.guice.api.ApiHostModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsFilePropertiesModule;
@@ -45,10 +46,10 @@ import com.google.inject.Injector;
 public class ScheduledBufferingGrpc {
   public static void main(String[] args) {
     Injector injector = Guice.createInjector(
-        new TraceContextHandlerTracerModule(),
+        new SpanContextHandlerTracerModule(),
         new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
-        new DefaultTraceContextHandlerModule(),
+        new GrpcSpanContextHandlerModule(),
         new TraceSinkV1Module(),
         new ConstantTraceOptionsFactoryModule(),
         new ProjectIdPropertiesModule(),
@@ -67,15 +68,15 @@ public class ScheduledBufferingGrpc {
 
     ManagedTracer tracer = injector.getInstance(ManagedTracer.class);
 
-    tracer.startSpan("my span 1",
+    TraceContext context1 = tracer.startSpan("my span 1",
         new StartSpanOptions().setTraceOptions(TraceOptions.forTraceEnabled()));
-    tracer.startSpan("my span 2");
+    TraceContext context2 = tracer.startSpan("my span 2");
 
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
-    tracer.setStackTrace(stackTraceBuilder.build());
-    tracer.endSpan();
+    tracer.setStackTrace(context2, stackTraceBuilder.build());
+    tracer.endSpan(context1);
 
-    tracer.endSpan();
+    tracer.endSpan(context1);
 
     FlushableTraceConsumer flushableSink = injector.getInstance(FlushableTraceConsumer.class);
 
