@@ -21,7 +21,7 @@ import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.TraceContextHandlerTracer;
+import com.google.cloud.trace.SpanContextHandlerTracer;
 import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.grpc.v1.GrpcTraceConsumer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
@@ -55,7 +55,7 @@ public class ManagedGrpc {
     // Create the managed tracer.
     SpanContextHandler spanContextHandler = new GrpcSpanContextHandler(
         spanContextFactory.initialContext());
-    ManagedTracer managedTracer = new TraceContextHandlerTracer(tracer, spanContextHandler);
+    ManagedTracer managedTracer = new SpanContextHandlerTracer(tracer, spanContextHandler);
 
     // Create some trace data.
     TraceContext context1 = managedTracer.startSpan("my span 1");

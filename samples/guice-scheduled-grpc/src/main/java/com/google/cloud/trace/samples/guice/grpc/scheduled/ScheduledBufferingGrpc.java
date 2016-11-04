@@ -22,7 +22,7 @@ import com.google.cloud.trace.guice.JavaTimestampFactoryModule;
 import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
 import com.google.cloud.trace.guice.SpanContextFactoryTracerModule;
-import com.google.cloud.trace.guice.TraceContextHandlerTracerModule;
+import com.google.cloud.trace.guice.SpanContextHandlerTracerModule;
 import com.google.cloud.trace.guice.TraceEnabledModule;
 import com.google.cloud.trace.guice.api.ApiHostModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsFilePropertiesModule;
@@ -46,7 +46,7 @@ import com.google.inject.Injector;
 public class ScheduledBufferingGrpc {
   public static void main(String[] args) {
     Injector injector = Guice.createInjector(
-        new TraceContextHandlerTracerModule(),
+        new SpanContextHandlerTracerModule(),
         new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
         new GrpcSpanContextHandlerModule(),

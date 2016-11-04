@@ -21,7 +21,7 @@ import com.google.cloud.trace.guice.NaiveSamplingTraceOptionsFactoryModule;
 import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
 import com.google.cloud.trace.guice.SpanContextFactoryTracerModule;
-import com.google.cloud.trace.guice.TraceContextHandlerTracerModule;
+import com.google.cloud.trace.guice.SpanContextHandlerTracerModule;
 import com.google.cloud.trace.guice.annotation.ManagedTracerSpanModule;
 import com.google.cloud.trace.guice.api.ApiHostModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsFileJndiModule;
@@ -44,7 +44,7 @@ public class GuiceTraceServletContextListener extends GuiceServletContextListene
   @Override
   protected Injector getInjector() {
     return Guice.createInjector(
-        new TraceContextHandlerTracerModule(),
+        new SpanContextHandlerTracerModule(),
         new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
         new GrpcSpanContextHandlerModule(),

@@ -27,7 +27,7 @@ import com.google.cloud.trace.core.TraceContext;
  *
  * <p>This tracer maintains the current trace context and delegates calls to another tracer.</p>
  */
-public class TraceContextHandlerTracer implements ManagedTracer  {
+public class SpanContextHandlerTracer implements ManagedTracer  {
   private final Tracer tracer;
   private final SpanContextHandler contextHandler;
 
@@ -37,7 +37,7 @@ public class TraceContextHandlerTracer implements ManagedTracer  {
    * @param tracer         a tracer that serves as a delegate for all tracer functionality.
    * @param contextHandler a span context handler that manages the current span context.
    */
-  public TraceContextHandlerTracer(Tracer tracer, SpanContextHandler contextHandler) {
+  public SpanContextHandlerTracer(Tracer tracer, SpanContextHandler contextHandler) {
     this.tracer = tracer;
     this.contextHandler = contextHandler;
   }

@@ -25,8 +25,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TraceContextHandlerTracerTest {
-  private TraceContextHandlerTracer tracer;
+public class SpanContextHandlerTracerTest {
+  private SpanContextHandlerTracer tracer;
   private SpanContextHandler contextHandler;
   private TestTraceSink sink;
 
@@ -39,7 +39,7 @@ public class TraceContextHandlerTracerTest {
         contextFactory,
         tsFactory);
     this.contextHandler = new GrpcSpanContextHandler(contextFactory.initialContext());
-    this.tracer = new TraceContextHandlerTracer(delegate, contextHandler);
+    this.tracer = new SpanContextHandlerTracer(delegate, contextHandler);
   }
 
   @Test
