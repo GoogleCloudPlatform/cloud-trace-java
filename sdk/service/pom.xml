@@ -3,17 +3,17 @@
 
   <parent>
     <groupId>com.google.cloud.trace</groupId>
-    <artifactId>samples</artifactId>
+    <artifactId>sdk</artifactId>
     <version>0.1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>basic-logging</artifactId>
+  <artifactId>service</artifactId>
   <packaging>jar</packaging>
 
-  <name>Google Cloud Trace Java SDK Basic Logging Sample</name>
+  <name>Google Cloud Trace Java SDK Service Definition</name>
+  <url>http://cloud.google.com/trace</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <exec.mainClass>com.google.cloud.trace.samples.logging.basic.BasicLogging</exec.mainClass>
   </properties>
 
   <dependencies>
@@ -23,15 +23,10 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>logging-service</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
+      <groupId>com.google.truth</groupId>
+      <artifactId>truth</artifactId>
+      <version>0.29</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

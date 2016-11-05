@@ -21,6 +21,7 @@
     <module>core</module>
     <module>java-timestamp</module>
     <module>joda-timestamp</module>
+    <module>service</module>
     <module>servlet</module>
   </modules>
 </project>
