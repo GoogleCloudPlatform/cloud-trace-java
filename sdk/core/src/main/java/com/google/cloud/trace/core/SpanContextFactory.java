@@ -92,7 +92,7 @@ public class SpanContextFactory {
    * @return the new span context.
    */
   public SpanContext initialContext() {
-    return new SpanContext(traceIdFactory.invalid(), spanIdFactory.invalid(), new TraceOptions());
+    return new SpanContext(TraceId.invalid(), SpanId.invalid(), new TraceOptions());
   }
 
   /**
@@ -105,12 +105,12 @@ public class SpanContextFactory {
     int index = header.indexOf('/');
     if (index == -1) {
       TraceId traceId = parseTraceId(header);
-      return new SpanContext(traceId, spanIdFactory.invalid(), traceOptionsFactory.create());
+      return new SpanContext(traceId, SpanId.invalid(), traceOptionsFactory.create());
     }
 
     TraceId traceId = parseTraceId(header.substring(0, index));
     if (!traceId.isValid()) {
-      return new SpanContext(traceId, spanIdFactory.invalid(), traceOptionsFactory.create());
+      return new SpanContext(traceId, SpanId.invalid(), traceOptionsFactory.create());
     }
 
     String[] afterTraceId = header.substring(index + 1).split(";");
@@ -135,7 +135,7 @@ public class SpanContextFactory {
     try {
       return new TraceId(new BigInteger(input, 16));
     } catch (NumberFormatException ex) {
-      return traceIdFactory.invalid();
+      return TraceId.invalid();
     }
   }
 
@@ -143,7 +143,7 @@ public class SpanContextFactory {
     try {
       return new SpanId(UnsignedLongs.parseUnsignedLong(input));
     } catch (NumberFormatException ex) {
-      return spanIdFactory.invalid();
+      return SpanId.invalid();
     }
   }
 
