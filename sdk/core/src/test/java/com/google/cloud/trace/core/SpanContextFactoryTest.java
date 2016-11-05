@@ -144,11 +144,6 @@ public class SpanContextFactoryTest {
     public TraceId nextId() {
       return new TraceId(BigInteger.valueOf(id++));
     }
-
-    @Override
-    public TraceId invalid() {
-      return new TraceId(BigInteger.valueOf(0));
-    }
   }
 
   private static class SequentialSpanIdFactory implements IdFactory<SpanId> {
@@ -157,11 +152,6 @@ public class SpanContextFactoryTest {
     @Override
     public SpanId nextId() {
       return new SpanId(id++);
-    }
-
-    @Override
-    public SpanId invalid() {
-      return new SpanId(0);
     }
   }
 

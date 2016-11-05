@@ -20,12 +20,11 @@ import java.security.SecureRandom;
  * An factory for generating span identifiers. This factory uses a {@link SecureRandom} to produce
  * span identifiers.
  *
- * @see AbstractSpanIdFactory
  * @see IdFactory
  * @see SecureRandom
  * @see SpanId
  */
-public class RandomSpanIdFactory extends AbstractSpanIdFactory {
+public class RandomSpanIdFactory implements IdFactory<SpanId> {
   private final SecureRandom random;
 
   /**

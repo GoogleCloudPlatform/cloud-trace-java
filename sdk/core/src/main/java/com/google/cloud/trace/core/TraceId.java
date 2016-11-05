@@ -24,9 +24,19 @@ import java.util.Objects;
  * @see BigInteger
  */
 public class TraceId {
+  private static final TraceId invalid = new TraceId(BigInteger.ZERO);
   private static final int TRACE_ID_BIT_LENGTH = 128;
 
   private final BigInteger traceId;
+
+  /**
+   * Returns the invalid trace identifier value.
+   *
+   * @return the invalid trace identifier value.
+   */
+  public static TraceId invalid() {
+    return invalid;
+  }
 
   /**
    * Creates a trace identifier whose value is taken from the given {@link BigInteger}.

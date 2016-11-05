@@ -21,12 +21,11 @@ import java.security.SecureRandom;
  * An factory for generating trace identifiers. This factory uses a {@link SecureRandom} to produce
  * trace identifiers.
  *
- * @see AbstractTraceIdFactory
  * @see IdFactory
  * @see SecureRandom
  * @see TraceId
  */
-public class RandomTraceIdFactory extends AbstractTraceIdFactory {
+public class RandomTraceIdFactory implements IdFactory<TraceId> {
   private static final int TRACE_ID_BIT_LENGTH = 128;
 
   private final SecureRandom random;

@@ -22,7 +22,17 @@ import java.util.Objects;
  * A class that represents a span identifier. A span identifier is a 64-bit, unsigned integer.
  */
 public class SpanId {
+  private static final SpanId invalid = new SpanId(0);
   private final long spanId;
+
+  /**
+   * Returns the invalid span identifier value.
+   *
+   * @return the invalid span identifier value.
+   */
+  public static SpanId invalid() {
+    return invalid;
+  }
 
   /**
    * Creates a span identifier whose value is taken from the given {@code long}.

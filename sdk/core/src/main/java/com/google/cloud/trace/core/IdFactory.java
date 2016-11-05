@@ -26,11 +26,4 @@ public interface IdFactory<T> {
    * @return the new identifier.
    */
   T nextId();
-
-  /**
-   * Returns the invalid identifier value for {@code <T>}.
-   *
-   * @return the invalid identifier.
-   */
-  T invalid();
 }
