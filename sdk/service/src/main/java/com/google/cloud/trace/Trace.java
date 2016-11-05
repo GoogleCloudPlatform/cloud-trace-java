@@ -63,7 +63,7 @@ public class Trace {
     }
   }
 
-  public static  ManagedTracer getTracer() {
+  public static ManagedTracer getTracer() {
     return service.getTracer();
   }
 
