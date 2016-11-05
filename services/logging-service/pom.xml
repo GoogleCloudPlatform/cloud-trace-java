@@ -3,17 +3,16 @@
 
   <parent>
     <groupId>com.google.cloud.trace</groupId>
-    <artifactId>samples</artifactId>
+    <artifactId>services-parent</artifactId>
     <version>0.1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>basic-logging</artifactId>
+  <artifactId>logging-service</artifactId>
   <packaging>jar</packaging>
 
-  <name>Google Cloud Trace Java SDK Basic Logging Sample</name>
+  <name>Google Cloud Trace Java SDK Logging Service</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <exec.mainClass>com.google.cloud.trace.samples.logging.basic.BasicLogging</exec.mainClass>
   </properties>
 
   <dependencies>
@@ -24,14 +23,18 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>java-timestamp</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>service</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>logging-service</artifactId>
+      <artifactId>v1</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>
