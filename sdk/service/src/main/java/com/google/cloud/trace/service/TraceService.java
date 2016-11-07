@@ -12,27 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.core;
+package com.google.cloud.trace.service;
+
+import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.core.SpanContextHandler;
 
 /**
- * An abstract factory for generating span identifiers. This factory knows about the invalid span
- * identifier value.
- *
- * @see IdFactory
- * @see RandomSpanIdFactory
- * @see SpanId
+ * An interface that provides trace services.
  */
-public abstract class AbstractSpanIdFactory implements IdFactory<SpanId> {
-  @Override
-  public abstract SpanId nextId();
-
-  /**
-   * Returns the invalid span identifier value.
-   *
-   * @return the invalid span identifier value.
-   */
-  @Override
-  public SpanId invalid() {
-    return new SpanId(0);
-  }
+public interface TraceService {
+  ManagedTracer getTracer();
+  SpanContextHandler getSpanContextHandler();
 }
