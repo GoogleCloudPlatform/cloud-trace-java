@@ -33,11 +33,8 @@ public class SpanContextHandlerTracerTest {
     TimestampFactory tsFactory = new TestTimestampFactory(1, 2);
     this.sink = new TestTraceSink();
     SpanContextFactory contextFactory = new SpanContextFactory(new ConstantTraceOptionsFactory(true, true));
-    SpanContextFactoryTracer delegate = new SpanContextFactoryTracer(sink,
-        contextFactory,
-        tsFactory);
     this.contextHandler = new GrpcSpanContextHandler(contextFactory.initialContext());
-    this.tracer = new SpanContextHandlerTracer(delegate, contextHandler);
+    this.tracer = new SpanContextHandlerTracer(sink, contextHandler, contextFactory, tsFactory);
   }
 
   @Test

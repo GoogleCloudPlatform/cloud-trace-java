@@ -50,12 +50,11 @@ public class ManagedGrpc {
     SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create the managed tracer.
     SpanContextHandler spanContextHandler = new GrpcSpanContextHandler(
         spanContextFactory.initialContext());
-    ManagedTracer managedTracer = new SpanContextHandlerTracer(tracer, spanContextHandler);
+    ManagedTracer managedTracer = new SpanContextHandlerTracer(traceSink, spanContextHandler, spanContextFactory, timestampFactory);
 
     // Create some trace data.
     TraceContext context1 = managedTracer.startSpan("my span 1");

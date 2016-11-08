@@ -17,9 +17,17 @@ package com.google.cloud.trace;
 import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextFactory;
+import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.Timestamp;
+import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceOptions;
+import com.google.cloud.trace.core.TraceSink;
+import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 
 /**
  * A managed tracer that maintains trace context.
@@ -27,24 +35,41 @@ import com.google.cloud.trace.core.TraceContext;
  * <p>This tracer maintains the current trace context and delegates calls to another tracer.</p>
  */
 public class SpanContextHandlerTracer implements ManagedTracer  {
-  private final Tracer tracer;
   private final SpanContextHandler contextHandler;
+  private final TimestampFactory timestampFactory;
+  private final ImmutableSet<TraceSink> sinks;
+  private final SpanContextFactory spanContextFactory;
 
   /**
    * Creates a new managed tracer.
    *
-   * @param tracer         a tracer that serves as a delegate for all tracer functionality.
+   * @param sinks a set of trace sinks that this tracer will send trace data to.
    * @param contextHandler a span context handler that manages the current span context.
+   * @param spanContextFactory a span context factory used to generate new span contexts.
+   * @param timestampFactory a timestamp factory used to generate new timestamps.
    */
-  public SpanContextHandlerTracer(Tracer tracer, SpanContextHandler contextHandler) {
-    this.tracer = tracer;
+  public SpanContextHandlerTracer(Set<TraceSink> sinks, SpanContextHandler contextHandler, SpanContextFactory spanContextFactory, TimestampFactory timestampFactory) {
     this.contextHandler = contextHandler;
+    this.timestampFactory = timestampFactory;
+    this.sinks = ImmutableSet.copyOf(sinks);
+    this.spanContextFactory = spanContextFactory;
+  }
+
+  /**
+   * Creates a new tracer.
+   * @param sink a trace sink that this tracer will send trace data to.
+   * @param contextHandler a span context handler that manages the current span context.
+   * @param spanContextFactory a span context factory used to generate new span contexts.
+   * @param timestampFactory a timestamp factory used to generate new timestamps.
+   */
+  public SpanContextHandlerTracer(TraceSink sink, SpanContextHandler contextHandler, SpanContextFactory spanContextFactory, TimestampFactory timestampFactory) {
+    this(ImmutableSet.of(sink), contextHandler, spanContextFactory, timestampFactory);
   }
 
   @Override
   public TraceContext startSpan(String name) {
     SpanContext parent = contextHandler.current();
-    SpanContext child = tracer.startSpan(parent, name);
+    SpanContext child = startSpanOptions(parent, name, null, null, null, null);
     contextHandler.attach(child);
     return new TraceContext(child, parent);
   }
@@ -52,30 +77,69 @@ public class SpanContextHandlerTracer implements ManagedTracer  {
   @Override
   public TraceContext startSpan(String name, StartSpanOptions options) {
     SpanContext parent = contextHandler.current();
-    SpanContext child = tracer.startSpan(parent, name, options);
+    SpanContext child = startSpanOptions(parent, name, options.getTimestamp(), options.getSpanKind(),
+        options.getEnableTrace(), options.getEnableStackTrace());
     contextHandler.attach(child);
     return new TraceContext(child, parent);
   }
 
   @Override
   public void endSpan(TraceContext traceContext) {
-    tracer.endSpan(traceContext.getCurrent());
+    endSpanOptions(traceContext.getCurrent(), null);
     contextHandler.detach(traceContext.getParent());
   }
 
   @Override
   public void endSpan(TraceContext traceContext, EndSpanOptions options) {
-    tracer.endSpan(traceContext.getCurrent(), options);
+    endSpanOptions(traceContext.getCurrent(), options.getTimestamp());
     contextHandler.detach(traceContext.getParent());
   }
 
   @Override
   public void annotateSpan(TraceContext traceContext, Labels labels) {
-    tracer.annotateSpan(traceContext.getCurrent(), labels);
+    for (TraceSink sink : sinks) {
+      sink.annotateSpan(traceContext.getCurrent(), labels);
+    }
   }
 
   @Override
   public void setStackTrace(TraceContext traceContext, StackTrace stackTrace) {
-    tracer.setStackTrace(traceContext.getCurrent(), stackTrace);
+    for (TraceSink sink : sinks) {
+      sink.setStackTrace(traceContext.getCurrent(), stackTrace);
+    }
+  }
+
+  private SpanContext startSpanOptions(SpanContext parentContext, String name, Timestamp timestamp,
+      SpanKind spanKind, Boolean enableTrace, Boolean enableStackTrace) {
+    if (timestamp == null) {
+      timestamp = timestampFactory.now();
+    }
+    if (spanKind == null) {
+      spanKind = SpanKind.UNSPECIFIED;
+    }
+    if (enableTrace != null || enableStackTrace != null) {
+      TraceOptions options = parentContext.getTraceOptions();
+      if (enableTrace != null) {
+        options = options.overrideTraceEnabled(enableTrace);
+      }
+      if (enableStackTrace != null) {
+        options = options.overrideStackTraceEnabled(enableStackTrace);
+      }
+      parentContext = parentContext.overrideOptions(options);
+    }
+    SpanContext context = spanContextFactory.childContext(parentContext);
+    for (TraceSink sink : sinks) {
+      sink.startSpan(context, parentContext, spanKind, name, timestamp);
+    }
+    return context;
+  }
+
+  private void endSpanOptions(SpanContext context, Timestamp timestamp) {
+    if (timestamp == null) {
+      timestamp = timestampFactory.now();
+    }
+    for (TraceSink sink : sinks) {
+      sink.endSpan(context, timestamp);
+    }
   }
 }

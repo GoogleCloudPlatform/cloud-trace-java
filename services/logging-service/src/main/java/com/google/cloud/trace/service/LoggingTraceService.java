@@ -51,11 +51,10 @@ public class LoggingTraceService implements TraceService {
     SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create the services.
     this.spanContextHandler = new GrpcSpanContextHandler(spanContextFactory.initialContext());
-    this.tracer = new SpanContextHandlerTracer(tracer, spanContextHandler);
+    this.tracer = new SpanContextHandlerTracer(traceSink, spanContextHandler, spanContextFactory, timestampFactory);
   }
 
   @Override
