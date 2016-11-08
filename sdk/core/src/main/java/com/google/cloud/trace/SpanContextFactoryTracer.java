@@ -75,13 +75,13 @@ public class SpanContextFactoryTracer implements Tracer {
 
   @Override
   public SpanContext startSpan(SpanContext parentContext, String name) {
-    return startSpanOptions(parentContext, name, null, null, null);
+    return startSpanOptions(parentContext, name, null, null, null, null);
   }
 
   @Override
   public SpanContext startSpan(SpanContext parentContext, String name, StartSpanOptions options) {
     return startSpanOptions(parentContext, name, options.getTimestamp(), options.getSpanKind(),
-        options.getTraceOptions());
+        options.getEnableTrace(), options.getEnableStackTrace());
   }
 
   @Override
@@ -109,15 +109,22 @@ public class SpanContextFactoryTracer implements Tracer {
   }
 
   private SpanContext startSpanOptions(SpanContext parentContext, String name, Timestamp timestamp,
-      SpanKind spanKind, TraceOptions traceOptions) {
+      SpanKind spanKind, Boolean enableTrace, Boolean enableStackTrace) {
     if (timestamp == null) {
       timestamp = timestampFactory.now();
     }
     if (spanKind == null) {
       spanKind = SpanKind.UNSPECIFIED;
     }
-    if (traceOptions != null) {
-      parentContext = parentContext.overrideOptions(traceOptions);
+    if (enableTrace != null || enableStackTrace != null) {
+      TraceOptions options = parentContext.getTraceOptions();
+      if (enableTrace != null) {
+        options = options.overrideTraceEnabled(enableTrace);
+      }
+      if (enableStackTrace != null) {
+        options = options.overrideStackTraceEnabled(enableStackTrace);
+      }
+      parentContext = parentContext.overrideOptions(options);
     }
     SpanContext context = spanContextFactory.childContext(parentContext);
     for (TraceSink sink : sinks) {

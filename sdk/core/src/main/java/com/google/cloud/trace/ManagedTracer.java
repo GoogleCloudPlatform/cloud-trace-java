@@ -18,7 +18,6 @@ import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
-import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.TraceContext;
 
 /**
@@ -31,7 +30,6 @@ import com.google.cloud.trace.core.TraceContext;
  * @see Labels
  * @see StackTrace
  * @see StartSpanOptions
- * @see SpanContext
  * @see Tracer
  */
 public interface ManagedTracer {
@@ -85,10 +83,4 @@ public interface ManagedTracer {
    * @param stackTrace a stack trace to add to the span as a label annotation.
    */
   void setStackTrace(TraceContext traceContext, StackTrace stackTrace);
-
-  /**
-   * Returns the current SpanContext.
-   * @return the current SpanContext.
-   */
-  SpanContext getCurrentSpanContext();
 }

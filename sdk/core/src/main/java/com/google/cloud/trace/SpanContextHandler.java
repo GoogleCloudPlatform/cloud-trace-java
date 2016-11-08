@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.core;
+package com.google.cloud.trace;
+
+import com.google.cloud.trace.core.SpanContext;
 
 public interface SpanContextHandler {
   /**

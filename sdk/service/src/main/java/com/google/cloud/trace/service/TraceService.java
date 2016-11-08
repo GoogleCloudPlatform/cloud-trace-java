@@ -15,7 +15,7 @@
 package com.google.cloud.trace.service;
 
 import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.core.SpanContextHandler;
+import com.google.cloud.trace.SpanContextHandler;
 
 /**
  * An interface that provides trace services.

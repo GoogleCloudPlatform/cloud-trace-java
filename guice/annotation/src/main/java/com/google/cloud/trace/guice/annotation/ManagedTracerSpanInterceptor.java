@@ -15,18 +15,17 @@
 package com.google.cloud.trace.guice.annotation;
 
 import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.annotation.Label;
 import com.google.cloud.trace.annotation.Name;
 import com.google.cloud.trace.annotation.Option;
 import com.google.cloud.trace.annotation.Span;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
-import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TraceContext;
-import com.google.cloud.trace.core.TraceOptions;
 import com.google.common.base.CaseFormat;
 import com.google.inject.Provider;
 
@@ -92,26 +91,12 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
       }
     }
 
-    boolean stackTraceEnabled;
-    Boolean overrideTraceEnabled = span.trace().getBooleanValue();
-    Boolean overrideStackTraceEnabled = span.stackTrace().getBooleanValue();
+    Boolean enableTrace = span.trace().getBooleanValue();
+    Boolean enableStackTrace = span.stackTrace().getBooleanValue();
     ManagedTracer tracer = tracerProvider.get();
-    TraceContext traceContext;
-    if (overrideTraceEnabled != null || overrideStackTraceEnabled != null) {
-      TraceOptions traceOptions = tracer.getCurrentSpanContext().getTraceOptions();
-      if (overrideTraceEnabled != null) {
-        traceOptions = traceOptions.overrideTraceEnabled(overrideTraceEnabled);
-      }
-      if (overrideStackTraceEnabled != null) {
-        traceOptions = traceOptions.overrideStackTraceEnabled(overrideStackTraceEnabled);
-      }
-      traceContext = tracer.startSpan(methodName, new StartSpanOptions().setTraceOptions(traceOptions));
-      stackTraceEnabled = traceOptions.getStackTraceEnabled();
-    } else {
-      traceContext = tracer.startSpan(methodName);
-      stackTraceEnabled = tracer.getCurrentSpanContext().getTraceOptions()
-          .getStackTraceEnabled();
-    }
+    TraceContext traceContext = tracer.startSpan(methodName, new StartSpanOptions()
+        .setEnableTrace(enableTrace).setEnableStackTrace(enableStackTrace));
+    boolean stackTraceEnabled = traceContext.getCurrent().getTraceOptions().getStackTraceEnabled();
 
     boolean labelAllParams = span.labelAll();
     String labelPrefix;

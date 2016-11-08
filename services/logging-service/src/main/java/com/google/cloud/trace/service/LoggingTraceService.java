@@ -14,15 +14,15 @@
 
 package com.google.cloud.trace.service;
 
-import com.google.cloud.trace.Tracer;
+import com.google.cloud.trace.GrpcSpanContextHandler;
 import com.google.cloud.trace.ManagedTracer;
 import com.google.cloud.trace.SpanContextFactoryTracer;
+import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
-import com.google.cloud.trace.core.GrpcSpanContextHandler;
 import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.SpanContextFactory;
-import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.v1.TraceSinkV1;

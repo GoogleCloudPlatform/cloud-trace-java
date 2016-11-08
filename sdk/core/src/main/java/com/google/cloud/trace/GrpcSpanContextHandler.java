@@ -1,5 +1,6 @@
-package com.google.cloud.trace.core;
+package com.google.cloud.trace;
 
+import com.google.cloud.trace.core.SpanContext;
 import io.grpc.Context;
 import io.grpc.Context.Key;
 

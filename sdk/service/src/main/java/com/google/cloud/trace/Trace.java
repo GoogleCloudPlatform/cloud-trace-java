@@ -17,7 +17,6 @@ package com.google.cloud.trace;
 import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
-import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
@@ -92,10 +91,6 @@ public class Trace {
     public void annotateSpan(TraceContext traceContext, Labels labels) {}
     @Override
     public void setStackTrace(TraceContext traceContext, StackTrace stackTrace) {}
-    @Override
-    public SpanContext getCurrentSpanContext() {
-      return context.getCurrent();
-    }
   }
 
   private static class NoSpanContextHandler implements SpanContextHandler {
