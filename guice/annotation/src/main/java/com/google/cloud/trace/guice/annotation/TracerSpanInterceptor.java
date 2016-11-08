@@ -14,14 +14,12 @@
 
 package com.google.cloud.trace.guice.annotation;
 
-import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.SpanContextHandler;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.annotation.Label;
 import com.google.cloud.trace.annotation.Name;
 import com.google.cloud.trace.annotation.Option;
 import com.google.cloud.trace.annotation.Span;
 import com.google.cloud.trace.core.Labels;
-import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
@@ -35,13 +33,13 @@ import org.aopalliance.intercept.MethodInvocation;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
-public class ManagedTracerSpanInterceptor implements MethodInterceptor {
-  private final Provider<ManagedTracer> tracerProvider;
+public class TracerSpanInterceptor implements MethodInterceptor {
+  private final Provider<Tracer> tracerProvider;
   private final Provider<Map<String, Labeler>> labelerMapProvider;
   private final String labelHost;
 
-  public ManagedTracerSpanInterceptor(
-      Provider<ManagedTracer> tracerProvider,
+  public TracerSpanInterceptor(
+      Provider<Tracer> tracerProvider,
       Provider<Map<String, Labeler>> labelerMapProvider,
       String labelHost) {
     this.tracerProvider = tracerProvider;
@@ -93,7 +91,7 @@ public class ManagedTracerSpanInterceptor implements MethodInterceptor {
 
     Boolean enableTrace = span.trace().getBooleanValue();
     Boolean enableStackTrace = span.stackTrace().getBooleanValue();
-    ManagedTracer tracer = tracerProvider.get();
+    Tracer tracer = tracerProvider.get();
     TraceContext traceContext = tracer.startSpan(methodName, new StartSpanOptions()
         .setEnableTrace(enableTrace).setEnableStackTrace(enableStackTrace));
     boolean stackTraceEnabled = traceContext.getCurrent().getTraceOptions().getStackTraceEnabled();

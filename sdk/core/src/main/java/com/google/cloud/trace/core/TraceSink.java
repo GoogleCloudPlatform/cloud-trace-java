@@ -14,14 +14,14 @@
 
 package com.google.cloud.trace.core;
 
-import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 
 /**
  * A tracer that is used to receive trace data. This tracer is not designed to be used to implement
  * application code.
  *
  * @see Labels
- * @see ManagedTracer
+ * @see Tracer
  * @see SpanKind
  * @see StackTrace
  * @see Timestamp

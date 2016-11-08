@@ -46,10 +46,10 @@ public class Trace {
         private final SpanContext spanContext = new SpanContext(
             TraceId.invalid(), SpanId.invalid(), new TraceOptions());
         private final TraceContext traceContext = new TraceContext(spanContext, null);
-        private final ManagedTracer tracer = new NoTracer(traceContext);
+        private final Tracer tracer = new NoTracer(traceContext);
         private final SpanContextHandler spanContextHandler = new NoSpanContextHandler(spanContext);
         @Override
-        public ManagedTracer getTracer() {
+        public Tracer getTracer() {
           return tracer;
         }
         @Override
@@ -62,7 +62,7 @@ public class Trace {
     }
   }
 
-  public static ManagedTracer getTracer() {
+  public static Tracer getTracer() {
     return service.getTracer();
   }
 
@@ -70,7 +70,7 @@ public class Trace {
     return service.getSpanContextHandler();
   }
 
-  private static class NoTracer implements ManagedTracer {
+  private static class NoTracer implements Tracer {
     private final TraceContext context;
     private NoTracer(TraceContext context) {
       this.context = context;

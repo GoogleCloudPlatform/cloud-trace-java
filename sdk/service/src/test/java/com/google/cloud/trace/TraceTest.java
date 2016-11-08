@@ -27,7 +27,7 @@ import org.junit.Test;
 public class TraceTest {
   @Test
   public void testGetTracer_No() {
-    ManagedTracer tracer = Trace.getTracer();
+    Tracer tracer = Trace.getTracer();
     TraceContext context = tracer.startSpan("hello");
     assertInvalid(context.getCurrent());
     tracer.annotateSpan(context, Labels.builder().build());

@@ -15,7 +15,7 @@
 package com.google.cloud.trace.service;
 
 import com.google.cloud.trace.GrpcSpanContextHandler;
-import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 public class LoggingTraceService implements TraceService {
   private final static Logger logger = Logger.getLogger(LoggingTraceService.class.getName());
   
-  private final ManagedTracer tracer;
+  private final Tracer tracer;
   private final SpanContextHandler spanContextHandler;
 
   public LoggingTraceService() {
@@ -56,7 +56,7 @@ public class LoggingTraceService implements TraceService {
   }
 
   @Override
-  public ManagedTracer getTracer() {
+  public Tracer getTracer() {
     return tracer;
   }
 

@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.samples.guice.grpc.scheduled;
 
-import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
@@ -63,7 +63,7 @@ public class ScheduledBufferingGrpc {
         new ClientSecretsFilePropertiesModule(),
         new TraceAppendScopesModule());
 
-    ManagedTracer tracer = injector.getInstance(ManagedTracer.class);
+    Tracer tracer = injector.getInstance(Tracer.class);
 
     TraceContext context1 = tracer.startSpan("my span 1",
         new StartSpanOptions().setEnableTrace(true));

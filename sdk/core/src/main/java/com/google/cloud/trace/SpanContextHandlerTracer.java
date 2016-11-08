@@ -30,18 +30,18 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
 /**
- * A managed tracer that maintains trace context.
+ * A tracer that maintains trace context.
  *
  * <p>This tracer maintains the current trace context and delegates calls to another tracer.</p>
  */
-public class SpanContextHandlerTracer implements ManagedTracer  {
+public class SpanContextHandlerTracer implements Tracer {
   private final SpanContextHandler contextHandler;
   private final TimestampFactory timestampFactory;
   private final ImmutableSet<TraceSink> sinks;
   private final SpanContextFactory spanContextFactory;
 
   /**
-   * Creates a new managed tracer.
+   * Creates a new tracer.
    *
    * @param sinks a set of trace sinks that this tracer will send trace data to.
    * @param contextHandler a span context handler that manages the current span context.

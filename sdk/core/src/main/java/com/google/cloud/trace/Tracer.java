@@ -26,12 +26,27 @@ import com.google.cloud.trace.core.TraceContext;
  * spans and adding label and stack trace annotations to spans. It provides basic context management
  * so that new spans are created as children of the span in the current context.
  *
+ * <p>A trace contains a collection of spans. Each span has a name and also start and end times.
+ * Thus traces can be used for application timing and profiling.
+ *
+ * <p>A trace is identified by a trace id, which is included in the trace. A span is identified by a
+ * span id, which is included in the span.
+ *
+ * <p>Spans can have parents, so they form a hierarchical representation. Thus traces can be used to
+ * understand the flow of a given execution of an application. Tracing can be helpful in
+ * understanding the relationships between components in a distributed application. If a span has a
+ * parent, its parent's span id is included in the span.
+ *
+ * <p>Spans can also contain labels. These labels are used to annotate spans with additional
+ * information. A label is a key-value pair of strings.
+ *
+ * @see <a href="https://cloud.google.com/trace">Stackdriver Trace</a>
  * @see EndSpanOptions
  * @see Labels
  * @see StackTrace
  * @see StartSpanOptions
  */
-public interface ManagedTracer {
+public interface Tracer {
   /**
    * Starts a new span and updates the current context. The new span will be a child of the span in
    * the current context.

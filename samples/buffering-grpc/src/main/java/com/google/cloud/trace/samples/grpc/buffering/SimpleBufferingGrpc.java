@@ -16,7 +16,7 @@ package com.google.cloud.trace.samples.grpc.buffering;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.trace.GrpcSpanContextHandler;
-import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
 import com.google.cloud.trace.core.TraceContext;
@@ -55,7 +55,7 @@ public class SimpleBufferingGrpc {
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
     SpanContextHandler contextHandler = new GrpcSpanContextHandler(spanContextFactory.initialContext());
-    ManagedTracer tracer = new SpanContextHandlerTracer(traceSink, contextHandler, spanContextFactory, timestampFactory);
+    Tracer tracer = new SpanContextHandlerTracer(traceSink, contextHandler, spanContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
     TraceContext context1 = tracer.startSpan("my span 1");

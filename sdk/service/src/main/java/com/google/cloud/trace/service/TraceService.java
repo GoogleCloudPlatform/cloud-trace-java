@@ -14,13 +14,13 @@
 
 package com.google.cloud.trace.service;
 
-import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.SpanContextHandler;
 
 /**
  * An interface that provides trace services.
  */
 public interface TraceService {
-  ManagedTracer getTracer();
+  Tracer getTracer();
   SpanContextHandler getSpanContextHandler();
 }

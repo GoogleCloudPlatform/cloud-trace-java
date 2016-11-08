@@ -14,7 +14,7 @@
 
 package com.google.cloud.trace.guice;
 
-import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
 import com.google.cloud.trace.core.SpanContextFactory;
@@ -30,7 +30,7 @@ public class SpanContextHandlerTracerModule extends AbstractModule {
 
   @Provides
   @Singleton
-  ManagedTracer provideManagedTracer(TraceSink sink, SpanContextHandler contextHandler, SpanContextFactory contextFactory, TimestampFactory timestampFactory) {
+  Tracer provideTracer(TraceSink sink, SpanContextHandler contextHandler, SpanContextFactory contextFactory, TimestampFactory timestampFactory) {
     return new SpanContextHandlerTracer(sink, contextHandler, contextFactory, timestampFactory);
   }
 }
