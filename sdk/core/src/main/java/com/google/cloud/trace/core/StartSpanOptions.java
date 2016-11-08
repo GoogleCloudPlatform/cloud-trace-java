@@ -24,7 +24,8 @@ package com.google.cloud.trace.core;
 public class StartSpanOptions {
   private Timestamp timestamp;
   private SpanKind spanKind;
-  private TraceOptions traceOptions;
+  private Boolean enableTrace;
+  private Boolean enableStackTrace;
 
   /**
    * Returns the timestamp.
@@ -67,22 +68,42 @@ public class StartSpanOptions {
   }
 
   /**
-   * Returns the trace options.
+   * Returns the enable trace option.
    *
-   * @return the trace options or the default if null.
+   * @return the enable trace option or the default if null.
    */
-  public TraceOptions getTraceOptions() {
-    return traceOptions;
+  public Boolean getEnableTrace() {
+    return enableTrace;
   }
 
   /**
-   * Sets the trace options.
+   * Sets the enable trace option.
    *
-   * @param traceOptions the trace options or the default if null.
+   * @param enableTrace the enable trace option or the default if null.
    * @return this.
    */
-  public StartSpanOptions setTraceOptions(TraceOptions traceOptions) {
-    this.traceOptions = traceOptions;
+  public StartSpanOptions setEnableTrace(Boolean enableTrace) {
+    this.enableTrace = enableTrace;
+    return this;
+  }
+
+  /**
+   * Returns the enable stack trace option.
+   *
+   * @return the enable stack trace option or the default if null.
+   */
+  public Boolean getEnableStackTrace() {
+    return enableStackTrace;
+  }
+
+  /**
+   * Sets the enable stack trace option.
+   *
+   * @param enableStackTrace the enable stack trace option or the default if null.
+   * @return this.
+   */
+  public StartSpanOptions setEnableStackTrace(Boolean enableStackTrace) {
+    this.enableStackTrace = enableStackTrace;
     return this;
   }
 }

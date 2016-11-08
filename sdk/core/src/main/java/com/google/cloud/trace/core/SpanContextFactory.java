@@ -158,6 +158,7 @@ public class SpanContextFactory {
   /**
    * Transforms this context into an HTTP request header.
    *
+   * @param context the span context to convert to a header.
    * @return this context as a header.
    */
   public static String toHeader(SpanContext context) {

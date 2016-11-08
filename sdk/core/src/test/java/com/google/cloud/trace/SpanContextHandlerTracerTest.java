@@ -4,11 +4,9 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.EndSpanOptions;
-import com.google.cloud.trace.core.GrpcSpanContextHandler;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanContextFactory;
-import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
@@ -158,11 +156,6 @@ public class SpanContextHandlerTracerTest {
     TestTraceSink.StackTraceEvent annotateEvent = sink.stackTraceEvents.get(0);
     assertThat(annotateEvent.context).isEqualTo(child);
     assertThat(annotateEvent.stackTrace).isEqualTo(stackTrace);
-  }
-
-  @Test
-  public void testGetCurrentSpanContext() {
-    assertThat(tracer.getCurrentSpanContext()).isEqualTo(contextHandler.current());
   }
 
   private static class TestTraceSink implements TraceSink {

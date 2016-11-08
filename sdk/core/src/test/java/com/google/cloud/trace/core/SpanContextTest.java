@@ -5,7 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import java.math.BigInteger;
 import org.junit.Test;
 
-public class TraceContextTest {
+public class SpanContextTest {
   private static final SpanContext first =
       new SpanContext(new TraceId(BigInteger.valueOf(10)), new SpanId(30), new TraceOptions(0));
   private static final SpanContext second =

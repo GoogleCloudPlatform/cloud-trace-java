@@ -15,7 +15,11 @@
 package com.google.cloud.trace.samples.guice.grpc.scheduled;
 
 import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.StartSpanOptions;
+import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceOptions;
 import com.google.cloud.trace.guice.ConstantTraceOptionsFactoryModule;
 import com.google.cloud.trace.guice.GrpcSpanContextHandlerModule;
 import com.google.cloud.trace.guice.JavaTimestampFactoryModule;
@@ -35,10 +39,6 @@ import com.google.cloud.trace.guice.v1.ScheduledBufferingTraceSinkModule;
 import com.google.cloud.trace.guice.v1.SinkBufferSizePropertiesModule;
 import com.google.cloud.trace.guice.v1.SinkScheduledDelayPropertiesModule;
 import com.google.cloud.trace.guice.v1.TraceSinkV1Module;
-import com.google.cloud.trace.core.StackTrace;
-import com.google.cloud.trace.core.StartSpanOptions;
-import com.google.cloud.trace.core.ThrowableStackTraceHelper;
-import com.google.cloud.trace.core.TraceOptions;
 import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -69,7 +69,7 @@ public class ScheduledBufferingGrpc {
     ManagedTracer tracer = injector.getInstance(ManagedTracer.class);
 
     TraceContext context1 = tracer.startSpan("my span 1",
-        new StartSpanOptions().setTraceOptions(TraceOptions.forTraceEnabled()));
+        new StartSpanOptions().setEnableTrace(true));
     TraceContext context2 = tracer.startSpan("my span 2");
 
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());

@@ -19,7 +19,6 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
-import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.TraceContext;
@@ -38,8 +37,6 @@ public class TraceTest {
     context = tracer.startSpan("hello", new StartSpanOptions());
     assertInvalid(context.getCurrent());
     tracer.endSpan(context, new EndSpanOptions());
-
-    assertInvalid(tracer.getCurrentSpanContext());
   }
 
   @Test

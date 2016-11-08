@@ -1,8 +1,11 @@
-package com.google.cloud.trace.core;
-
+package com.google.cloud.trace;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanId;
+import com.google.cloud.trace.core.TraceId;
+import com.google.cloud.trace.core.TraceOptions;
 import java.math.BigInteger;
 import org.junit.Test;
 

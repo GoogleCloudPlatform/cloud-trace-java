@@ -14,15 +14,13 @@
 
 package com.google.cloud.trace.guice.servlet;
 
+import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanContextFactory;
-import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.inject.Inject;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
-
 import java.io.IOException;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;

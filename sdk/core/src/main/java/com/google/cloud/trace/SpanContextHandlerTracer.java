@@ -19,7 +19,6 @@ import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
-import com.google.cloud.trace.core.SpanContextHandler;
 import com.google.cloud.trace.core.TraceContext;
 
 /**
@@ -78,10 +77,5 @@ public class SpanContextHandlerTracer implements ManagedTracer  {
   @Override
   public void setStackTrace(TraceContext traceContext, StackTrace stackTrace) {
     tracer.setStackTrace(traceContext.getCurrent(), stackTrace);
-  }
-
-  @Override
-  public SpanContext getCurrentSpanContext() {
-    return contextHandler.current();
   }
 }
