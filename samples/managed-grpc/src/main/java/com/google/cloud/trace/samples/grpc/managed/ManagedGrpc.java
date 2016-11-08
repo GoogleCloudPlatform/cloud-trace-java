@@ -16,11 +16,9 @@ package com.google.cloud.trace.samples.grpc.managed;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.trace.GrpcSpanContextHandler;
-import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.SpanContextFactoryTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
-import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.SpanContextFactory;
@@ -50,22 +48,19 @@ public class ManagedGrpc {
     SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
-
-    // Create the managed tracer.
     SpanContextHandler spanContextHandler = new GrpcSpanContextHandler(
         spanContextFactory.initialContext());
-    ManagedTracer managedTracer = new SpanContextHandlerTracer(tracer, spanContextHandler);
+    Tracer tracer = new SpanContextHandlerTracer(traceSink, spanContextHandler, spanContextFactory, timestampFactory);
 
     // Create some trace data.
-    TraceContext context1 = managedTracer.startSpan("my span 1");
+    TraceContext context1 = tracer.startSpan("my span 1");
 
-    TraceContext context2 = managedTracer.startSpan("my span 2");
+    TraceContext context2 = tracer.startSpan("my span 2");
 
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
-    managedTracer.setStackTrace(context2, stackTraceBuilder.build());
-    managedTracer.endSpan(context2);
+    tracer.setStackTrace(context2, stackTraceBuilder.build());
+    tracer.endSpan(context2);
 
-    managedTracer.endSpan(context1);
+    tracer.endSpan(context1);
   }
 }

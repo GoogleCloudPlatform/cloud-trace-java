@@ -15,14 +15,14 @@
 package com.google.cloud.trace.samples.logging.basic;
 
 import com.google.cloud.trace.Trace;
-import com.google.cloud.trace.ManagedTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TraceContext;
 
 public class BasicLogging {
   public static void main(String[] args) {
-    ManagedTracer tracer = Trace.getTracer();
+    Tracer tracer = Trace.getTracer();
 
     // Create a span using the given timestamps.
     TraceContext context = tracer.startSpan("my span 1");

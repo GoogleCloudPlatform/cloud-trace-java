@@ -14,7 +14,6 @@
 
 package com.google.cloud.trace.core;
 
-import com.google.cloud.trace.ManagedTracer;
 import com.google.cloud.trace.Tracer;
 
 /**
@@ -22,12 +21,11 @@ import com.google.cloud.trace.Tracer;
  * application code.
  *
  * @see Labels
- * @see ManagedTracer
+ * @see Tracer
  * @see SpanKind
  * @see StackTrace
  * @see Timestamp
  * @see SpanContext
- * @see Tracer
  */
 public interface TraceSink {
   /**

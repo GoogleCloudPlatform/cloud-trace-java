@@ -20,9 +20,8 @@ import com.google.cloud.trace.guice.NaiveSamplingRateJndiModule;
 import com.google.cloud.trace.guice.NaiveSamplingTraceOptionsFactoryModule;
 import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
-import com.google.cloud.trace.guice.SpanContextFactoryTracerModule;
 import com.google.cloud.trace.guice.SpanContextHandlerTracerModule;
-import com.google.cloud.trace.guice.annotation.ManagedTracerSpanModule;
+import com.google.cloud.trace.guice.annotation.TracerSpanModule;
 import com.google.cloud.trace.guice.api.ApiHostModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsFileJndiModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsGoogleCredentialsModule;
@@ -45,7 +44,6 @@ public class GuiceTraceServletContextListener extends GuiceServletContextListene
   protected Injector getInjector() {
     return Guice.createInjector(
         new SpanContextHandlerTracerModule(),
-        new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
         new GrpcSpanContextHandlerModule(),
         new TraceSinkV1Module(),
@@ -63,7 +61,7 @@ public class GuiceTraceServletContextListener extends GuiceServletContextListene
         new ClientSecretsGoogleCredentialsModule(),
         new ClientSecretsFileJndiModule(),
         new TraceAppendScopesModule(),
-        new ManagedTracerSpanModule(),
+        new TracerSpanModule(),
         new RequestLabelerModule(),
         new GuiceServletModule());
   }

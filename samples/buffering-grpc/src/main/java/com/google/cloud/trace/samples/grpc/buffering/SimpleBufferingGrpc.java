@@ -15,16 +15,18 @@
 package com.google.cloud.trace.samples.grpc.buffering;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.cloud.trace.core.TraceSink;
-import com.google.cloud.trace.SpanContextFactoryTracer;
+import com.google.cloud.trace.GrpcSpanContextHandler;
 import com.google.cloud.trace.Tracer;
+import com.google.cloud.trace.SpanContextHandler;
+import com.google.cloud.trace.SpanContextHandlerTracer;
+import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceSink;
 import com.google.cloud.trace.grpc.v1.GrpcTraceConsumer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TimestampFactory;
-import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.FlushableTraceConsumer;
@@ -52,12 +54,13 @@ public class SimpleBufferingGrpc {
     SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
+    SpanContextHandler contextHandler = new GrpcSpanContextHandler(spanContextFactory.initialContext());
+    Tracer tracer = new SpanContextHandlerTracer(traceSink, contextHandler, spanContextFactory, timestampFactory);
 
     // Create a span using the given timestamps.
-    SpanContext context1 = tracer.startSpan(spanContextFactory.initialContext(), "my span 1");
+    TraceContext context1 = tracer.startSpan("my span 1");
 
-    SpanContext context2 = tracer.startSpan(context1, "my span 2");
+    TraceContext context2 = tracer.startSpan("my span 2");
 
     StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
     tracer.setStackTrace(context2, stackTraceBuilder.build());

@@ -15,11 +15,9 @@
 package com.google.cloud.trace.service;
 
 import com.google.cloud.trace.GrpcSpanContextHandler;
-import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.SpanContextFactoryTracer;
+import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
-import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.SpanContextFactory;
@@ -38,7 +36,7 @@ import java.util.logging.Logger;
 public class LoggingTraceService implements TraceService {
   private final static Logger logger = Logger.getLogger(LoggingTraceService.class.getName());
   
-  private final ManagedTracer tracer;
+  private final Tracer tracer;
   private final SpanContextHandler spanContextHandler;
 
   public LoggingTraceService() {
@@ -51,15 +49,14 @@ public class LoggingTraceService implements TraceService {
     SpanContextFactory spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
-    Tracer tracer = new SpanContextFactoryTracer(traceSink, spanContextFactory, timestampFactory);
 
     // Create the services.
     this.spanContextHandler = new GrpcSpanContextHandler(spanContextFactory.initialContext());
-    this.tracer = new SpanContextHandlerTracer(tracer, spanContextHandler);
+    this.tracer = new SpanContextHandlerTracer(traceSink, spanContextHandler, spanContextFactory, timestampFactory);
   }
 
   @Override
-  public ManagedTracer getTracer() {
+  public Tracer getTracer() {
     return tracer;
   }
 
