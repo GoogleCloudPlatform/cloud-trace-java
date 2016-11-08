@@ -19,13 +19,11 @@ import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.ThrowableStackTraceHelper;
 import com.google.cloud.trace.core.TraceContext;
-import com.google.cloud.trace.core.TraceOptions;
 import com.google.cloud.trace.guice.ConstantTraceOptionsFactoryModule;
 import com.google.cloud.trace.guice.GrpcSpanContextHandlerModule;
 import com.google.cloud.trace.guice.JavaTimestampFactoryModule;
 import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
-import com.google.cloud.trace.guice.SpanContextFactoryTracerModule;
 import com.google.cloud.trace.guice.SpanContextHandlerTracerModule;
 import com.google.cloud.trace.guice.TraceEnabledModule;
 import com.google.cloud.trace.guice.api.ApiHostModule;
@@ -47,7 +45,6 @@ public class ScheduledBufferingGrpc {
   public static void main(String[] args) {
     Injector injector = Guice.createInjector(
         new SpanContextHandlerTracerModule(),
-        new SpanContextFactoryTracerModule(),
         new JavaTimestampFactoryModule(),
         new GrpcSpanContextHandlerModule(),
         new TraceSinkV1Module(),

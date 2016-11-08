@@ -15,7 +15,6 @@
 package com.google.cloud.trace.core;
 
 import com.google.cloud.trace.ManagedTracer;
-import com.google.cloud.trace.Tracer;
 
 /**
  * A tracer that is used to receive trace data. This tracer is not designed to be used to implement
@@ -27,7 +26,6 @@ import com.google.cloud.trace.Tracer;
  * @see StackTrace
  * @see Timestamp
  * @see SpanContext
- * @see Tracer
  */
 public interface TraceSink {
   /**

@@ -30,7 +30,6 @@ import com.google.cloud.trace.core.TraceContext;
  * @see Labels
  * @see StackTrace
  * @see StartSpanOptions
- * @see Tracer
  */
 public interface ManagedTracer {
   /**

@@ -17,7 +17,6 @@ package com.google.cloud.trace.guice;
 import com.google.cloud.trace.ManagedTracer;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
-import com.google.cloud.trace.Tracer;
 import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceSink;
