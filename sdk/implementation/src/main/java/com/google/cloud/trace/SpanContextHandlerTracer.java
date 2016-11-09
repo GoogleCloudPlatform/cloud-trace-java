@@ -117,6 +117,7 @@ public class SpanContextHandlerTracer implements Tracer {
     if (spanKind == null) {
       spanKind = SpanKind.UNSPECIFIED;
     }
+    SpanContext context;
     if (enableTrace != null || enableStackTrace != null) {
       TraceOptions options = parentContext.getTraceOptions();
       if (enableTrace != null) {
@@ -125,9 +126,10 @@ public class SpanContextHandlerTracer implements Tracer {
       if (enableStackTrace != null) {
         options = options.overrideStackTraceEnabled(enableStackTrace);
       }
-      parentContext = parentContext.overrideOptions(options);
+      context = spanContextFactory.childContext(parentContext.overrideOptions(options));
+    } else {
+      context = spanContextFactory.childContext(parentContext);
     }
-    SpanContext context = spanContextFactory.childContext(parentContext);
     for (TraceSink sink : sinks) {
       sink.startSpan(context, parentContext, spanKind, name, timestamp);
     }

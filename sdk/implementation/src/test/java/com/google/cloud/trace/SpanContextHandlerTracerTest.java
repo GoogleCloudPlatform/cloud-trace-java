@@ -33,7 +33,7 @@ public class SpanContextHandlerTracerTest {
     TimestampFactory tsFactory = new TestTimestampFactory(1, 2);
     this.sink = new TestTraceSink();
     SpanContextFactory contextFactory = new SpanContextFactory(new ConstantTraceOptionsFactory(true, true));
-    this.contextHandler = new GrpcSpanContextHandler(contextFactory.initialContext());
+    this.contextHandler = new TestSpanContextHandler(contextFactory.initialContext());
     this.tracer = new SpanContextHandlerTracer(sink, contextHandler, contextFactory, tsFactory);
   }
 
@@ -86,6 +86,60 @@ public class SpanContextHandlerTracerTest {
 
     assertThat(startEvent1.kind).isEqualTo(SpanKind.RPC_CLIENT);
     assertThat(startEvent1.timestamp).isEqualTo(ts);
+  }
+
+  @Test
+  public void testStartSpanWithTraceOptionsTrue() {
+    SpanContext initial = new SpanContext(
+        new TraceId(BigInteger.valueOf(1000)),
+        new SpanId(2000),
+        new TraceOptions());
+    contextHandler.attach(initial);
+    StartSpanOptions options = new StartSpanOptions()
+        .setEnableTrace(true)
+        .setEnableStackTrace(true);
+
+    TraceContext traceContext = tracer.startSpan("foo", options);
+    assertThat(sink.startSpanEvents).hasSize(1);
+    TestTraceSink.StartSpanEvent startEvent1 = sink.startSpanEvents.get(0);
+
+    assertThat(traceContext.getParent()).isEqualTo(initial);
+    assertThat(traceContext.getParent()).isEqualTo(startEvent1.parentContext);
+
+    assertThat(traceContext.getCurrent()).isNotEqualTo(traceContext.getParent());
+    assertThat(traceContext.getCurrent()).isEqualTo(contextHandler.current());
+    assertThat(traceContext.getCurrent()).isEqualTo(startEvent1.context);
+    assertThat(traceContext.getCurrent().getTraceOptions().getTraceEnabled()).isEqualTo(true);
+    assertThat(traceContext.getCurrent().getTraceOptions().getStackTraceEnabled()).isEqualTo(true);
+
+    assertThat(startEvent1.name).isEqualTo("foo");
+  }
+
+  @Test
+  public void testStartSpanWithTraceOptionsFalse() {
+    SpanContext initial = new SpanContext(
+        new TraceId(BigInteger.valueOf(1000)),
+        new SpanId(2000),
+        new TraceOptions(3));
+    contextHandler.attach(initial);
+    StartSpanOptions options = new StartSpanOptions()
+        .setEnableTrace(false)
+        .setEnableStackTrace(false);
+
+    TraceContext traceContext = tracer.startSpan("foo", options);
+    assertThat(sink.startSpanEvents).hasSize(1);
+    TestTraceSink.StartSpanEvent startEvent1 = sink.startSpanEvents.get(0);
+
+    assertThat(traceContext.getParent()).isEqualTo(initial);
+    assertThat(traceContext.getParent()).isEqualTo(startEvent1.parentContext);
+
+    assertThat(traceContext.getCurrent()).isNotEqualTo(traceContext.getParent());
+    assertThat(traceContext.getCurrent()).isEqualTo(contextHandler.current());
+    assertThat(traceContext.getCurrent()).isEqualTo(startEvent1.context);
+    assertThat(traceContext.getCurrent().getTraceOptions().getTraceEnabled()).isEqualTo(false);
+    assertThat(traceContext.getCurrent().getTraceOptions().getStackTraceEnabled()).isEqualTo(false);
+
+    assertThat(startEvent1.name).isEqualTo("foo");
   }
 
   @Test
