@@ -16,6 +16,12 @@ package com.google.cloud.trace;
 
 import com.google.cloud.trace.core.SpanContext;
 
+/**
+ * An interface for managing span contexts.
+ *
+ * <p>The interface supports attaching and detaching contexts. When a context is attached, the
+ * previous context is returned. To detach a context, pass in the previous context.
+ */
 public interface SpanContextHandler {
   /**
    * Returns the current span context.
