@@ -19,6 +19,7 @@
   <modules>
     <module>annotation</module>
     <module>core</module>
+    <module>implementation</module>
     <module>java-timestamp</module>
     <module>joda-timestamp</module>
     <module>service</module>
