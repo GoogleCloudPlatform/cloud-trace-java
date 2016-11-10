@@ -18,8 +18,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>grpc-sink</artifactId>
+      <groupId>com.google.cloud.trace.v1</groupId>
+      <artifactId>grpc-consumer</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -33,8 +33,8 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>v1</artifactId>
+      <groupId>com.google.cloud.trace.v1</groupId>
+      <artifactId>sink</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

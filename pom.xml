@@ -34,11 +34,11 @@
   </properties>
 
   <modules>
+    <module>guice</module>
+    <module>samples</module>
     <module>sdk</module>
     <module>services</module>
-    <module>samples</module>
-    <module>sinks</module>
-    <module>guice</module>
+    <module>sinks/v1</module>
   </modules>
 
   <scm>

@@ -2,11 +2,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.google.cloud.trace</groupId>
-    <artifactId>sinks-parent</artifactId>
+    <groupId>com.google.cloud.trace.v1</groupId>
+    <artifactId>v1</artifactId>
     <version>0.1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>grpc-sink</artifactId>
+  <artifactId>grpc-consumer</artifactId>
   <packaging>jar</packaging>
 
   <name>Google Cloud Trace Java SDK gRPC Sink</name>
@@ -18,7 +18,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>v1</artifactId>
+      <artifactId>sink</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
