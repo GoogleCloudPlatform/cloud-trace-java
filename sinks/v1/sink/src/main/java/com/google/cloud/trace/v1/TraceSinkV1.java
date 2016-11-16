@@ -19,7 +19,7 @@ import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.Timestamp;
-import com.google.cloud.trace.core.TraceSink;
+import com.google.cloud.trace.sink.TraceSink;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.producer.TraceProducer;
 import com.google.devtools.cloudtrace.v1.Trace;

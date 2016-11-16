@@ -30,7 +30,7 @@ import com.google.cloud.trace.core.TimestampFactory;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceId;
 import com.google.cloud.trace.core.TraceOptions;
-import com.google.cloud.trace.core.TraceSink;
+import com.google.cloud.trace.sink.TraceSink;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;

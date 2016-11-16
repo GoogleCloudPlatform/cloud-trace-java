@@ -12,7 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.core;
+package com.google.cloud.trace.sink;
+
+import com.google.cloud.trace.core.Labels;
+import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanKind;
+import com.google.cloud.trace.core.StackTrace;
+import com.google.cloud.trace.core.Timestamp;
 
 /**
  * A trace sink that does nothing.

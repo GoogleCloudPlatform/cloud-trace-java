@@ -22,7 +22,7 @@ import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.JavaTimestampFactory;
 import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.core.TimestampFactory;
-import com.google.cloud.trace.core.TraceSink;
+import com.google.cloud.trace.sink.TraceSink;
 import com.google.cloud.trace.v1.TraceSinkV1;
 import com.google.cloud.trace.v1.consumer.LoggingTraceConsumer;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;

@@ -24,6 +24,7 @@
     <module>joda-timestamp</module>
     <module>service</module>
     <module>servlet</module>
+    <module>sink</module>
 
     <!-- Test support. -->
     <module>core-testing</module>
