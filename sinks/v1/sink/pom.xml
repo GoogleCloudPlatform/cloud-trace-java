@@ -49,5 +49,10 @@
       <version>2.2.6</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>sink</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

@@ -19,7 +19,7 @@ import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.SpanContextHandlerTracer;
 import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.core.TimestampFactory;
-import com.google.cloud.trace.core.TraceSink;
+import com.google.cloud.trace.sink.TraceSink;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
