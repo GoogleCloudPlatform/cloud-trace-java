@@ -13,6 +13,7 @@
   <artifactId>services-parent</artifactId>
   <packaging>pom</packaging>
   <modules>
+    <module>appengine-standard-service</module>
     <module>logging-service</module>
   </modules>
 </project>
