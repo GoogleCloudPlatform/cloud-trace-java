@@ -6,7 +6,7 @@
     <artifactId>services-parent</artifactId>
     <version>0.1.1-SNAPSHOT</version>
   </parent>
-  <artifactId>logging-service</artifactId>
+  <artifactId>appengine-standard-service</artifactId>
   <packaging>jar</packaging>
 
   <name>Google Cloud Trace Java SDK App Engine Standard Service</name>
