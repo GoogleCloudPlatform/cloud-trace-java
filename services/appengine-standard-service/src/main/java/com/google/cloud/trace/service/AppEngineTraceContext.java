@@ -17,7 +17,15 @@ package com.google.cloud.trace.service;
 import com.google.appengine.api.labs.trace.Span;
 import com.google.apphosting.api.CloudTraceContext;
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.TraceContext;
+import com.google.cloud.trace.core.TraceId;
+import com.google.cloud.trace.core.TraceOptions;
+import com.google.common.base.Throwables;
+import com.google.common.primitives.UnsignedLong;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protos.cloud.trace.TraceId.TraceIdProto;
+import java.math.BigInteger;
 
 /**
  * Implementation of {@link TraceContext} based on Google App Engine's Trace
@@ -47,7 +55,21 @@ class AppEngineTraceContext extends TraceContext {
   }
 
   private static SpanContext getSpanContext(CloudTraceContext cloudTraceContext) {
-    // TODO: Implement this.
-    return null;
+    if (cloudTraceContext == null) {
+      return new SpanContext(TraceId.invalid(), SpanId.invalid(), new TraceOptions());
+    }
+
+    try {
+      // Extract the trace ID from the binary protobuf CloudTraceContext#traceId.
+      TraceIdProto traceIdProto = TraceIdProto.parseFrom(cloudTraceContext.getTraceId());
+      BigInteger traceIdHi = UnsignedLong.fromLongBits(traceIdProto.getHi()).bigIntegerValue();
+      BigInteger traceIdLo = UnsignedLong.fromLongBits(traceIdProto.getLo()).bigIntegerValue();
+      BigInteger traceId = traceIdHi.shiftLeft(64).or(traceIdLo);
+
+      return new SpanContext(new TraceId(traceId), new SpanId(cloudTraceContext.getSpanId()),
+          new TraceOptions((int) cloudTraceContext.getTraceMask()));
+    } catch (InvalidProtocolBufferException e) {
+      throw Throwables.propagate(e);
+    }
   }
 }

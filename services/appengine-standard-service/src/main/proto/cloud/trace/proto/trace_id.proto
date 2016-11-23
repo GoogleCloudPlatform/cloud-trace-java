@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+option java_package = "com.google.protos.cloud.trace";
+option optimize_for = LITE_RUNTIME;
+
+message TraceIdProto {
+  fixed64 hi = 1;
+  fixed64 lo = 2;
+}
