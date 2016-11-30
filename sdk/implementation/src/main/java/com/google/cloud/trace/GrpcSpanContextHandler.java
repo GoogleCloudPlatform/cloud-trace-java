@@ -15,6 +15,7 @@
 package com.google.cloud.trace;
 
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 import io.grpc.Context;
 import io.grpc.Context.Key;
 
@@ -38,14 +39,29 @@ public class GrpcSpanContextHandler implements SpanContextHandler {
   }
 
   @Override
-  public SpanContext attach(SpanContext context) {
-    Context previous = Context.current().withValue(contextKey, context).attach();
-    return contextKey.get(previous);
+  public SpanContextHandle attach(SpanContext context) {
+    Context current = Context.current().withValue(contextKey, context);
+    Context previous = current.attach();
+    return new GrpcSpanContextHandle(current, previous);
   }
 
-  @Override
-  public void detach(SpanContext toAttach) {
-    Context current = Context.current();
-    current.detach(current.withValue(contextKey, toAttach));
+
+  private class GrpcSpanContextHandle implements SpanContextHandle {
+    private final Context current, previous;
+
+    private GrpcSpanContextHandle(Context current, Context previous) {
+      this.current = current;
+      this.previous = previous;
+    }
+
+    @Override
+    public SpanContext getCurrentSpanContext() {
+      return contextKey.get(current);
+    }
+
+    @Override
+    public void detach() {
+      current.detach(previous);
+    }
   }
 }

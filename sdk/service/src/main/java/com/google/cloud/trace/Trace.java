@@ -17,6 +17,7 @@ package com.google.cloud.trace;
 import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
@@ -45,7 +46,7 @@ public class Trace {
       service = new TraceService() {
         private final SpanContext spanContext = new SpanContext(
             TraceId.invalid(), SpanId.invalid(), new TraceOptions());
-        private final TraceContext traceContext = new TraceContext(spanContext, null);
+        private final TraceContext traceContext = new TraceContext(new NoSpanContextHandle(spanContext));
         private final Tracer tracer = new NoTracer(traceContext);
         private final SpanContextHandler spanContextHandler = new NoSpanContextHandler(spanContext);
         @Override
@@ -103,10 +104,24 @@ public class Trace {
       return context;
     }
     @Override
-    public SpanContext attach(SpanContext context) {
+    public SpanContextHandle attach(SpanContext context) {
+      return new NoSpanContextHandle(context);
+    }
+  }
+
+  private static class NoSpanContextHandle implements SpanContextHandle {
+    private final SpanContext context;
+
+    private NoSpanContextHandle(SpanContext context) {
+      this.context = context;
+    }
+
+    @Override
+    public SpanContext getCurrentSpanContext() {
       return context;
     }
+
     @Override
-    public void detach(SpanContext toAttach) {}
+    public void detach() {}
   }
 }

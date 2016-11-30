@@ -17,6 +17,7 @@ package com.google.cloud.trace;
 import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.TraceId;
 import com.google.cloud.trace.core.TraceOptions;
@@ -32,13 +33,13 @@ public class GrpcSpanContextHandlerTest {
   public void testAttachDetach() throws Exception {
     SpanContextHandler contextHandler = new GrpcSpanContextHandler(first);
     assertThat(contextHandler.current()).isEqualTo(first);
-    assertThat(contextHandler.attach(second)).isEqualTo(first);
+    SpanContextHandle handle1 = contextHandler.attach(second);
     assertThat(contextHandler.current()).isEqualTo(second);
-    assertThat(contextHandler.attach(third)).isEqualTo(second);
+    SpanContextHandle handle2 = contextHandler.attach(third);
     assertThat(contextHandler.current()).isEqualTo(third);
-    contextHandler.detach(second);
+    handle2.detach();
     assertThat(contextHandler.current()).isEqualTo(second);
-    contextHandler.detach(first);
+    handle1.detach();
     assertThat(contextHandler.current()).isEqualTo(first);
   }
 }

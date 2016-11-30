@@ -21,6 +21,7 @@ import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanContextFactory;
+import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
@@ -53,24 +54,18 @@ public class SpanContextHandlerTracerTest {
 
   @Test
   public void testStartSpan() throws Exception {
-    SpanContext initialContext = contextHandler.current();
     TraceContext traceContext = tracer.startSpan("foo");
     assertThat(sink.startSpanEvents).hasSize(1);
     TestTraceSink.StartSpanEvent startEvent1 = sink.startSpanEvents.get(0);
 
-    assertThat(traceContext.getParent()).isEqualTo(initialContext);
-    assertThat(traceContext.getParent()).isEqualTo(startEvent1.parentContext);
-
-    assertThat(traceContext.getCurrent()).isNotEqualTo(traceContext.getParent());
-    assertThat(traceContext.getCurrent()).isEqualTo(contextHandler.current());
-    assertThat(traceContext.getCurrent()).isEqualTo(startEvent1.context);
+    assertThat(traceContext.getHandle().getCurrentSpanContext()).isEqualTo(contextHandler.current());
+    assertThat(traceContext.getHandle().getCurrentSpanContext()).isEqualTo(startEvent1.context);
 
     assertThat(startEvent1.name).isEqualTo("foo");
   }
 
   @Test
   public void testStartSpanWithOptions() {
-    SpanContext initialContext = contextHandler.current();
     StartSpanOptions options = new StartSpanOptions();
     options.setSpanKind(SpanKind.RPC_CLIENT);
     Timestamp ts = new Timestamp() {
@@ -89,12 +84,8 @@ public class SpanContextHandlerTracerTest {
     assertThat(sink.startSpanEvents).hasSize(1);
     TestTraceSink.StartSpanEvent startEvent1 = sink.startSpanEvents.get(0);
 
-    assertThat(traceContext.getParent()).isEqualTo(initialContext);
-    assertThat(traceContext.getParent()).isEqualTo(startEvent1.parentContext);
-
-    assertThat(traceContext.getCurrent()).isNotEqualTo(traceContext.getParent());
-    assertThat(traceContext.getCurrent()).isEqualTo(contextHandler.current());
-    assertThat(traceContext.getCurrent()).isEqualTo(startEvent1.context);
+    assertThat(traceContext.getHandle().getCurrentSpanContext()).isEqualTo(contextHandler.current());
+    assertThat(traceContext.getHandle().getCurrentSpanContext()).isEqualTo(startEvent1.context);
 
     assertThat(startEvent1.name).isEqualTo("foo");
 
@@ -117,14 +108,11 @@ public class SpanContextHandlerTracerTest {
     assertThat(sink.startSpanEvents).hasSize(1);
     TestTraceSink.StartSpanEvent startEvent1 = sink.startSpanEvents.get(0);
 
-    assertThat(traceContext.getParent()).isEqualTo(initial);
-    assertThat(traceContext.getParent()).isEqualTo(startEvent1.parentContext);
-
-    assertThat(traceContext.getCurrent()).isNotEqualTo(traceContext.getParent());
-    assertThat(traceContext.getCurrent()).isEqualTo(contextHandler.current());
-    assertThat(traceContext.getCurrent()).isEqualTo(startEvent1.context);
-    assertThat(traceContext.getCurrent().getTraceOptions().getTraceEnabled()).isEqualTo(true);
-    assertThat(traceContext.getCurrent().getTraceOptions().getStackTraceEnabled()).isEqualTo(true);
+    SpanContext currentContext = traceContext.getHandle().getCurrentSpanContext();
+    assertThat(currentContext).isEqualTo(contextHandler.current());
+    assertThat(currentContext).isEqualTo(startEvent1.context);
+    assertThat(currentContext.getTraceOptions().getTraceEnabled()).isEqualTo(true);
+    assertThat(currentContext.getTraceOptions().getStackTraceEnabled()).isEqualTo(true);
 
     assertThat(startEvent1.name).isEqualTo("foo");
   }
@@ -144,14 +132,11 @@ public class SpanContextHandlerTracerTest {
     assertThat(sink.startSpanEvents).hasSize(1);
     TestTraceSink.StartSpanEvent startEvent1 = sink.startSpanEvents.get(0);
 
-    assertThat(traceContext.getParent()).isEqualTo(initial);
-    assertThat(traceContext.getParent()).isEqualTo(startEvent1.parentContext);
-
-    assertThat(traceContext.getCurrent()).isNotEqualTo(traceContext.getParent());
-    assertThat(traceContext.getCurrent()).isEqualTo(contextHandler.current());
-    assertThat(traceContext.getCurrent()).isEqualTo(startEvent1.context);
-    assertThat(traceContext.getCurrent().getTraceOptions().getTraceEnabled()).isEqualTo(false);
-    assertThat(traceContext.getCurrent().getTraceOptions().getStackTraceEnabled()).isEqualTo(false);
+    SpanContext currentContext = traceContext.getHandle().getCurrentSpanContext();
+    assertThat(currentContext).isEqualTo(contextHandler.current());
+    assertThat(currentContext).isEqualTo(startEvent1.context);
+    assertThat(currentContext.getTraceOptions().getTraceEnabled()).isEqualTo(false);
+    assertThat(currentContext.getTraceOptions().getStackTraceEnabled()).isEqualTo(false);
 
     assertThat(startEvent1.name).isEqualTo("foo");
   }
@@ -160,7 +145,9 @@ public class SpanContextHandlerTracerTest {
   public void testEndSpan() {
     SpanContext parent = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(1), new TraceOptions());
     SpanContext child = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(2), new TraceOptions());
-    TraceContext inProgressContext = new TraceContext(child, parent);
+    contextHandler.attach(parent);
+    SpanContextHandle handle = contextHandler.attach(child);
+    TraceContext inProgressContext = new TraceContext(handle);
     tracer.endSpan(inProgressContext);
 
     assertThat(contextHandler.current()).isEqualTo(parent);
@@ -186,7 +173,9 @@ public class SpanContextHandlerTracerTest {
     options.setTimestamp(ts);
     SpanContext parent = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(1), new TraceOptions());
     SpanContext child = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(2), new TraceOptions());
-    TraceContext inProgressContext = new TraceContext(child, parent);
+    contextHandler.attach(parent);
+    SpanContextHandle handle = contextHandler.attach(child);
+    TraceContext inProgressContext = new TraceContext(handle);
     tracer.endSpan(inProgressContext, options);
 
     assertThat(sink.endSpanEvents).hasSize(1);
@@ -198,28 +187,26 @@ public class SpanContextHandlerTracerTest {
 
   @Test
   public void testAnnotateSpan() {
-    SpanContext parent = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(1), new TraceOptions());
-    SpanContext child = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(2), new TraceOptions());
-    TraceContext inProgressContext = new TraceContext(child, parent);
+    SpanContext current = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(2), new TraceOptions());
+    TraceContext inProgressContext = new TraceContext(new DetachedSpanContextHandle(current));
     Labels labels = Labels.builder().add("foo", "bar").build();
     tracer.annotateSpan(inProgressContext, labels);
     assertThat(sink.annotateEvents).hasSize(1);
     TestTraceSink.AnnotateEvent annotateEvent = sink.annotateEvents.get(0);
-    assertThat(annotateEvent.context).isEqualTo(child);
+    assertThat(annotateEvent.context).isEqualTo(current);
     assertThat(annotateEvent.labels).isEqualTo(labels);
   }
 
   @Test
   public void testSetStackTrace() {
-    SpanContext parent = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(1), new TraceOptions());
-    SpanContext child = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(2), new TraceOptions());
-    TraceContext inProgressContext = new TraceContext(child, parent);
+    SpanContext current = new SpanContext(new TraceId(BigInteger.valueOf(1)), new SpanId(2), new TraceOptions());
+    TraceContext inProgressContext = new TraceContext(new DetachedSpanContextHandle(current));
     StackTrace stackTrace = StackTrace.builder()
         .add("testClass", "testMethod", "testFile", 1, 2).build();
     tracer.setStackTrace(inProgressContext, stackTrace);
     assertThat(sink.stackTraceEvents).hasSize(1);
     TestTraceSink.StackTraceEvent annotateEvent = sink.stackTraceEvents.get(0);
-    assertThat(annotateEvent.context).isEqualTo(child);
+    assertThat(annotateEvent.context).isEqualTo(current);
     assertThat(annotateEvent.stackTrace).isEqualTo(stackTrace);
   }
 

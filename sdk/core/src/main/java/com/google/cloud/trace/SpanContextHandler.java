@@ -15,6 +15,7 @@
 package com.google.cloud.trace;
 
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 
 /**
  * An interface for managing span contexts.
@@ -32,14 +33,8 @@ public interface SpanContextHandler {
 
   /**
    * Replace the current SpanContext with a new SpanContext.
-   * @param context the {@link SpanContext} to attach
-   * @return The previous SpanContext
+   * @param context the {@link SpanContext} to attach.
+   * @return a handle to the attached context.
    */
-  SpanContext attach(SpanContext context);
-
-  /**
-   * Replace the current SpanContext with a previous SpanContext.
-   * @param toAttach the previous SpanContext that should be re-attached.
-   */
-  void detach(SpanContext toAttach);
+  SpanContextHandle attach(SpanContext context);
 }

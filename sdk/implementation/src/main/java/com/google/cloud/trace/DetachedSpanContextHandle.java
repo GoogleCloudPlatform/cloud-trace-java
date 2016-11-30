@@ -12,19 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.cloud.trace.core;
+package com.google.cloud.trace;
+
+import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 
 /**
- * Represents the current context of a Trace.
+ * A SpanContextHandle that is not associated with the current context. Calling detach() will have
+ * no effect.
  */
-public class TraceContext {
-  private final SpanContextHandle handle;
+public class DetachedSpanContextHandle implements SpanContextHandle {
+  private final SpanContext spanContext;
 
-  public TraceContext(SpanContextHandle handle) {
-    this.handle = handle;
+  public DetachedSpanContextHandle(SpanContext spanContext) {
+    this.spanContext = spanContext;
   }
 
-  public SpanContextHandle getHandle() {
-    return handle;
+  @Override
+  public SpanContext getCurrentSpanContext() {
+    return spanContext;
   }
+
+  @Override
+  public void detach() {}
 }

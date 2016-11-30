@@ -18,6 +18,7 @@ import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanContextFactory;
+import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.SpanKind;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
@@ -70,8 +71,8 @@ public class SpanContextHandlerTracer implements Tracer {
   public TraceContext startSpan(String name) {
     SpanContext parent = contextHandler.current();
     SpanContext child = startSpanOptions(parent, name, null, null, null, null);
-    contextHandler.attach(child);
-    return new TraceContext(child, parent);
+    SpanContextHandle handle = contextHandler.attach(child);
+    return new TraceContext(handle);
   }
 
   @Override
@@ -79,33 +80,33 @@ public class SpanContextHandlerTracer implements Tracer {
     SpanContext parent = contextHandler.current();
     SpanContext child = startSpanOptions(parent, name, options.getTimestamp(), options.getSpanKind(),
         options.getEnableTrace(), options.getEnableStackTrace());
-    contextHandler.attach(child);
-    return new TraceContext(child, parent);
+    SpanContextHandle handle = contextHandler.attach(child);
+    return new TraceContext(handle);
   }
 
   @Override
   public void endSpan(TraceContext traceContext) {
-    endSpanOptions(traceContext.getCurrent(), null);
-    contextHandler.detach(traceContext.getParent());
+    endSpanOptions(traceContext.getHandle().getCurrentSpanContext(), null);
+    traceContext.getHandle().detach();
   }
 
   @Override
   public void endSpan(TraceContext traceContext, EndSpanOptions options) {
-    endSpanOptions(traceContext.getCurrent(), options.getTimestamp());
-    contextHandler.detach(traceContext.getParent());
+    endSpanOptions(traceContext.getHandle().getCurrentSpanContext(), options.getTimestamp());
+    traceContext.getHandle().detach();
   }
 
   @Override
   public void annotateSpan(TraceContext traceContext, Labels labels) {
     for (TraceSink sink : sinks) {
-      sink.annotateSpan(traceContext.getCurrent(), labels);
+      sink.annotateSpan(traceContext.getHandle().getCurrentSpanContext(), labels);
     }
   }
 
   @Override
   public void setStackTrace(TraceContext traceContext, StackTrace stackTrace) {
     for (TraceSink sink : sinks) {
-      sink.setStackTrace(traceContext.getCurrent(), stackTrace);
+      sink.setStackTrace(traceContext.getHandle().getCurrentSpanContext(), stackTrace);
     }
   }
 
