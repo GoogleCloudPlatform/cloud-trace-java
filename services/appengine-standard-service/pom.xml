@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.google.cloud.trace</groupId>
     <artifactId>services-parent</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1-SNAPSHOT</version>
   </parent>
   <artifactId>appengine-standard-service</artifactId>
   <packaging>jar</packaging>
@@ -23,7 +23,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>core</artifactId>
-      <version>0.2.0</version>
+      <version>0.2.1-SNAPSHOT</version>
       <type>jar</type>
     </dependency>
     <dependency>
