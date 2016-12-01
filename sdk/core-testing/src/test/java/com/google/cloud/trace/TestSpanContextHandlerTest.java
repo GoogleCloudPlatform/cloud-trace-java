@@ -48,15 +48,15 @@ public class TestSpanContextHandlerTest {
   @Test
   public void testAttach() {
     TestSpanContextHandler handler = new TestSpanContextHandler();
-    SpanContext previous = handler.attach(context);
+    handler.attach(context);
     assertThat(handler.current()).isEqualTo(context);
-    assertThat(previous).isEqualTo(TestSpanContextHandler.TEST_CONTEXT);
   }
 
   @Test
   public void testDetach() {
-    TestSpanContextHandler handler = new TestSpanContextHandler();
-    handler.detach(context);
-    assertThat(handler.current()).isEqualTo(context);
+    TestSpanContextHandler handler = new TestSpanContextHandler(
+        TestSpanContextHandler.TEST_CONTEXT);
+    handler.attach(context).detach();
+    assertThat(handler.current()).isEqualTo(TestSpanContextHandler.TEST_CONTEXT);
   }
 }

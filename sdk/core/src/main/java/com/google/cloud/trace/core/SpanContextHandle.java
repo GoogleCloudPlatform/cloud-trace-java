@@ -15,16 +15,19 @@
 package com.google.cloud.trace.core;
 
 /**
- * Represents the current context of a Trace.
+ * A handle to a span context. This can be used to detach the span context from the current context.
  */
-public class TraceContext {
-  private final SpanContextHandle handle;
+public interface SpanContextHandle {
 
-  public TraceContext(SpanContextHandle handle) {
-    this.handle = handle;
-  }
+  /**
+   * Returns the current span context.
+   *
+   * @return the current span context.
+   */
+  SpanContext getCurrentSpanContext();
 
-  public SpanContextHandle getHandle() {
-    return handle;
-  }
+  /**
+   * Detaches the span context from the current context.
+   */
+  void detach();
 }

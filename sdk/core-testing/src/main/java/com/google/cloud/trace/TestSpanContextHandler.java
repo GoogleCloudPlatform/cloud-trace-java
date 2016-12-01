@@ -15,6 +15,7 @@
 package com.google.cloud.trace;
 
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.TraceId;
 import com.google.cloud.trace.core.TraceOptions;
@@ -42,14 +43,35 @@ public class TestSpanContextHandler implements SpanContextHandler {
   }
 
   @Override
-  public SpanContext attach(SpanContext context) {
+  public SpanContextHandle attach(SpanContext context) {
     SpanContext temp = currentContext;
     this.currentContext = context;
-    return temp;
+    return new TestSpanContextHandle(this, currentContext, temp);
   }
 
-  @Override
-  public void detach(SpanContext toAttach) {
+  private void detach(SpanContext toAttach) {
     this.currentContext = toAttach;
+  }
+
+  private static class TestSpanContextHandle implements SpanContextHandle {
+    private TestSpanContextHandler handler;
+    private SpanContext current, previous;
+
+    public TestSpanContextHandle(TestSpanContextHandler handler,
+        SpanContext current, SpanContext previous) {
+      this.handler = handler;
+      this.current = current;
+      this.previous = previous;
+    }
+
+    @Override
+    public SpanContext getCurrentSpanContext() {
+      return current;
+    }
+
+    @Override
+    public void detach() {
+      handler.detach(previous);
+    }
   }
 }

@@ -17,8 +17,8 @@ package com.google.cloud.trace.service;
 import com.google.appengine.api.labs.trace.Span;
 import com.google.apphosting.api.CloudTraceContext;
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.SpanId;
-import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceId;
 import com.google.cloud.trace.core.TraceOptions;
 import com.google.common.base.Throwables;
@@ -28,30 +28,26 @@ import com.google.protos.cloud.trace.TraceId.TraceIdProto;
 import java.math.BigInteger;
 
 /**
- * Implementation of {@link TraceContext} based on Google App Engine's Trace
+ * Implementation of {@link SpanContextHandle} based on Google App Engine's Trace
  * Service API.
  */
-class AppEngineTraceContext extends TraceContext {
+class AppEngineSpanContextHandle implements SpanContextHandle {
   private final Span span;
 
-  AppEngineTraceContext(Span span) {
-    // TODO: TraceContext should be an interface.
-    super(null, null);
+  AppEngineSpanContextHandle(Span span) {
     this.span = span;
   }
 
-  Span getSpan() {
-    return span;
-  }
-
   @Override
-  public SpanContext getCurrent() {
+  public SpanContext getCurrentSpanContext() {
     return getSpanContext(span.getContext());
   }
 
   @Override
-  public SpanContext getParent() {
-    return getSpanContext(span.getParentContext());
+  public void detach() {}
+
+  Span getSpan() {
+    return span;
   }
 
   private static SpanContext getSpanContext(CloudTraceContext cloudTraceContext) {

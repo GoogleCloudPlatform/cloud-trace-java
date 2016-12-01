@@ -19,6 +19,7 @@ import static com.google.common.truth.Truth.assertThat;
 import com.google.cloud.trace.core.EndSpanOptions;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.StackTrace;
 import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.TraceContext;
@@ -29,13 +30,13 @@ public class TraceTest {
   public void testGetTracer_No() {
     Tracer tracer = Trace.getTracer();
     TraceContext context = tracer.startSpan("hello");
-    assertInvalid(context.getCurrent());
+    assertInvalid(context.getHandle().getCurrentSpanContext());
     tracer.annotateSpan(context, Labels.builder().build());
     tracer.setStackTrace(context, StackTrace.builder().build());
     tracer.endSpan(context);
 
     context = tracer.startSpan("hello", new StartSpanOptions());
-    assertInvalid(context.getCurrent());
+    assertInvalid(context.getHandle().getCurrentSpanContext());
     tracer.endSpan(context, new EndSpanOptions());
   }
 
@@ -43,10 +44,9 @@ public class TraceTest {
   public void testGetSpanContextHandler_No() {
     SpanContextHandler handler = Trace.getSpanContextHandler();
     assertInvalid(handler.current());
-    SpanContext attached = handler.attach(handler.current());
-    assertInvalid(attached);
+    SpanContextHandle handle = handler.attach(handler.current());
     assertInvalid(handler.current());
-    handler.detach(attached);
+    handle.detach();
     assertInvalid(handler.current());
   }
 

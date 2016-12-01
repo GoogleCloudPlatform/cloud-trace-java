@@ -39,7 +39,7 @@ class AppEngineTracer implements Tracer {
   public TraceContext startSpan(String name) {
     checkNotNull(name);
 
-    return new AppEngineTraceContext(traceService.startSpan(name));
+    return new TraceContext(new AppEngineSpanContextHandle(traceService.startSpan(name)));
   }
 
   @Override
@@ -84,6 +84,6 @@ class AppEngineTracer implements Tracer {
   private Span getSpan(TraceContext traceContext) {
     checkNotNull(traceContext);
 
-    return ((AppEngineTraceContext) traceContext).getSpan();
+    return ((AppEngineSpanContextHandle) traceContext.getHandle()).getSpan();
   }
 }

@@ -94,7 +94,8 @@ public class TracerSpanInterceptor implements MethodInterceptor {
     Tracer tracer = tracerProvider.get();
     TraceContext traceContext = tracer.startSpan(methodName, new StartSpanOptions()
         .setEnableTrace(enableTrace).setEnableStackTrace(enableStackTrace));
-    boolean stackTraceEnabled = traceContext.getCurrent().getTraceOptions().getStackTraceEnabled();
+    boolean stackTraceEnabled = traceContext.getHandle().getCurrentSpanContext().getTraceOptions()
+        .getStackTraceEnabled();
 
     boolean labelAllParams = span.labelAll();
     String labelPrefix;
