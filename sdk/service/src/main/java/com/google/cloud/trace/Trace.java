@@ -15,8 +15,10 @@
 package com.google.cloud.trace;
 
 import com.google.cloud.trace.core.EndSpanOptions;
+import com.google.cloud.trace.core.IdFactory;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.core.SpanContextHandle;
 import com.google.cloud.trace.core.SpanId;
 import com.google.cloud.trace.core.StackTrace;
@@ -24,6 +26,7 @@ import com.google.cloud.trace.core.StartSpanOptions;
 import com.google.cloud.trace.core.TraceContext;
 import com.google.cloud.trace.core.TraceId;
 import com.google.cloud.trace.core.TraceOptions;
+import com.google.cloud.trace.core.TraceOptionsFactory;
 import com.google.cloud.trace.service.TraceService;
 import java.util.ServiceLoader;
 
@@ -49,6 +52,10 @@ public class Trace {
         private final TraceContext traceContext = new TraceContext(new NoSpanContextHandle(spanContext));
         private final Tracer tracer = new NoTracer(traceContext);
         private final SpanContextHandler spanContextHandler = new NoSpanContextHandler(spanContext);
+        private final SpanContextFactory spanContextFactory = new SpanContextFactory(
+            new TraceDisabledOptionsFactory(), new InvalidTraceIdFactory(),
+            new InvalidSpanIdFactory());
+
         @Override
         public Tracer getTracer() {
           return tracer;
@@ -56,6 +63,11 @@ public class Trace {
         @Override
         public SpanContextHandler getSpanContextHandler() {
           return spanContextHandler;
+        }
+
+        @Override
+        public SpanContextFactory getSpanContextFactory() {
+          return spanContextFactory;
         }
       };
     } else {
@@ -69,6 +81,10 @@ public class Trace {
 
   public static SpanContextHandler getSpanContextHandler() {
     return service.getSpanContextHandler();
+  }
+
+  public static SpanContextFactory getSpanContextFactory() {
+    return service.getSpanContextFactory();
   }
 
   private static class NoTracer implements Tracer {
@@ -123,5 +139,33 @@ public class Trace {
 
     @Override
     public void detach() {}
+  }
+
+  private static class InvalidTraceIdFactory implements IdFactory<TraceId> {
+    @Override
+    public TraceId nextId() {
+      return TraceId.invalid();
+    }
+  }
+
+  private static class InvalidSpanIdFactory implements IdFactory<SpanId> {
+    @Override
+    public SpanId nextId() {
+      return SpanId.invalid();
+    }
+  }
+
+  private static class TraceDisabledOptionsFactory implements TraceOptionsFactory {
+    private static final TraceOptions options = TraceOptions.forTraceDisabled();
+
+    @Override
+    public TraceOptions create() {
+      return options;
+    }
+
+    @Override
+    public TraceOptions create(TraceOptions parent) {
+      return options;
+    }
   }
 }

@@ -16,6 +16,7 @@ package com.google.cloud.trace.service;
 
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.Tracer;
+import com.google.cloud.trace.core.SpanContextFactory;
 
 /**
  * An interface that provides trace services.
@@ -23,4 +24,5 @@ import com.google.cloud.trace.Tracer;
 public interface TraceService {
   Tracer getTracer();
   SpanContextHandler getSpanContextHandler();
+  SpanContextFactory getSpanContextFactory();
 }
