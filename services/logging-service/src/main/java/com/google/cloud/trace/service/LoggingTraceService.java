@@ -38,6 +38,7 @@ public class LoggingTraceService implements TraceService {
   
   private final Tracer tracer;
   private final SpanContextHandler spanContextHandler;
+  private final SpanContextFactory spanContextFactory;
 
   public LoggingTraceService() {
     // Create the trace sink.
@@ -46,7 +47,7 @@ public class LoggingTraceService implements TraceService {
     TraceSink traceSink = new TraceSinkV1("1", traceProducer, traceConsumer);
 
     // Create the tracer.
-    SpanContextFactory spanContextFactory = new SpanContextFactory(
+    spanContextFactory = new SpanContextFactory(
         new ConstantTraceOptionsFactory(true, false));
     TimestampFactory timestampFactory = new JavaTimestampFactory();
 
@@ -63,5 +64,10 @@ public class LoggingTraceService implements TraceService {
   @Override
   public SpanContextHandler getSpanContextHandler() {
     return spanContextHandler;
+  }
+
+  @Override
+  public SpanContextFactory getSpanContextFactory() {
+    return spanContextFactory;
   }
 }

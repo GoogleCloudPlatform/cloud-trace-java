@@ -17,6 +17,7 @@ package com.google.cloud.trace.service;
 import com.google.appengine.api.labs.trace.TraceServiceFactory;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.Tracer;
+import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.common.annotations.VisibleForTesting;
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -48,5 +49,12 @@ public class AppEngineTraceService implements TraceService {
     throw new UnsupportedOperationException(
         "#getSpanContextHandler is not supported because the context "
         + "is managed by the App Engine runtime");
+  }
+
+  @Override
+  public SpanContextFactory getSpanContextFactory() {
+    throw new UnsupportedOperationException(
+        "#getSpanContextFactory is not supported because the context "
+            + "is managed by the App Engine runtime");
   }
 }
