@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.google.cloud.trace.v1</groupId>
     <artifactId>v1</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.1</version>
   </parent>
   <artifactId>grpc-consumer</artifactId>
   <packaging>jar</packaging>
