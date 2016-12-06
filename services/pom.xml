@@ -13,5 +13,6 @@
   <modules>
     <module>appengine-standard-service</module>
     <module>logging-service</module>
+    <module>trace-grpc-api-service</module>
   </modules>
 </project>

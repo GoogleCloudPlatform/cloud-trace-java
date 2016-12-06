@@ -35,43 +35,50 @@ import java.util.ServiceLoader;
  * {@link TraceService}.
  */
 public class Trace {
-  private static final TraceService service;
+  private static Object monitor = new Object();
+
+  private static TraceService service = new NoTraceService();
+  private static boolean initialized = false;
 
   static {
-    TraceService traceService = null;
-    for (TraceService candidate : ServiceLoader.load(TraceService.class)) {
-      if (traceService != null) {
-        throw new RuntimeException("Found more than one TraceService provider.");
-      }
-      traceService = candidate;
+    for (TraceService service : ServiceLoader.load(TraceService.class)) {
+      init(service);
     }
-    if (traceService == null) {
-      service = new TraceService() {
-        private final SpanContext spanContext = new SpanContext(
-            TraceId.invalid(), SpanId.invalid(), new TraceOptions());
-        private final TraceContext traceContext = new TraceContext(new NoSpanContextHandle(spanContext));
-        private final Tracer tracer = new NoTracer(traceContext);
-        private final SpanContextHandler spanContextHandler = new NoSpanContextHandler(spanContext);
-        private final SpanContextFactory spanContextFactory = new SpanContextFactory(
-            new TraceDisabledOptionsFactory(), new InvalidTraceIdFactory(),
-            new InvalidSpanIdFactory());
+  }
 
-        @Override
-        public Tracer getTracer() {
-          return tracer;
-        }
-        @Override
-        public SpanContextHandler getSpanContextHandler() {
-          return spanContextHandler;
-        }
-
-        @Override
-        public SpanContextFactory getSpanContextFactory() {
-          return spanContextFactory;
-        }
-      };
-    } else {
+  public static void init(TraceService traceService) {
+    synchronized (monitor) {
+      if (initialized) {
+        throw new IllegalArgumentException("Trace service is already initialized.");
+      }
       service = traceService;
+      initialized = true;
+    }
+  }
+
+  private static class NoTraceService implements TraceService {
+    private final SpanContext spanContext = new SpanContext(
+        TraceId.invalid(), SpanId.invalid(), new TraceOptions());
+    private final TraceContext traceContext = new TraceContext(new NoSpanContextHandle(spanContext));
+    private final Tracer tracer = new NoTracer(traceContext);
+    private final SpanContextHandler spanContextHandler = new NoSpanContextHandler(spanContext);
+    private final SpanContextFactory spanContextFactory = new SpanContextFactory(
+        new TraceDisabledOptionsFactory(), new InvalidTraceIdFactory(),
+        new InvalidSpanIdFactory());
+
+    @Override
+    public Tracer getTracer() {
+      return tracer;
+    }
+
+    @Override
+    public SpanContextHandler getSpanContextHandler() {
+      return spanContextHandler;
+    }
+
+    @Override
+    public SpanContextFactory getSpanContextFactory() {
+      return spanContextFactory;
     }
   }
 
