@@ -121,7 +121,7 @@ public class TraceGrpcApiService implements TraceService {
    * Returns a new builder.
    * @return the new builder.
    */
-  public Builder builder() {
+  public static Builder builder() {
     return new Builder();
   }
 
