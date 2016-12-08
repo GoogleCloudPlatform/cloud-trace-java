@@ -156,6 +156,6 @@ public class TraceGrpcApiService implements TraceService {
 
   @Override
   public SpanContextFactory getSpanContextFactory() {
-    return null;
+    return factory;
   }
 }
