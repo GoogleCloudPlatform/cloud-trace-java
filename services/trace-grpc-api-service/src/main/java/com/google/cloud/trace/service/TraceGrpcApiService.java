@@ -31,7 +31,8 @@ import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.producer.TraceProducer;
 import com.google.cloud.trace.v1.util.RoughTraceSizer;
 import java.io.IOException;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides a gRPC Trace Service. The provided {@link Tracer} will write Traces to the Stackdriver
@@ -134,9 +135,12 @@ public class TraceGrpcApiService implements TraceService {
     TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         credentials);
+    ScheduledThreadPoolExecutor executorService = new ScheduledThreadPoolExecutor(1);
+    // Have the flushing threads shutdown if idle for the scheduled delay.
+    executorService.allowCoreThreadTimeOut(true);
+    executorService.setKeepAliveTime(scheduledDelay, TimeUnit.SECONDS);
     traceConsumer = new ScheduledBufferingTraceConsumer(traceConsumer, new RoughTraceSizer(),
-        bufferSize, scheduledDelay,
-        Executors.newSingleThreadScheduledExecutor());
+        bufferSize, scheduledDelay, executorService);
     TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, traceConsumer);
 
     factory = new SpanContextFactory(optionsFactory);
