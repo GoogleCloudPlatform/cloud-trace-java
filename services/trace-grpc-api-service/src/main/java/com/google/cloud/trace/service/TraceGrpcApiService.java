@@ -113,7 +113,7 @@ public class TraceGrpcApiService implements TraceService {
         credentials = GoogleCredentials.getApplicationDefault();
       }
       return new TraceGrpcApiService(projectId, optionsFactory, bufferSize,
-          scheduledDelay);
+          scheduledDelay, credentials);
     }
   }
 
@@ -130,10 +130,10 @@ public class TraceGrpcApiService implements TraceService {
   private final SpanContextFactory factory;
 
   private TraceGrpcApiService(String projectId, TraceOptionsFactory optionsFactory,
-      int bufferSize, int scheduledDelay) throws IOException {
+      int bufferSize, int scheduledDelay, GoogleCredentials credentials) throws IOException {
     TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
-        GoogleCredentials.getApplicationDefault());
+        credentials);
     traceConsumer = new ScheduledBufferingTraceConsumer(traceConsumer, new RoughTraceSizer(),
         bufferSize, scheduledDelay,
         Executors.newSingleThreadScheduledExecutor());
