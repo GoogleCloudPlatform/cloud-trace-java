@@ -24,11 +24,27 @@ If you're using the Google Cloud Platform to host your application, this SDK is 
 
 To use the SDK, add the following Maven dependency to your application's `pom.xml` file:
 
+```xml
     <dependency>
       <groupId>com.google.cloud.trace</groupId>
-      <artifactId>google-cloud-trace-sdk-core</artifactId>
-      <version>0.1.1-SNAPSHOT</version>
+      <artifactId>core</artifactId>
     </dependency>
+```
+Additionally, add a dependency on a `TraceService` artifact which will process the trace events you create.
+* The Logging service will write trace events to the logs.
+```xml
+  <dependency>
+    <groupId>com.google.cloud.trace</groupId>
+    <artifactId>logging-service</artifactId>
+  </dependency>
+```
+* The Stackdriver Trace gRPC API `TraceService` will write traces to the Stackdriver Trace API using gRPC.
+```xml
+  <dependency>
+    <groupId>com.google.cloud.trace</groupId>
+    <artifactId>trace-grpc-api-service</artifactId>
+  </dependency>
+```
 
 If you'd like to build the SDK yourself, create a clone of this project on your local machine:
 
@@ -42,32 +58,102 @@ To build the project, from its root directory run:
 
 
 ## Hello, Trace!
+### Writing to the Stackdriver Trace API
+The following sample writes a trace span to the Stackdriver Trace API using gRPC.
+* Add the dependencies to your project.
+```xml
+  <dependencies>
+    <dependency>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>trace-grpc-api-service</artifactId>
+      <version>VERSION</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>core</artifactId>
+      <version>VERSION</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.auth</groupId>
+      <artifactId>google-auth-library-oauth2-http</artifactId>
+      <version>0.4.0</version>
+    </dependency>
+    <!-- gRPC dependencies -->
+    <dependency>
+      <groupId>io.grpc</groupId>
+      <artifactId>grpc-netty</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-tcnative-boringssl-static</artifactId>
+      <version>1.1.33.Fork23</version>
+    </dependency>
+  </dependencies>
+```
+* Write traces.
+```java
+public class Example {
+  public static void main(String[] args) throws IOException {
+    // Initialize the Tracer.
+    TraceService traceService = TraceGrpcApiService.builder()
+        // Set the projectId.
+        .setProjectId("my-project-id")
+        // Uncomment this if you want to provide your own credentials for the Stackdriver Trace API.
+        // On GCE, this is optional because the Application Default Credentials are used by default.
+        //.setCredentials(
+        //    GoogleCredentials.fromStream(new FileInputStream("/path/to/my/credentials.json")))
+        // Use a short delay of 1 second for this example. In production, you may want to use a
+        // higher value so that more trace events are batched together in a single request to the
+        // Stackdriver Trace API. By default, the delay is 15 seconds.
+        .setScheduledDelay(1)
+    .build();
+    Trace.init(traceService);
 
+    Tracer tracer = Trace.getTracer();
+    TraceContext context = tracer.startSpan("test-span");
+    tracer.endSpan(context);
+  }
+}
+```
+### Basic logging
 The following sample writes a trace span, containing a stack trace, to logs.
+* Add the dependencies to your project.
+```xml
+  <dependencies>
+    <dependency>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>core</artifactId>
+      <version>VERSION</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>service</artifactId>
+      <version>VERSION</version>
+    </dependency>
+    <!-- Adding this dependency auto-configures tracing to write to logs. -->
+    <dependency>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>logging-service</artifactId>
+      <version>VERSION</version>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+```
+* Write traces.
+```java
+public class Example {
+  public static void main(String[] args) {
+    Tracer tracer = Trace.getTracer();
 
-    public class BasicLogging {
-      private final static Logger logger = Logger.getLogger(BasicLogging.class.getName());
-
-      public static void main(String[] args) {
-        // Create the raw tracer.
-        TraceSource traceSource = new TraceSource();
-        TraceSink traceSink = new LoggingTraceSink(logger, Level.WARNING);
-        RawTracer rawTracer = new RawTracerV1("1", traceSource, traceSink);
-
-        // Create the tracer.
-        TraceContextFactory traceContextFactory = new TraceContextFactory(
-            new ConstantTraceOptionsFactory(true, false));
-        TimestampFactory timestampFactory = new JavaTimestampFactory();
-        Tracer tracer = new TraceContextFactoryTracer(rawTracer, traceContextFactory, timestampFactory);
-
-        // Create a span using the given timestamps.
-        TraceContext context1 = tracer.startSpan(traceContextFactory.rootContext(), "my span 1");
-        StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
-        tracer.setStackTrace(context1, stackTraceBuilder.build());
-        tracer.endSpan(context1);
-      }
-    }
-
+    // Create a span using the given timestamps.
+    TraceContext context = tracer.startSpan("my span 1");
+    StackTrace.Builder stackTraceBuilder = ThrowableStackTraceHelper.createBuilder(new Exception());
+    tracer.setStackTrace(context, stackTraceBuilder.build());
+    tracer.endSpan(context);
+  }
+}
+```
 ## What's next
 
 (coming soon: Concepts, Trace Java SDK on Google Cloud Platform)
