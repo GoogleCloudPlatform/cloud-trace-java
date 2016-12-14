@@ -35,7 +35,7 @@ import java.util.ServiceLoader;
  * {@link TraceService}.
  */
 public class Trace {
-  private static Object monitor = new Object();
+  private static final Object monitor = new Object();
 
   private static TraceService service = new NoTraceService();
   private static boolean initialized = false;
