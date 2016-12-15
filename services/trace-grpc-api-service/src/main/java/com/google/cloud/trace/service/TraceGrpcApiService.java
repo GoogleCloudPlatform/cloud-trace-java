@@ -30,7 +30,9 @@ import com.google.cloud.trace.v1.consumer.ScheduledBufferingTraceConsumer;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.cloud.trace.v1.producer.TraceProducer;
 import com.google.cloud.trace.v1.util.RoughTraceSizer;
+
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +47,7 @@ public class TraceGrpcApiService implements TraceService {
     private int bufferSize = 32 * 1024;
     private int scheduledDelay = 15;
     private GoogleCredentials credentials;
+    private ScheduledExecutorService executorService;
 
     private Builder() {}
 
@@ -107,14 +110,36 @@ public class TraceGrpcApiService implements TraceService {
     }
 
     /**
+     * Sets the {@link ScheduledExecutorService}.
+     * @param scheduledExecutorService The {@link ScheduledExecutorService} which will be used for writing traces.
+     * Optional. Defaults to {@link ScheduledThreadPoolExecutor} with corePoolSize = 1
+     */
+    public Builder setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+      if (scheduledExecutorService == null) {
+        throw new IllegalArgumentException("ScheduledExecutorService must not be null.");
+      }
+      this.executorService = scheduledExecutorService;
+      return this;
+    }
+
+    /**
      * Builds a new TraceGrpcApiService.
      */
     public TraceGrpcApiService build() throws IOException {
       if (credentials == null) {
         credentials = GoogleCredentials.getApplicationDefault();
       }
+
+      if(executorService == null) {
+        ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+        // Have the flushing threads shutdown if idle for the scheduled delay.
+        scheduledThreadPoolExecutor.allowCoreThreadTimeOut(true);
+        scheduledThreadPoolExecutor.setKeepAliveTime(scheduledDelay, TimeUnit.SECONDS);
+        executorService = scheduledThreadPoolExecutor;
+      }
+
       return new TraceGrpcApiService(projectId, optionsFactory, bufferSize,
-          scheduledDelay, credentials);
+          scheduledDelay, credentials, executorService);
     }
   }
 
@@ -131,14 +156,11 @@ public class TraceGrpcApiService implements TraceService {
   private final SpanContextFactory factory;
 
   private TraceGrpcApiService(String projectId, TraceOptionsFactory optionsFactory,
-      int bufferSize, int scheduledDelay, GoogleCredentials credentials) throws IOException {
+                              int bufferSize, int scheduledDelay, GoogleCredentials credentials,
+                              ScheduledExecutorService executorService) throws IOException {
     TraceProducer traceProducer = new TraceProducer();
     TraceConsumer traceConsumer = new GrpcTraceConsumer("cloudtrace.googleapis.com",
         credentials);
-    ScheduledThreadPoolExecutor executorService = new ScheduledThreadPoolExecutor(1);
-    // Have the flushing threads shutdown if idle for the scheduled delay.
-    executorService.allowCoreThreadTimeOut(true);
-    executorService.setKeepAliveTime(scheduledDelay, TimeUnit.SECONDS);
     traceConsumer = new ScheduledBufferingTraceConsumer(traceConsumer, new RoughTraceSizer(),
         bufferSize, scheduledDelay, executorService);
     TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, traceConsumer);
