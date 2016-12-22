@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.google.cloud.trace</groupId>
     <artifactId>samples</artifactId>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.2.3</version>
   </parent>
   <artifactId>guice-scheduled-grpc</artifactId>
   <packaging>jar</packaging>

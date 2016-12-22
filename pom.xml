@@ -3,7 +3,7 @@
 
   <groupId>com.google.cloud.trace</groupId>
   <artifactId>root</artifactId>
-  <version>0.2.3-SNAPSHOT</version>
+  <version>0.2.3</version>
   <packaging>pom</packaging>
 
   <name>Google Cloud Trace Java SDK Root Project</name>
@@ -45,7 +45,7 @@
     <url>https://github.com/GoogleCloudPlatform/cloud-trace-java</url>
     <connection>scm:git:https://github.com/GoogleCloudPlatform/cloud-trace-java.git</connection>
     <developerConnection>scm:git:https://github.com/GoogleCloudPlatform/cloud-trace-java.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>0.2.3</tag>
   </scm>
 
   <distributionManagement>
