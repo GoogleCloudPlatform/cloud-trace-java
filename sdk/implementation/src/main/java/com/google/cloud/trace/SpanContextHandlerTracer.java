@@ -36,6 +36,8 @@ import java.util.Set;
  * <p>This tracer maintains the current trace context and delegates calls to another tracer.</p>
  */
 public class SpanContextHandlerTracer implements Tracer {
+  private static final Labels agentLabel = Labels.builder().add("/agent", "cloud-trace-java "
+      + SdkVersion.get()).build();
   private final SpanContextHandler contextHandler;
   private final TimestampFactory timestampFactory;
   private final ImmutableSet<TraceSink> sinks;
@@ -69,10 +71,8 @@ public class SpanContextHandlerTracer implements Tracer {
 
   @Override
   public TraceContext startSpan(String name) {
-    SpanContext parent = contextHandler.current();
-    SpanContext child = startSpanOptions(parent, name, null, null, null, null);
-    SpanContextHandle handle = contextHandler.attach(child);
-    return new TraceContext(handle);
+    StartSpanOptions defaultOptions = new StartSpanOptions();
+    return startSpan(name, defaultOptions);
   }
 
   @Override
@@ -81,7 +81,9 @@ public class SpanContextHandlerTracer implements Tracer {
     SpanContext child = startSpanOptions(parent, name, options.getTimestamp(), options.getSpanKind(),
         options.getEnableTrace(), options.getEnableStackTrace());
     SpanContextHandle handle = contextHandler.attach(child);
-    return new TraceContext(handle);
+    TraceContext traceContext = new TraceContext(handle);
+    annotateSpan(traceContext, agentLabel);
+    return traceContext;
   }
 
   @Override

@@ -18,6 +18,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 import com.google.cloud.trace.core.ConstantTraceOptionsFactory;
 import com.google.cloud.trace.core.EndSpanOptions;
+import com.google.cloud.trace.core.Label;
 import com.google.cloud.trace.core.Labels;
 import com.google.cloud.trace.core.SpanContext;
 import com.google.cloud.trace.core.SpanContextFactory;
@@ -139,6 +140,17 @@ public class SpanContextHandlerTracerTest {
     assertThat(currentContext.getTraceOptions().getStackTraceEnabled()).isEqualTo(false);
 
     assertThat(startEvent1.name).isEqualTo("foo");
+  }
+
+  @Test
+  public void testStartSpanAddsAgentLabel() {
+    TraceContext traceContext = tracer.startSpan("foo");
+    assertThat(sink.annotateEvents).hasSize(1);
+    TestTraceSink.AnnotateEvent annotateEvent = sink.annotateEvents.get(0);
+
+    assertThat(annotateEvent.context).isEqualTo(traceContext.getHandle().getCurrentSpanContext());
+    String expectedAgent = "cloud-trace-java " + SdkVersion.get();
+    assertThat(annotateEvent.labels.getLabels()).contains(new Label("/agent", expectedAgent));
   }
 
   @Test
