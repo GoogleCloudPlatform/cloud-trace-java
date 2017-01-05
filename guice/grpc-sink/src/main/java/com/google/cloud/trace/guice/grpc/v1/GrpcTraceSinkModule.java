@@ -31,6 +31,6 @@ public class GrpcTraceSinkModule extends AbstractModule {
   @ApiTraceSink
   @Singleton
   TraceConsumer provideTraceSink(@ApiHost String apiHost, Credentials credentials) {
-    return new GrpcTraceConsumer(apiHost, credentials);
+    return GrpcTraceConsumer.create(apiHost, credentials);
   }
 }

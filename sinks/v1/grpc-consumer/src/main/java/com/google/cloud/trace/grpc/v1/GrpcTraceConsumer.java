@@ -19,7 +19,7 @@ import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.devtools.cloudtrace.v1.PatchTracesRequest;
 import com.google.devtools.cloudtrace.v1.TraceServiceGrpc;
 import com.google.devtools.cloudtrace.v1.Traces;
-import io.grpc.ManagedChannel;
+import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.auth.MoreCallCredentials;
 
@@ -33,19 +33,15 @@ import io.grpc.auth.MoreCallCredentials;
  * @see TraceConsumer
  */
 public class GrpcTraceConsumer implements TraceConsumer {
-  private final ManagedChannel managedChannel;
   private final TraceServiceGrpc.TraceServiceBlockingStub traceService;
 
   /**
    * Creates a trace consumer that sends trace messages to the Stackdriver Trace API via gRPC.
    *
-   * @param apiHost     a string containing the API host name.
-   * @param credentials a credentials used to authenticate API calls.
+   * @param traceService the trace service to use for sending API calls.
    */
-  public GrpcTraceConsumer(String apiHost, Credentials credentials) {
-    this.managedChannel = ManagedChannelBuilder.forTarget(apiHost).build();
-    this.traceService = TraceServiceGrpc.newBlockingStub(managedChannel)
-        .withCallCredentials(MoreCallCredentials.from(credentials));
+  public GrpcTraceConsumer(TraceServiceGrpc.TraceServiceBlockingStub traceService) {
+    this.traceService = traceService;
   }
 
   @Override
@@ -63,9 +59,14 @@ public class GrpcTraceConsumer implements TraceConsumer {
   }
 
   /**
-   * Closes the resources held by this trace consumer.
+   * Creates a trace consumer that sends trace messages to the Stackdriver Trace API via gRPC.
+   *
+   * @param apiHost     a string containing the API host name.
+   * @param credentials a credentials used to authenticate API calls.
    */
-  public void close() {
-    managedChannel.shutdown();
+  public static GrpcTraceConsumer create(String apiHost, Credentials credentials) {
+    Channel channel = ManagedChannelBuilder.forTarget(apiHost).build();
+    return new GrpcTraceConsumer(TraceServiceGrpc.newBlockingStub(channel)
+        .withCallCredentials(MoreCallCredentials.from(credentials)));
   }
 }
