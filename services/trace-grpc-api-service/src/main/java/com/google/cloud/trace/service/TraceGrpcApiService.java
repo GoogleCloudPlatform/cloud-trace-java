@@ -133,8 +133,8 @@ public class TraceGrpcApiService implements TraceService {
       if(executorService == null) {
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
         // Have the flushing threads shutdown if idle for the scheduled delay.
-        scheduledThreadPoolExecutor.allowCoreThreadTimeOut(true);
         scheduledThreadPoolExecutor.setKeepAliveTime(scheduledDelay, TimeUnit.SECONDS);
+        scheduledThreadPoolExecutor.allowCoreThreadTimeOut(true);
         executorService = scheduledThreadPoolExecutor;
       }
 
