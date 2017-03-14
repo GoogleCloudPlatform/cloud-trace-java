@@ -24,7 +24,6 @@
     <dependency>
       <groupId>com.google.api.grpc</groupId>
       <artifactId>grpc-google-devtools-cloudtrace-v1</artifactId>
-      <version>0.1.0</version>
     </dependency>
     <dependency>
       <groupId>com.google.auth</groupId>
@@ -33,13 +32,7 @@
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>
-      <artifactId>grpc-auth</artifactId>
-      <version>1.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-core</artifactId>
-      <version>1.0.1</version>
+      <artifactId>grpc-all</artifactId>
     </dependency>
   </dependencies>
 </project>
