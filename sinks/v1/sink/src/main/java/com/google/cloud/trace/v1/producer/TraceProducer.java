@@ -159,7 +159,7 @@ public class TraceProducer {
     stackTraceValue.append("]}");
 
     spanBuilder.putLabels(
-        "trace.cloud.google.com/stacktrace", stackTraceValue.toString());
+        "/stacktrace", stackTraceValue.toString());
 
     Trace.Builder traceBuilder =
         Trace.newBuilder()

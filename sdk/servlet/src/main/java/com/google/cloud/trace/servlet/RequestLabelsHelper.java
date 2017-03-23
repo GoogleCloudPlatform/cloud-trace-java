@@ -46,15 +46,15 @@ public class RequestLabelsHelper {
    * @param labelsBuilder the labels builder to add span label annotations to.
    */
   public static void addRequestLabels(HttpServletRequest request, Labels.Builder labelsBuilder) {
-    labelsBuilder.add("trace.cloud.google.com/http/method", request.getMethod());
-    labelsBuilder.add("trace.cloud.google.com/http/url", request.getRequestURL().toString());
+    labelsBuilder.add("/http/method", request.getMethod());
+    labelsBuilder.add("/http/url", request.getRequestURL().toString());
     if (request.getContentLength() != -1) {
       labelsBuilder.add(
-          "trace.cloud.google.com/http/request/size", Integer.toString(request.getContentLength()));
+          "/http/request/size", Integer.toString(request.getContentLength()));
     }
-    labelsBuilder.add("trace.cloud.google.com/http/host", request.getServerName());
+    labelsBuilder.add("/http/host", request.getServerName());
     if (request.getHeader("user-agent") != null) {
-      labelsBuilder.add("trace.cloud.google.com/http/user_agent", request.getHeader("user-agent"));
+      labelsBuilder.add("/http/user_agent", request.getHeader("user-agent"));
     }
   }
 
@@ -66,11 +66,11 @@ public class RequestLabelsHelper {
    * @param labelsBuilder the labels builder to add span label annotations to.
    */
   public static void addResponseLabels(HttpServletResponse response, Labels.Builder labelsBuilder) {
-    // Add "trace.cloud.google.com/http/status_code" to Integer.toString(response.getStatus()), if
+    // Add "/http/status_code" to Integer.toString(response.getStatus()), if
     // GAE supports 3.0.
     if (response.getBufferSize() > 0) {
       labelsBuilder.add(
-          "trace.cloud.google.com/http/response/size", Integer.toString(response.getBufferSize()));
+          "/http/response/size", Integer.toString(response.getBufferSize()));
     }
   }
 }
