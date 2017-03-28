@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.google.cloud.trace</groupId>
     <artifactId>services-parent</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3-SNAPSHOT</version>
   </parent>
   <artifactId>logging-service</artifactId>
   <packaging>jar</packaging>
