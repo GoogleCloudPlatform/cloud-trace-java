@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.google.cloud.trace</groupId>
     <artifactId>samples</artifactId>
-    <version>0.3.2-SNAPSHOT</version>
+    <version>0.3.2</version>
   </parent>
   <artifactId>guice-servlet-grpc</artifactId>
   <packaging>war</packaging>
