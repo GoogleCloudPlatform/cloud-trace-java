@@ -55,15 +55,15 @@ public class TracerSpanInterceptor implements MethodInterceptor {
 
     if (span.callLabels() == Option.TRUE) {
       labelsBeforeCallBuilder
-          .add("trace.cloud.google.com/call/class",
+          .add("g.co/call/class",
               invocation.getMethod().getDeclaringClass().getName())
-          .add("trace.cloud.google.com/call/method",
+          .add("g.co/call/method",
               invocation.getMethod().getName())
-          .add("trace.cloud.google.com/call/package",
+          .add("g.co/call/package",
               invocation.getMethod().getDeclaringClass().getPackage().getName());
     }
     if (span.entry()) {
-      labelsBeforeCallBuilder.add("trace.cloud.google.com/agent", "cloud-trace-java/0.1");
+      labelsBeforeCallBuilder.add("/agent", "cloud-trace-java/0.1");
     }
 
     String methodName;
@@ -124,8 +124,8 @@ public class TracerSpanInterceptor implements MethodInterceptor {
     } catch (Throwable t) {
       if (span.callLabels() == Option.TRUE) {
         labelsAfterCallBuilder
-            .add("trace.cloud.google.com/exception/class", t.getClass().getName())
-            .add("trace.cloud.google.com/exception/message", t.getMessage());
+            .add("g.co/exception/class", t.getClass().getName())
+            .add("g.co/exception/message", t.getMessage());
       }
     } finally {
       if (stackTraceEnabled) {
