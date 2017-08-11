@@ -6,7 +6,7 @@
     <artifactId>v1</artifactId>
     <version>0.3.3-SNAPSHOT</version>
   </parent>
-  <artifactId>sink</artifactId>
+  <artifactId>api-sink</artifactId>
   <packaging>jar</packaging>
 
   <name>Google Cloud Trace Java SDK API v1 Dependencies</name>

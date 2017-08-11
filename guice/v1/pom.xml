@@ -24,7 +24,7 @@
     </dependency>
     <dependency>
       <groupId>com.google.cloud.trace.v1</groupId>
-      <artifactId>sink</artifactId>
+      <artifactId>api-sink</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
