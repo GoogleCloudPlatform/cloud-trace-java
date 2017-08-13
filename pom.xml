@@ -34,6 +34,8 @@
     <grpc.version>1.5.0</grpc.version>
     <netty-boringssl.version>2.0.5.Final</netty-boringssl.version>
     <grpc-google-devtools-cloudtrace-v1.version>0.1.1</grpc-google-devtools-cloudtrace-v1.version>
+    <google-auth-library-credentials.version>0.7.1</google-auth-library-credentials.version>
+    <google-auth-library-oauth2-http.version>0.7.1</google-auth-library-oauth2-http.version>
   </properties>
 
   <modules>
