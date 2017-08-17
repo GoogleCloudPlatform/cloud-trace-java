@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.google.auth</groupId>
       <artifactId>google-auth-library-credentials</artifactId>
-      <version>0.4.0</version>
+      <version>${google-auth-library-credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>io.grpc</groupId>

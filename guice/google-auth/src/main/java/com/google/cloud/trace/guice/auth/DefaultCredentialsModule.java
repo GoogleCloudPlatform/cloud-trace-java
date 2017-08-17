@@ -16,8 +16,8 @@ package com.google.cloud.trace.guice.auth;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.api.client.http.HttpTransport;
 import com.google.auth.Credentials;
+import com.google.auth.http.HttpTransportFactory;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.trace.guice.auth.Scopes;
 import com.google.inject.AbstractModule;
@@ -39,13 +39,13 @@ public final class DefaultCredentialsModule extends AbstractModule {
 
   @Override
   protected final void configure() {
-    requireBinding(HttpTransport.class);
+    requireBinding(HttpTransportFactory.class);
     requireBinding(Key.get(new TypeLiteral<List<String>>() {}, Scopes.class));
   }
 
   @Provides
   @Singleton
-  final Credentials provideCredentials(HttpTransport transport, @Scopes List<String> scopes)
+  final Credentials provideCredentials(HttpTransportFactory transport, @Scopes List<String> scopes)
       throws IOException {
     return GoogleCredentials.getApplicationDefault(checkNotNull(transport)).createScoped(scopes);
   }
