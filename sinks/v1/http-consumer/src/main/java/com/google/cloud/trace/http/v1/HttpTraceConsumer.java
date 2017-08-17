@@ -21,6 +21,7 @@ import com.google.devtools.cloudtrace.v1.Traces;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -76,6 +77,10 @@ public class HttpTraceConsumer implements TraceConsumer {
       connection.setRequestProperty("Content-Type", "application/json");
       connection.setRequestProperty(
           "Authorization", "Bearer " + oAuth2Credentials.getAccessToken().getTokenValue());
+      connection.setDoOutput(true);
+      OutputStream out = connection.getOutputStream();
+      out.write(jsonRequest.getBytes());
+      out.close();
       // Use the connection to make the request. This also sets the connection's response code.
       InputStream responseStream = connection.getInputStream();
       int responseCode = connection.getResponseCode();
