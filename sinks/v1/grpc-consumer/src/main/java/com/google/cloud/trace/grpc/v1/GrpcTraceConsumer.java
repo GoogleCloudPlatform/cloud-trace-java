@@ -14,14 +14,14 @@
 
 package com.google.cloud.trace.grpc.v1;
 
+import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.Credentials;
+import com.google.cloud.trace.v1.TraceServiceClient;
+import com.google.cloud.trace.v1.TraceServiceSettings;
 import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.devtools.cloudtrace.v1.PatchTracesRequest;
-import com.google.devtools.cloudtrace.v1.TraceServiceGrpc;
 import com.google.devtools.cloudtrace.v1.Traces;
-import io.grpc.Channel;
-import io.grpc.ManagedChannelBuilder;
-import io.grpc.auth.MoreCallCredentials;
+import java.io.IOException;
 
 
 /**
@@ -33,14 +33,14 @@ import io.grpc.auth.MoreCallCredentials;
  * @see TraceConsumer
  */
 public class GrpcTraceConsumer implements TraceConsumer {
-  private final TraceServiceGrpc.TraceServiceBlockingStub traceService;
+  private final TraceServiceClient traceService;
 
   /**
    * Creates a trace consumer that sends trace messages to the Stackdriver Trace API via gRPC.
    *
    * @param traceService the trace service to use for sending API calls.
    */
-  public GrpcTraceConsumer(TraceServiceGrpc.TraceServiceBlockingStub traceService) {
+  public GrpcTraceConsumer(TraceServiceClient traceService) {
     this.traceService = traceService;
   }
 
@@ -64,9 +64,20 @@ public class GrpcTraceConsumer implements TraceConsumer {
    * @param apiHost     a string containing the API host name.
    * @param credentials a credentials used to authenticate API calls.
    */
-  public static GrpcTraceConsumer create(String apiHost, Credentials credentials) {
-    Channel channel = ManagedChannelBuilder.forTarget(apiHost).build();
-    return new GrpcTraceConsumer(TraceServiceGrpc.newBlockingStub(channel)
-        .withCallCredentials(MoreCallCredentials.from(credentials)));
+  public static GrpcTraceConsumer create(String apiHost, Credentials credentials)
+      throws IOException {
+    TraceServiceSettings traceServiceSettings =
+        TraceServiceSettings.defaultBuilder()
+            .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
+            .setTransportProvider(
+                TraceServiceSettings.defaultGrpcTransportProviderBuilder()
+                    .setChannelProvider(
+                        TraceServiceSettings.defaultGrpcChannelProviderBuilder()
+                            .setEndpoint(apiHost)
+                            .build())
+                    .build())
+            .build();
+
+    return new GrpcTraceConsumer(TraceServiceClient.create(traceServiceSettings));
   }
 }
