@@ -32,6 +32,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>sdk-sink</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${project.groupId}.v1</groupId>
       <artifactId>sink</artifactId>
       <version>${project.version}</version>

@@ -22,6 +22,7 @@ import com.google.cloud.trace.v1.consumer.TraceConsumer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import java.io.IOException;
 
 public class GrpcTraceSinkModule extends AbstractModule {
   @Override
@@ -30,7 +31,8 @@ public class GrpcTraceSinkModule extends AbstractModule {
   @Provides
   @ApiTraceSink
   @Singleton
-  TraceConsumer provideTraceSink(@ApiHost String apiHost, Credentials credentials) {
+  TraceConsumer provideTraceSink(@ApiHost String apiHost, Credentials credentials)
+      throws IOException {
     return GrpcTraceConsumer.create(apiHost, credentials);
   }
 }
