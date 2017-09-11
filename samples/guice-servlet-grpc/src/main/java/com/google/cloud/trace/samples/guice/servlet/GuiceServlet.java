@@ -14,22 +14,34 @@
 
 package com.google.cloud.trace.samples.guice.servlet;
 
-import com.google.cloud.trace.annotation.Name;
+import com.google.cloud.logging.LoggingHandler;
 import com.google.cloud.trace.annotation.Option;
 import com.google.cloud.trace.annotation.Span;
 import com.google.cloud.trace.guice.servlet.RequestLabeler;
 
+import com.google.inject.Inject;
 import java.io.IOException;
 
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class GuiceServlet extends HttpServlet {
+  private final static Logger LOGGER = Logger.getLogger(GuiceServlet.class.getName());
+
   private static class MyExceptionMethodException extends Exception {
     private MyExceptionMethodException(String message) {
       super(message);
     }
+  }
+
+  @Inject LoggingHandler loggingHandler;
+
+  @Override
+  public void init() throws ServletException {
+    LoggingHandler.addHandler(LOGGER, loggingHandler);
   }
 
   @Span(labels={RequestLabeler.KEY},entry=true,trace=Option.TRUE)
@@ -37,7 +49,9 @@ public class GuiceServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/plain");
     response.setCharacterEncoding("UTF-8");
-    response.getWriter().println("Hello, AppEngine-Java!");
+    response.getWriter().println("Hello, Java!");
+
+    LOGGER.info("Hello info log!");
 
     myMethod();
     stackTraceTrue();
@@ -51,6 +65,7 @@ public class GuiceServlet extends HttpServlet {
 
   @Span(callLabels=Option.TRUE)
   public void myMethod() {
+    LOGGER.warning("Beware!");
     try {
       Thread.sleep(1);
     } catch (InterruptedException ex) {
@@ -68,7 +83,7 @@ public class GuiceServlet extends HttpServlet {
   @Span(callLabels=Option.TRUE)
   public void exceptionMethod() throws MyExceptionMethodException {
     try {
-      Thread.sleep(1);
+      Thread.sleep(5);
     } catch (InterruptedException ex) {
     }
     throw new MyExceptionMethodException("A useless exception message.");
