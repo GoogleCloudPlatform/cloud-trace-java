@@ -26,7 +26,6 @@ import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
 import com.google.cloud.trace.guice.SpanContextHandlerTracerModule;
 import com.google.cloud.trace.guice.TraceEnabledModule;
-import com.google.cloud.trace.guice.api.ApiHostModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsFilePropertiesModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsGoogleCredentialsModule;
 import com.google.cloud.trace.guice.auth.TraceAppendScopesModule;
@@ -58,7 +57,6 @@ public class ScheduledBufferingGrpc {
         new SinkBufferSizePropertiesModule(),
         new SinkScheduledDelayPropertiesModule(),
         new SingleThreadScheduledExecutorModule(),
-        new ApiHostModule(),
         new ClientSecretsGoogleCredentialsModule(),
         new ClientSecretsFilePropertiesModule(),
         new TraceAppendScopesModule());

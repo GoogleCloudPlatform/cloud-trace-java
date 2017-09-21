@@ -17,7 +17,6 @@
 
   <modules>
     <module>annotation</module>
-    <module>api</module>
     <module>core</module>
     <module>google-auth</module>
     <module>grpc-sink</module>

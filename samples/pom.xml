@@ -22,5 +22,6 @@
     <module>guice-scheduled-grpc</module>
     <module>guice-servlet-grpc</module>
     <module>managed-grpc</module>
+    <module>stackdriver-trace-api</module>
   </modules>
 </project>

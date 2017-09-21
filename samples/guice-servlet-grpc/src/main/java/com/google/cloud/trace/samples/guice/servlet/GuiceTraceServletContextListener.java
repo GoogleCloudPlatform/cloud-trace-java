@@ -22,7 +22,6 @@ import com.google.cloud.trace.guice.SingleThreadScheduledExecutorModule;
 import com.google.cloud.trace.guice.StackTraceDisabledModule;
 import com.google.cloud.trace.guice.SpanContextHandlerTracerModule;
 import com.google.cloud.trace.guice.annotation.TracerSpanModule;
-import com.google.cloud.trace.guice.api.ApiHostModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsFileJndiModule;
 import com.google.cloud.trace.guice.auth.ClientSecretsGoogleCredentialsModule;
 import com.google.cloud.trace.guice.auth.TraceAppendScopesModule;
@@ -57,7 +56,6 @@ public class GuiceTraceServletContextListener extends GuiceServletContextListene
         new SinkBufferSizeJndiModule(),
         new SinkScheduledDelayJndiModule(),
         new SingleThreadScheduledExecutorModule(),
-        new ApiHostModule(),
         new ClientSecretsGoogleCredentialsModule(),
         new ClientSecretsFileJndiModule(),
         new TraceAppendScopesModule(),

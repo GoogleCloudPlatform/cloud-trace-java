@@ -34,4 +34,17 @@
       <scope>runtime</scope>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.5.0</version>
+        <configuration>
+          <mainClass>com.google.cloud.trace.samples.logging.basic.BasicLogging</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
