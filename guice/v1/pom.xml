@@ -33,11 +33,6 @@
       <version>${google-cloud-trace.version}</version>
     </dependency>
     <dependency>
-      <!-- replacement for excluded transitive dependency from com.google.api.grpc:grpc-google-devtools-cloudtrace-v1 -->
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-all</artifactId>
-    </dependency>
-    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
       <version>4.0</version>
