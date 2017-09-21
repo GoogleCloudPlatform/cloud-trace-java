@@ -44,7 +44,7 @@ public class SimpleBufferingGrpc {
 
     // Create the trace sink.
     TraceProducer traceProducer = new TraceProducer();
-    TraceConsumer traceConsumer = GrpcTraceConsumer.create("cloudtrace.googleapis.com",
+    TraceConsumer traceConsumer = GrpcTraceConsumer.createWithCredentials(
         GoogleCredentials.fromStream(new FileInputStream(clientSecretsFile))
             .createScoped(Arrays.asList("https://www.googleapis.com/auth/trace.append")));
     FlushableTraceConsumer flushableSink = new SimpleBufferingTraceConsumer(traceConsumer);

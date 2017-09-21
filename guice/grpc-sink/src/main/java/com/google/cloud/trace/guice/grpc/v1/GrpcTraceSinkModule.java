@@ -31,8 +31,17 @@ public class GrpcTraceSinkModule extends AbstractModule {
   @Provides
   @ApiTraceSink
   @Singleton
+  @Deprecated
   TraceConsumer provideTraceSink(@ApiHost String apiHost, Credentials credentials)
       throws IOException {
-    return GrpcTraceConsumer.create(apiHost, credentials);
+    return GrpcTraceConsumer.createWithCredentials(credentials);
+  }
+
+  @Provides
+  @ApiTraceSink
+  @Singleton
+  TraceConsumer provideTraceSink(Credentials credentials)
+      throws IOException {
+    return GrpcTraceConsumer.createWithCredentials(credentials);
   }
 }

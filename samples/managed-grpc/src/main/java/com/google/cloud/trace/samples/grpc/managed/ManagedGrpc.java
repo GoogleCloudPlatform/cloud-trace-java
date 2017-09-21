@@ -40,8 +40,7 @@ public class ManagedGrpc {
 
     // Create the trace sink.
     TraceProducer traceProducer = new TraceProducer();
-    TraceConsumer traceConsumer = GrpcTraceConsumer.create("cloudtrace.googleapis.com",
-        GoogleCredentials.getApplicationDefault());
+    TraceConsumer traceConsumer = GrpcTraceConsumer.create();
     TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, traceConsumer);
 
     // Create the tracer.

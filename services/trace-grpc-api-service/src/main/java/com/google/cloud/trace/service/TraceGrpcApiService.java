@@ -159,8 +159,7 @@ public class TraceGrpcApiService implements TraceService {
                               int bufferSize, int scheduledDelay, GoogleCredentials credentials,
                               ScheduledExecutorService executorService) throws IOException {
     TraceProducer traceProducer = new TraceProducer();
-    TraceConsumer traceConsumer = GrpcTraceConsumer.create("cloudtrace.googleapis.com",
-        credentials);
+    TraceConsumer traceConsumer = GrpcTraceConsumer.createWithCredentials(credentials);
     traceConsumer = new ScheduledBufferingTraceConsumer(traceConsumer, new RoughTraceSizer(),
         bufferSize, scheduledDelay, executorService);
     TraceSink traceSink = new TraceSinkV1(projectId, traceProducer, traceConsumer);
