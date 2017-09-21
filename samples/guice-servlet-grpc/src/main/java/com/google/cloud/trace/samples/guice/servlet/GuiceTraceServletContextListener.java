@@ -57,7 +57,6 @@ public class GuiceTraceServletContextListener extends GuiceServletContextListene
         new SinkBufferSizeJndiModule(),
         new SinkScheduledDelayJndiModule(),
         new SingleThreadScheduledExecutorModule(),
-        new ApiHostModule(),
         new ClientSecretsGoogleCredentialsModule(),
         new ClientSecretsFileJndiModule(),
         new TraceAppendScopesModule(),

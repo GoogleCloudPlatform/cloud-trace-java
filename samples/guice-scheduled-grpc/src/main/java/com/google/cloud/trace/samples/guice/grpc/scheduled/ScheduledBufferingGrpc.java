@@ -58,7 +58,6 @@ public class ScheduledBufferingGrpc {
         new SinkBufferSizePropertiesModule(),
         new SinkScheduledDelayPropertiesModule(),
         new SingleThreadScheduledExecutorModule(),
-        new ApiHostModule(),
         new ClientSecretsGoogleCredentialsModule(),
         new ClientSecretsFilePropertiesModule(),
         new TraceAppendScopesModule());
