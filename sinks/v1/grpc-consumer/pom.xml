@@ -31,9 +31,5 @@
       <artifactId>google-auth-library-credentials</artifactId>
       <version>${google-auth-library-credentials.version}</version>
     </dependency>
-    <dependency>
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-all</artifactId>
-    </dependency>
   </dependencies>
 </project>

@@ -31,11 +31,11 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <grpc.version>1.4.0</grpc.version>
+    <grpc.version>1.6.1</grpc.version>
     <netty-boringssl.version>2.0.5.Final</netty-boringssl.version>
-    <google-cloud-trace.version>0.22.0-alpha</google-cloud-trace.version>
-    <google-auth-library-credentials.version>0.7.1</google-auth-library-credentials.version>
-    <google-auth-library-oauth2-http.version>0.7.1</google-auth-library-oauth2-http.version>
+    <google-cloud-trace.version>0.24.0-alpha</google-cloud-trace.version>
+    <google-auth-library-credentials.version>0.8.0</google-auth-library-credentials.version>
+    <google-auth-library-oauth2-http.version>0.8.0</google-auth-library-oauth2-http.version>
   </properties>
 
   <modules>
@@ -70,11 +70,6 @@
         <groupId>com.google.cloud</groupId>
         <artifactId>google-cloud-trace</artifactId>
         <version>${google-cloud-trace.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.grpc</groupId>
-        <artifactId>grpc-all</artifactId>
-        <version>${grpc.version}</version>
       </dependency>
       <dependency>
         <groupId>io.grpc</groupId>
