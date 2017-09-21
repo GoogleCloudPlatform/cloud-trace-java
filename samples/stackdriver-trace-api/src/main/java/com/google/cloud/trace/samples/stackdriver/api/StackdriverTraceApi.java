@@ -11,10 +11,12 @@ import java.io.IOException;
 
 public class StackdriverTraceApi {
   public static void main(String[] args) throws IOException {
+    String projectId = System.getProperty("projectId");
+
     // Initialize the Tracer.
     TraceService traceService = TraceGrpcApiService.builder()
         // Set the projectId.
-        .setProjectId("my-project-id")
+        .setProjectId(projectId)
         // Uncomment this if you want to provide your own credentials for the Stackdriver Trace API.
         // On GCE, this is optional because the Application Default Credentials are used by default.
         //.setCredentials(

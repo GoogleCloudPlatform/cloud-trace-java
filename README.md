@@ -65,29 +65,18 @@ The following sample writes a trace span to the Stackdriver Trace API using gRPC
   <dependencies>
     <dependency>
       <groupId>com.google.cloud.trace</groupId>
-      <artifactId>trace-grpc-api-service</artifactId>
-      <version>VERSION</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.cloud.trace</groupId>
       <artifactId>core</artifactId>
       <version>VERSION</version>
     </dependency>
     <dependency>
-      <groupId>com.google.auth</groupId>
-      <artifactId>google-auth-library-oauth2-http</artifactId>
-      <version>0.4.0</version>
-    </dependency>
-    <!-- gRPC dependencies -->
-    <dependency>
-      <groupId>io.grpc</groupId>
-      <artifactId>grpc-netty</artifactId>
-      <version>1.0.1</version>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>service</artifactId>
+      <version>VERSION</version>
     </dependency>
     <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-tcnative-boringssl-static</artifactId>
-      <version>1.1.33.Fork23</version>
+      <groupId>com.google.cloud.trace</groupId>
+      <artifactId>trace-grpc-api-service</artifactId>
+      <version>VERSION</version>
     </dependency>
   </dependencies>
 ```
