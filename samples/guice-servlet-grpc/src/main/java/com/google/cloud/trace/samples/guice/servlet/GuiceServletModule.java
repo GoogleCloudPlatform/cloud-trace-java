@@ -14,14 +14,13 @@
 
 package com.google.cloud.trace.samples.guice.servlet;
 
+import com.google.auth.Credentials;
 import com.google.cloud.logging.LoggingEnhancer;
 import com.google.cloud.logging.LoggingHandler;
 import com.google.cloud.logging.LoggingOptions;
-import com.google.cloud.logging.TraceLoggingEnhancer;
 import com.google.cloud.trace.SpanContextHandler;
 import com.google.cloud.trace.core.SpanContextFactory;
 import com.google.cloud.trace.core.TraceOptionsFactory;
-import com.google.cloud.trace.guice.api.ApiHost;
 import com.google.cloud.trace.guice.auth.Scopes;
 import com.google.cloud.trace.guice.servlet.RequestTraceContextFilter;
 import com.google.cloud.trace.guice.v1.ProjectId;
@@ -33,13 +32,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import com.google.auth.Credentials;
 
 public class GuiceServletModule extends ServletModule {
   @Override
   protected void configureServlets() {
-    bind(String.class).annotatedWith(ApiHost.class).toInstance("cloudtrace.googleapis.com:443");
-
     bind(GuiceServlet.class).in(Singleton.class);
     filter("/*").through(RequestTraceContextFilter.class);
     serve("/*").with(GuiceServlet.class);
@@ -59,7 +55,8 @@ public class GuiceServletModule extends ServletModule {
 
   @Provides
   @Singleton
-  LoggingEnhancer provideLoggingEnhancer(SpanContextHandler spanContextHandler, @ProjectId String projectId) {
+  LoggingEnhancer provideLoggingEnhancer(
+      SpanContextHandler spanContextHandler, @ProjectId String projectId) {
     return new SpanContextLoggingEnhancer(spanContextHandler, projectId);
   }
 
@@ -67,7 +64,8 @@ public class GuiceServletModule extends ServletModule {
   @Scopes
   @Singleton
   List<String> provideScopes() {
-    return Arrays.asList("https://www.googleapis.com/auth/trace.append",
+    return Arrays.asList(
+        "https://www.googleapis.com/auth/trace.append",
         "https://www.googleapis.com/auth/logging.write");
   }
 
@@ -79,8 +77,9 @@ public class GuiceServletModule extends ServletModule {
 
   @Provides
   @Singleton
-  LoggingHandler provideLoggingHandler(LoggingOptions loggingOptions, LoggingEnhancer loggingEnhancer) {
-    return new LoggingHandler(null, loggingOptions,
-        null, Collections.singletonList(loggingEnhancer));
+  LoggingHandler provideLoggingHandler(
+      LoggingOptions loggingOptions, LoggingEnhancer loggingEnhancer) {
+    return new LoggingHandler(
+        null, loggingOptions, null, Collections.singletonList(loggingEnhancer));
   }
 }
