@@ -69,13 +69,9 @@ public class GrpcTraceConsumer implements TraceConsumer {
     TraceServiceSettings traceServiceSettings =
         TraceServiceSettings.newBuilder()
             .setCredentialsProvider(FixedCredentialsProvider.create(credentials))
-            .setTransportProvider(
-                TraceServiceSettings.defaultGrpcTransportProviderBuilder()
-                    .setChannelProvider(
-                        TraceServiceSettings.defaultGrpcChannelProviderBuilder()
-                            .setEndpoint(apiHost)
-                            .build())
-                    .build())
+            .setTransportChannelProvider(TraceServiceSettings.defaultGrpcTransportProviderBuilder()
+                .setEndpoint(apiHost)
+                .build())
             .build();
 
     return new GrpcTraceConsumer(TraceServiceClient.create(traceServiceSettings));
