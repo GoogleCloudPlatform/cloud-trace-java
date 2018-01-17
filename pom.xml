@@ -31,10 +31,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <grpc.version>1.6.1</grpc.version>
+    <grpc.version>1.9.0</grpc.version>
     <google-cloud-trace.version>0.32.0-beta</google-cloud-trace.version>
-    <google-auth-library-credentials.version>0.8.0</google-auth-library-credentials.version>
-    <google-auth-library-oauth2-http.version>0.8.0</google-auth-library-oauth2-http.version>
+    <google-auth-library-credentials.version>0.9.0</google-auth-library-credentials.version>
+    <google-auth-library-oauth2-http.version>0.9.0</google-auth-library-oauth2-http.version>
   </properties>
 
   <modules>
