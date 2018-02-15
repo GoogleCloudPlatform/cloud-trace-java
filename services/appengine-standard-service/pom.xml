@@ -13,9 +13,6 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <!-- App Engine Trace API is available in 1.9.44+. -->
-    <appengine.target.version>1.9.44</appengine.target.version>
   </properties>
 
   <dependencies>
@@ -23,7 +20,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>core</artifactId>
-      <version>0.7.0-SNAPSHOT</version>
+      <version>${project.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -49,7 +46,7 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>${appengine.target.version}</version>
+      <version>${appengine-api.version}</version>
       <!-- Intentionally marked as optional. We want the dependent project -->
       <!-- to specify the concrete version to use in a deployment. -->
       <optional>true</optional>
@@ -57,7 +54,7 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-labs</artifactId>
-      <version>${appengine.target.version}</version>
+      <version>${appengine-api.version}</version>
       <!-- Intentionally marked as optional. We want the dependent project -->
       <!-- to specify the concrete version to use in a deployment. -->
       <optional>true</optional>
@@ -67,13 +64,13 @@
     <dependency>
       <groupId>com.google.truth</groupId>
       <artifactId>truth</artifactId>
-      <version>0.30</version>
+      <version>${google-truth.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>2.2.9</version>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -99,7 +96,7 @@
               <goal>test-compile</goal>
             </goals>
             <configuration>
-              <protocArtifact>com.google.protobuf:protoc:3.1.0:exe:${os.detected.classifier}</protocArtifact>
+              <protocArtifact>com.google.protobuf:protoc:${google-protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
             </configuration>
           </execution>
         </executions>
