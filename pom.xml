@@ -38,7 +38,7 @@
     <!-- App Engine Trace API is available in 1.9.44+. -->
     <appengine-api.version>1.9.60</appengine-api.version>
     <google-guava.version>19.0</google-guava.version>
-    <google-protobuf.version>3.1.0</google-protobuf.version>
+    <google-protobuf.version>3.5.1</google-protobuf.version>
     <joda-time.version>2.9.4</joda-time.version>
     <google-inject-guice.version>4.0</google-inject-guice.version>
     <javax-servlet.version>2.5</javax-servlet.version>
