@@ -1,3 +1,5 @@
+## Google is no longer actively updating this repository, and we recommend that developers use OpenCensus to send data to Stackdriver Trace. These libraries will continue to work for existing projects.
+
 # Google Cloud Trace SDK for Java
 
 [![Build Status][travis-image]][travis-url] [![Maven Central][maven-image]][maven-url]
